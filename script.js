@@ -416,7 +416,7 @@ async function getMagicAnswer() {
     inputField.value = ""; 
 
     // IDE JÖN MAJD A CLOUDFLARE WORKER URL-ED, AMIT A LÉTREHOZÁS UTÁN KAPSZ
-    const workerUrl = ""https://astro-insight-test-rendszer.soma-maczko74.workers.dev";
+    const workerUrl = "https://astro-insight-test-rendszer.soma-maczko74.workers.dev";
 
     try {
         console.log("Sending fetch request to Cloudflare Worker...");
