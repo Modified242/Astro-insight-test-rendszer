@@ -400,50 +400,51 @@ function analyzeUsername() {
     document.getElementById('analyzerResult').innerText = `Your Hidden Arcana: [ ${powers[hash % powers.length]} ]`;
 }
 
+// A te saját Cloudflare Worker URL-ed
+const CLOUDFLARE_WORKER_URL = "https://oracle-bot.soma-maczko74.workers.dev/"; 
+
 async function getMagicAnswer() {
     const inputField = document.getElementById("questionInput");
-    const resultDisplay = document.getElementById("magicAnswer");
+    const answerField = document.getElementById("magicAnswer");
     const question = inputField.value.trim();
 
-    console.log("Button clicked! Input value is:", question);
-
     if (!question) {
-        resultDisplay.textContent = "You must peer into the sphere and type a question first...";
+        answerField.innerText = "The sphere remains dark. Please whisper a question...";
         return;
     }
 
-    resultDisplay.textContent = "Consulting the cosmic alignment... 🌌";
-    inputField.value = ""; 
-
-    // IDE JÖN MAJD A CLOUDFLARE WORKER URL-ED, AMIT A LÉTREHOZÁS UTÁN KAPSZ
-    const workerUrl = "https://astro-insight-test-rendszer.soma-maczko74.workers.dev";
+    answerField.innerText = "Gazing into the cosmos...";
+    inputField.disabled = true;
 
     try {
-        console.log("Sending fetch request to Cloudflare Worker...");
-
-        const response = await fetch(workerUrl, {
+        const response = await fetch(CLOUDFLARE_WORKER_URL, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ message: question }) // Ugyanúgy "message" kulccsal küldjük a Workernek is
+            body: JSON.stringify({ message: question })
         });
 
-        console.log("Response status received from Worker:", response.status);
-
-        if (!response.ok) {
-            throw new Error("The connection to the spiritual realm timed out.");
-        }
-
-        // A Worker is sima szövegként fogja visszaküldeni a generált jóslatot
-        const aiResponseText = await response.text();
-        resultDisplay.textContent = aiResponseText;
+        const data = await response.json();
+        
+        // Megjelenítjük a Cloudflare-ből érkező AI választ
+        answerField.innerText = data.response;
 
     } catch (error) {
-        console.error("Caught an error in the fetch cycle:", error);
-        resultDisplay.textContent = "The ether is disrupted. Try asking again.";
+        console.error("Hiba:", error);
+        answerField.innerText = "The stars are misaligned. Try asking again later.";
+    } finally {
+        inputField.disabled = false;
+        inputField.value = ""; 
     }
 }
+
+// Enter leütésre is induljon el a küldés
+document.getElementById("questionInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        getMagicAnswer();
+    }
+});
 
 /*function submitLead() {
     const email = document.getElementById('emailInput').value;
