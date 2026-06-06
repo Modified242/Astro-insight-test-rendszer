@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astro Insight | Celestial Oracle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <canvas id="starlight-canvas"></canvas>
+
+    <nav class="navbar">
+    <a href="index.html" class="nav-logo-link" style="text-decoration: none; color: inherit; display: inline-flex;">
+        <div class="nav-logo">
+            <img src="logo.png" alt="Astro Insight Logo" class="logo-img">
+            Astro Insight
+        </div>
+    </a>
+        
+        <div class="nav-links" id="desktopNav">
+            <a href="#core">Readings</a>
+            <a href="#sync">Compatibility</a>
+            <a href="#tarot">Arcana</a>
+            <a href="about.html">About</a>
+            <button class="reset-btn" onclick="resetAura()" title="Clear your celestial aura">
+                Clear Aura ⟲
+            </button>
+        </div>
+
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        <a href="#core" onclick="toggleMobileMenu()">Readings</a>
+        <a href="#sync" onclick="toggleMobileMenu()">Compatibility</a>
+        <a href="#tarot" onclick="toggleMobileMenu()">Arcana</a>
+        <a href="about.html">About</a>
+        <button class="reset-btn" onclick="resetAura(); toggleMobileMenu()" style="margin-top: 20px; font-size: 1.2rem; padding: 10px 20px;">
+            Clear Aura ⟲
+        </button>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Astro Insight</h1>
+            <p>Your Traditional Guide to the Stars</p>
+        </header>
+
+        <section class="omen-box" id="itOmen">
+            <span class="omen-label">Cosmic Insight:</span>
+            <span id="omenText">Loading the wisdom of the ancients...</span>
+        </section>
+
+        <section class="core-box" id="core">
+            <h3>Celestial Readings</h3>
+            <p class="subtitle">Select your sign to align the stars and reveal your destiny.</p>
+            <div class="zodiac-grid" id="zodiacGrid"></div>
+        </section>
+
+        <section class="sync-box" id="sync">
+            <h3>Astro-Compatibility</h3>
+            <p class="subtitle">Discover the harmonic resonance between two celestial bodies.</p>
+            <div class="selector-group">
+                <select id="sign1"></select> <span class="plus-icon">+</span> <select id="sign2"></select>
+            </div>
+            <button class="glow-btn" onclick="checkCompatibility()">Reveal Connection</button>
+            <p id="compResult" class="result-text"></p>
+        </section>
+
+        <section class="tarot-box" id="tarot">
+            <h3>The Arcana Spread</h3>
+            <p class="subtitle">Draw three cards to unveil the path of Past, Present, and Future.</p>
+            <button class="glow-btn" onclick="drawTarot()">Consult the Deck</button>
+            <div id="tarotResult" class="tarot-grid"></div>
+        </section>
+
+        <div class="two-col-grid">
+            <section class="analyzer-box" id="analyzer">
+                <h3>Name Numerology</h3>
+                <div class="ask-input-group">
+                    <input type="text" id="usernameInput" placeholder="e.g., Alexander">
+                    <button class="glow-btn" onclick="analyzeUsername()">Analyze</button>
+                </div>
+                <p id="analyzerResult" class="result-text"></p>
+            </section>
+
+            <section class="ask-box" id="askOracle">
+                <h3>The Seer's Sphere</h3>
+                <div class="ask-input-group">
+                    <input type="text" id="questionInput" placeholder="Ask your question...">
+                    <button class="glow-btn" onclick="getMagicAnswer()">Ask</button>
+                </div>
+                <p id="magicAnswer" class="result-text"></p>
+            </section>
+        </div>
+
+        <!-- <section class="lead-box" id="leadGen">
+            <h3>Extended Lunar Calendar</h3>
+            <p class="subtitle">Subscribe to receive a detailed 30-day astral projection directly to your parchment.</p>
+            <div class="ask-input-group">
+                <input type="email" id="emailInput" placeholder="Your email address...">
+                <button id="leadBtn" class="glow-btn success-btn" onclick="submitLead()">Subscribe</button>
+            </div>
+            <p id="leadResult" class="result-text"></p>
+        </section> -->
+
+        <section class="archive-box">
+            <h3>Personal Grimoire</h3>
+            <div id="archiveContainer"><p class="subtitle">Your saved readings will be preserved here...</p></div>
+        </section>
+
+        <div id="fortuneModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2 id="signTitle" class="glow-text"></h2>
+                
+                <div class="modal-tabs">
+                    <button class="tab-btn active" onclick="switchTab(event, 'Insight')">Insight Transit</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'weekly')">Weekly Aspects</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'monthly')">Lunar Cycle</button>
+                </div>
+
+                <div class="lucky-attributes" id="luckyAttributes">
+                    <div class="attribute-box"><span class="attr-label">Planet:</span> <span class="attr-value" id="modalPlanet"></span></div>
+                    <div class="attribute-box"><span class="attr-label">Element:</span> <span class="attr-value" id="modalElement"></span></div>
+                    <div class="attribute-box"><span class="attr-label">Aura:</span> <div class="color-preview" id="luckyColorBox"></div> <span class="attr-value" id="luckyColorName"></span></div>
+                    <div class="attribute-box"><span class="attr-label">Numbers:</span> <span class="attr-value" id="luckyNumbers"></span></div>
+                    <div class="attribute-box" style="flex: 1 1 100%; justify-content: center; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        <span class="attr-label">Energy:</span> <span class="attr-value" id="modalEnergy" style="color: var(--glow-color); font-style: italic;"></span>
+                    </div>
+                </div>
+
+                <div id="tab-Insight" class="tab-content active-content"><p id="fortuneTextInsight">Reading the stars...</p></div>
+                <div id="tab-weekly" class="tab-content"><p id="fortuneTextWeekly">Loading...</p></div>
+                <div id="tab-monthly" class="tab-content"><p id="fortuneTextMonthly">Loading...</p></div>
+
+                <div class="modal-actions">
+                    <button id="saveBtn" class="glow-btn" onclick="saveToArchive()">Inscribe to Grimoire</button>
+                    <button id="shareBtn" class="glow-btn outline" onclick="shareDestiny()">Share Fate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<footer class="site-footer">
+        <p>&copy; 2026 Astro Insight. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a>
+            <span class="divider">|</span>
+            <a href="terms.html">Terms & Conditions</a>
+            <span class="divider">|</span>
+            <a href="helpcenter.html">Help Center</a>
+            <span class="divider">|</span>
+            <a href="support.html">Contact Support</a>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+    <script src="script.js"></script>
+</body>
+</html>
