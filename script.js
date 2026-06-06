@@ -415,27 +415,27 @@ async function getMagicAnswer() {
     resultDisplay.textContent = "Consulting the cosmic alignment... 🌌";
     inputField.value = ""; 
 
-    const webhookUrl = "https://hook.eu1.make.com/i2tz7oqk8m8qjbhqqu6ue25smktyy21x";
+    // IDE JÖN MAJD A CLOUDFLARE WORKER URL-ED, AMIT A LÉTREHOZÁS UTÁN KAPSZ
+    const workerUrl = "astro-insight-test-rendszer.soma-maczko74.workers.dev";
 
     try {
-        
-        console.log("Sending fetch request to Make.com...");
+        console.log("Sending fetch request to Cloudflare Worker...");
 
-        const response = await fetch(webhookUrl, {
+        const response = await fetch(workerUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ message: question })
+            body: JSON.stringify({ message: question }) // Ugyanúgy "message" kulccsal küldjük a Workernek is
         });
 
-        
-        console.log("Response status received from Make:", response.status);
+        console.log("Response status received from Worker:", response.status);
 
         if (!response.ok) {
             throw new Error("The connection to the spiritual realm timed out.");
         }
 
+        // A Worker is sima szövegként fogja visszaküldeni a generált jóslatot
         const aiResponseText = await response.text();
         resultDisplay.textContent = aiResponseText;
 
