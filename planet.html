@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary Guide — Astro Insight</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="starlight-canvas"></canvas>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo-link">
+            <div class="nav-logo">
+                <img src="logo.png" alt="Astro Insight Logo" class="logo-img">
+                <span>Astro Insight</span>
+            </div>
+        </a>
+        
+        <div class="nav-links" id="desktopNav">
+            <div class="nav-dropdown">
+                <a href="articles.html" class="dropbtn" style="color: var(--glow-color);">Articles ▾</a>
+                <div class="dropdown-content">
+                    <a href="zodiacs.html">Zodiac Signs</a>
+                    <a href="planet.html">Planets</a>
+                </div>
+            </div>
+            <a href="index.html">← Back to Astro Insight</a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        <a href="index.html">Home</a>
+        <a href="zodiacs.html">Zodiac Signs</a>
+        <a href="planet.html" style="color: var(--glow-color);">Planets</a>
+    </div>
+
+    <div class="container" style="margin-top: 140px;">
+        
+        <div id="articleView" style="display: none;">
+            <header style="text-align: center;">
+                <img id="planetImage" src="" alt="Planet View" style="width: 250px; height: 250px; object-fit: cover; border-radius: 50%; border: 2px solid var(--glow-color); box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); margin-bottom: 20px;">
+                <h1 id="planetTitle" style="color: var(--glow-color); text-transform: uppercase; letter-spacing: 3px; margin-top: 10px;"></h1>
+                <p class="subtitle" id="planetSubtitle">Ruling Planetary Energy</p>
+            </header>
+            <section style="text-align: left; line-height: 1.8; font-size: 1.15rem;">
+                <div id="planetContent"></div>
+                <div style="margin-top: 40px; text-align: center;">
+                    <a href="planet.html" class="glow-btn outline" style="text-decoration: none; display: inline-block;">View All Planets</a>
+                </div>
+            </section>
+        </div>
+
+        <div id="listView" style="display: none;">
+            <header>
+                <h1 style="color: var(--glow-color); text-transform: uppercase; letter-spacing: 3px;">Planetary Guide</h1>
+                <p class="subtitle">Select a celestial body to explore its cosmic influence</p>
+            </header>
+            <div class="zodiac-grid" id="planetsGrid">
+                </div>
+        </div>
+
+    </div>
+
+    <footer class="site-footer">
+    <p>&copy; 2026 Astro Insight. All rights reserved.</p>
+    <div class="footer-links">
+        <a href="about.html">About</a>
+        <span class="divider">|</span>
+        <a href="privacy.html">Privacy Policy</a>
+        <span class="divider">|</span>
+        <a href="terms.html">Terms & Conditions</a>
+        <span class="divider">|</span>
+        <a href="helpcenter.html">Help Center</a>
+        <span class="divider">|</span>
+        <a href="support.html">Contact Support</a>
+    </div>
+</footer>
+
+    <script>
+        // БАЗА ДАНИХ ДЛЯ ROLANDEX (Сюди він просто вставлятиме готові тексти)
+        const planetArticles = {
+            Mars: {
+                title: "Mars: The Cosmic Warrior",
+                image: "mars.webp",
+                content: "Mars represents drive, passion, and primal energy. It rules our desires and execution power. (Rolandex, place your full article text here...)"
+            },
+            Venus: {
+                title: "Venus: The Core of Harmony",
+                image: "venus.webp",
+                content: "Venus dictates love, beauty, aesthetics, and financial attraction. It governs how we connect and what we value. (Rolandex, place your full article text here...)"
+            },
+            Mercury: {
+                title: "Mercury: The Cosmic Messenger",
+                image: "mercury.webp",
+                content: "Mercury rules the mind, communication, intellect, and travel. It influences how we process information and express thoughts."
+            },
+            Moon: {
+                title: "The Moon: Ruler of the Soul",
+                image: "moon.webp",
+                content: "The Moon governs our inner world, emotions, intuition, and subconscious patterns. It reflects our deepest emotional needs."
+            },
+            Sun: {
+                title: "The Sun: The Divine Ego",
+                image: "sun.webp",
+                content: "The Sun represents your core identity, life force, and vital spirit. It is the essence of who you are shining out into the world."
+            },
+            Pluto: {
+                title: "Pluto: Lord of Transformation",
+                image: "pluto.webp",
+                content: "Pluto governs regeneration, deep subconscious shifts, power dynamics, and spiritual rebirth through destruction."
+            },
+            Jupiter: {
+                title: "Jupiter: The Great Benefic",
+                image: "jupiter.webp",
+                content: "Jupiter brings expansion, luck, philosophical wisdom, and prosperity. It shows where we seek growth and adventure."
+            },
+            Saturn: {
+                title: "Saturn: The Cosmic Taskmaster",
+                image: "saturn.webp",
+                content: "Saturn rules discipline, boundaries, karma, time, and long-term structure. It challenges us to build lasting foundations."
+            },
+            Uranus: {
+                title: "Uranus: The Awakener",
+                image: "uranus.webp",
+                content: "Uranus represents revolution, sudden change, eccentricity, innovation, and cosmic flashes of genius."
+            },
+            Neptune: {
+                title: "Neptune: The Divine Mystic",
+                image: "neptune.webp",
+                content: "Neptune rules dreams, illusions, spirituality, psychic sensitivity, and the dissolution of boundaries."
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Зчитуємо ?name=Знак із URL
+            const params = new URLSearchParams(window.location.search);
+            const planetName = params.get("name");
+
+            const articleView = document.getElementById("articleView");
+            const listView = document.getElementById("listView");
+
+            if (planetName && planetArticles[planetName]) {
+                // РЕЖИМ СТАТТІ: Якщо в URL вказано планету, показуємо статтю
+                listView.style.display = "none";
+                articleView.style.display = "block";
+
+                document.getElementById("planetTitle").innerText = planetArticles[planetName].title;
+                // ПІДСТАВЛЯЄМО ФОТО:
+                document.getElementById("planetImage").src = planetArticles[planetName].image;
+                document.getElementById("planetContent").innerHTML = `<p>${planetArticles[planetName].content}</p>`;
+                document.title = `${planetName} — Planetary Guide`;
+            } else {
+                // РЕЖИМ СПИСКУ: Якщо планету не обрано, будуємо гарну сітку вибору
+                articleView.style.display = "none";
+                listView.style.display = "block";
+/*  */
+                const grid = document.getElementById("planetsGrid");
+                grid.innerHTML = "";
+
+                // Автоматично генеруємо картки для кожної планети
+                Object.keys(planetArticles).forEach(name => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    card.style.padding = "30px 10px";
+                    card.innerHTML = `
+                        <img src="${planetArticles[name].image}" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px; border: 1px solid var(--glow-color-dim); object-fit: cover;">
+                        <h3 style="margin: 0 0 10px 0; color: var(--glow-color);">${name}</h3>
+                        <span class="sign-motto">Explore Energy ⟡</span>
+                    `;
+                    card.onclick = () => {
+                        window.location.href = `planet.html?name=${name}`;
+                    };
+                    grid.appendChild(card);
+                });
+            }
+        });
+    </script>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

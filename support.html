@@ -19,7 +19,7 @@
     </div>
         </a>
         <div class="nav-links">
-            <a href="index.html">← Back to Oracle</a>
+            <a href="index.html">← Back to Astro Insight</a>
         </div>
     </nav>
 
@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <form class="contact-form" onsubmit="event.preventDefault();">
+            <form class="contact-form" action="https://formspree.io/f/mqeobjed" method="POST">
                 <div class="form-group">
                     <label for="user-name">Your Name</label>
                     <input type="text" id="user-name" placeholder="Seeker Name" required autocomplete="name">
@@ -70,24 +70,26 @@
                     <textarea id="user-message" placeholder="Describe your cosmic block or inquiry in detail..." required></textarea>
                 </div>
 
-                <button type="submit" class="submit-btn">Send Message</button>
+                <button type="submit" class="submit-btn" onclick="handleFormSubmit(event)">Send Message</button>
             </form>
         </div>
     </div>
 
-    <footer class="site-footer">
-        <p>&copy; 2026 Astro Insight. All rights reserved.</p>
-        <div class="footer-links">
-            <a href="privacy.html">Privacy Policy</a>
-            <span class="divider">|</span>
-            <a href="terms.html">Terms & Conditions</a>
-            <span class="divider">|</span>
-            <a href="helpcenter.html">Help Center</a>
-            <span class="divider">|</span>
-            <a href="support.html">Contact Support</a>
-        </div>
+  <footer class="site-footer">
+    <p>&copy; 2026 Astro Insight. All rights reserved.</p>
+    <div class="footer-links">
+        <a href="about.html">About</a>
+        <span class="divider">|</span>
+        <a href="privacy.html">Privacy Policy</a>
+        <span class="divider">|</span>
+        <a href="terms.html">Terms & Conditions</a>
+        <span class="divider">|</span>
+        <a href="helpcenter.html">Help Center</a>
+        <span class="divider">|</span>
+        <a href="support.html">Contact Support</a>
+    </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=20260612"></script>
 </body>
 </html>
