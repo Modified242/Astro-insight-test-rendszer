@@ -530,15 +530,21 @@ details li { margin-bottom: 8px; }
     .cosmic-connector { transform: rotate(90deg); margin: 10px 0; padding-bottom: 0; }
     .compat-btn { width: 100%; }
     
-    /* Articles & Static Pages */
+    /* Articles & Static Pages (FIXED RIGHT SHIFT) */
     .privacy-container, .faq-container, .contact-container, .about-container, .terms-container { 
-        margin: 100px 15px 40px; 
+        margin: 100px auto 40px; 
+        width: 92%;
         padding: 25px 15px; 
     }
     .blog-post, .zodiac-article-block {
         padding: 20px 15px;
         border-radius: 8px;
     }
+
+    /* About Page Mobile Fixes */
+    .features-grid { grid-template-columns: 1fr; gap: 20px; }
+    .hero-text { font-size: 1.05rem; margin-bottom: 30px; }
+    .feature-card { padding: 20px 15px; }
 }
 
 @media (max-width: 480px) {
@@ -566,9 +572,10 @@ details li { margin-bottom: 8px; }
         font-size: 2.8rem;
     }
     
-    /* Compact static page margins */
+    /* Compact static page margins for very small screens */
     .privacy-container, .faq-container, .contact-container, .about-container, .terms-container { 
-        margin-top: 85px; 
+        margin: 85px auto 30px; 
+        width: 95%; 
         padding: 20px 10px; 
     }
 }
