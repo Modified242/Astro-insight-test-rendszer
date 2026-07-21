@@ -396,6 +396,33 @@ animate();
 // ==========================================
 const coreGrid = document.getElementById('zodiacGrid');
 
+// ==========================================
+// 1. ASTRO TICKER SYSTEM
+// ==========================================
+function initAstroTicker() {
+    const tickerContainer = document.getElementById('astro-ticker-content');
+    if (!tickerContainer) return; // Запобіжник, якщо на сторінці немає тікера
+
+    let tickerHtml = '';
+    // Проходимося по твоїй базі zodiacData і формуємо рядок
+    Object.values(zodiacData).forEach(s => {
+        tickerHtml += `
+            <span class="ticker-item" style="border-color: ${s.aura}">
+                <span class="ticker-icon" style="color: ${s.aura}">${s.icon}</span>
+                <strong>${s.name.toUpperCase()}:</strong> 
+                Ruler: <span style="color: var(--glow-color)">${s.planet}</span> | 
+                Element: ${s.element} ⟡
+            </span>
+        `;
+    });
+
+    // Дублюємо контент двічі для безперервної анімації CSS (infinite scroll)
+    tickerContainer.innerHTML = tickerHtml + tickerHtml;
+}
+
+// Запускаємо при завантаженні
+document.addEventListener('DOMContentLoaded', initAstroTicker);
+
 // ЗАПОБІЖНИК: Генеруємо сітку знаків тільки якщо вона є на сторінці (на index.html)
 if (coreGrid) {
     Object.values(zodiacData).forEach(s => {
@@ -524,25 +551,6 @@ function switchTab(event, tabName) {
 
 // ==========================================
 // WIDGETS
-// ==========================================
-
-function drawTarot() {
-    const tarotContainer = document.getElementById('tarotResult');
-    // ЗАПОБІЖНИК: Малюємо Таро тільки якщо на сторінці є блок для них
-    if (!tarotContainer) return;
-
-    playSound('mystic');
-    const cards = ["The Magician", "The High Priestess", "The Empress", "Wheel of Fortune", "The Star", "The Moon", "The Sun"];
-    const shuffled = cards.sort(() => 0.5 - Math.random()).slice(0, 3);
-    const layout = ["Past", "Present", "Future"];
-    let html = "";
-    for(let i=0; i<3; i++) {
-        html += `<div class="tarot-card" onclick="this.classList.toggle('flipped'); playSound('mystic')"><div class="tarot-inner"><div class="tarot-front">✧</div><div class="tarot-back"><div class="tarot-title">${layout[i]}</div><div class="tarot-name">${shuffled[i]}</div></div></div></div>`;
-    }
-    tarotContainer.innerHTML = html;
-}
-drawTarot();
-
 // ==========================================
 
 const NUMEROLOGY_WORKER_URL = "https://numerology.astroinsight.workers.dev";
@@ -754,7 +762,9 @@ function openSavedModal(index) {
     if (!item) return;
 
     playSound('mystic');
-    setAura(item.color); 
+    
+    // ФІКС БАГУ: Видалено міняння аури всього сайту (setAura) при перегляді Грімуару
+    // setAura(item.color); 
 
     // Беремо чисту назву знака і шукаємо його в базі (на випадок старих записів)
     let pureSign = item.sign.replace(" (Archived)", "").trim();
@@ -859,9 +869,48 @@ const compatMatrices = {
     polarity: {
         "Yang-Yang": 85, "Yin-Yin": 85, "Yang-Yin": 75
     },
+    // ==========================================
+    // COMPLETE PLANETARY MATRIX (100% COVERAGE)
+    // ==========================================
     planet: {
-        "Moon-Sun": 100, "Saturn-Sun": 40, "Mars-Venus": 90, "Jupiter-Sun": 85
-        // Додавайте інші комбінації з вашої таблиці сюди
+        // Sun pairings
+        "Sun-Sun": 80, "Sun-Moon": 100, "Sun-Mercury": 75, "Sun-Venus": 90, 
+        "Sun-Mars": 85, "Sun-Jupiter": 95, "Sun-Saturn": 40, "Sun-Uranus": 70, 
+        "Sun-Neptune": 60, "Sun-Pluto": 50,
+
+        // Moon pairings
+        "Moon-Moon": 80, "Moon-Mercury": 70, "Moon-Venus": 90, "Moon-Mars": 50, 
+        "Moon-Jupiter": 90, "Moon-Saturn": 30, "Moon-Uranus": 65, "Moon-Neptune": 85, 
+        "Moon-Pluto": 45,
+
+        // Mercury pairings
+        "Mercury-Mercury": 80, "Mercury-Venus": 85, "Mercury-Mars": 65, 
+        "Mercury-Jupiter": 70, "Mercury-Saturn": 75, "Mercury-Uranus": 90, 
+        "Mercury-Neptune": 60, "Mercury-Pluto": 65,
+
+        // Venus pairings
+        "Venus-Venus": 80, "Venus-Mars": 95, "Venus-Jupiter": 100, "Venus-Saturn": 70, 
+        "Venus-Uranus": 75, "Venus-Neptune": 95, "Venus-Pluto": 60,
+
+        // Mars pairings
+        "Mars-Mars": 70, "Mars-Jupiter": 85, "Mars-Saturn": 55, "Mars-Uranus": 60, 
+        "Mars-Neptune": 45, "Mars-Pluto": 90,
+
+        // Jupiter pairings
+        "Jupiter-Jupiter": 85, "Jupiter-Saturn": 60, "Jupiter-Uranus": 80, 
+        "Jupiter-Neptune": 85, "Jupiter-Pluto": 70,
+
+        // Saturn pairings
+        "Saturn-Saturn": 65, "Saturn-Uranus": 40, "Saturn-Neptune": 50, "Saturn-Pluto": 55,
+
+        // Uranus pairings
+        "Uranus-Uranus": 75, "Uranus-Neptune": 65, "Uranus-Pluto": 70,
+
+        // Neptune pairings
+        "Neptune-Neptune": 80, "Neptune-Pluto": 75,
+
+        // Pluto pairings
+        "Pluto-Pluto": 70
     }
 };
 
@@ -895,8 +944,12 @@ function getMatrixScore(matrixName, val1, val2) {
 }
 
 function checkCompatibility() {
-    const sign1 = document.getElementById('sign1').value;
-    const sign2 = document.getElementById('sign2').value;
+    // Беремо значення з прихованих інпутів кастомних дропдаунів (або зі звичайних селектів)
+    const sign1El = document.querySelector('#custom-dropdown-1 input[type="hidden"]') || document.getElementById('sign1');
+    const sign2El = document.querySelector('#custom-dropdown-2 input[type="hidden"]') || document.getElementById('sign2');
+    
+    const sign1 = sign1El ? sign1El.value : null;
+    const sign2 = sign2El ? sign2El.value : null;
     const resultBox = document.getElementById('compatibility-result');
     const btnText = document.querySelector('.compat-btn span') || document.querySelector('.compat-btn'); 
     
@@ -945,58 +998,125 @@ function checkCompatibility() {
         
     }, 800);
 }
-async function displayDailyOmen() {
-    const omenElement = document.getElementById("omenText");
+
+const COMPATIBILITY_WORKER_URL = "https://natal-engine.astroinsight.workers.dev/";
+
+async function calculateCompatibility() {
+    // Читаємо значення з твоїх кастомних дропдаунів (hidden inputs)
+    const sign1El = document.querySelector('#custom-dropdown-1 input[type="hidden"]') || document.getElementById('sign1');
+    const sign2El = document.querySelector('#custom-dropdown-2 input[type="hidden"]') || document.getElementById('sign2');
     
-    if (omenElement) {
-        try {
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            const dateString = `${yyyy}${mm}${dd}`;
-            const workerUrl = `https://astro-omen.astroinsight.workers.dev/?v=${dateString}`;
-            const response = await fetch(workerUrl);
-            if (!response.ok) throw new Error("Cosmic connection error");
-            const data = await response.json();
-            omenElement.textContent = data.omen;
-        } catch (error) {
-            console.error("Cosmic connection failed:", error);
-            omenElement.textContent = "The universe is whispering secrets. Listen closely.";
-        }
+    const sign1 = sign1El ? sign1El.value : null;
+    const sign2 = sign2El ? sign2El.value : null;
+
+    const date1 = document.getElementById('date1').value;
+    const date2 = document.getElementById('date2').value;
+
+    const resultBox = document.getElementById('compatibilityResult');
+    const scoreSpan = document.getElementById('syncScore');
+    const titleSpan = document.getElementById('syncTitle');
+    const verdictP = document.getElementById('syncVerdict');
+    const breakdownDiv = document.getElementById('syncBreakdown');
+
+    // UI Feedback while calculating
+    resultBox.classList.remove('hidden');
+    scoreSpan.innerText = "...";
+    titleSpan.innerText = "Aligning Celestial Spheres...";
+    verdictP.innerText = "";
+    breakdownDiv.innerHTML = "Connecting to the Natal Synastry Engine...";
+
+    if (!date1 || !date2) {
+        scoreSpan.innerText = "ERR";
+        titleSpan.innerText = "Date Required";
+        breakdownDiv.innerHTML = "Please provide exact birth dates for both individuals to calculate natal positions.";
+        return;
     }
-}
-document.addEventListener("DOMContentLoaded", displayDailyOmen);
 
-function handleFormSubmit(e) {
-    e.preventDefault();
-    const form = document.querySelector('.contact-form');
-    const btn = document.querySelector('.submit-btn');
+// 1. Перевірка: чи вибрані знаки зодіаку?
+    if (!sign1 || !sign2 || sign1 === "" || sign2 === "") {
+        scoreSpan.innerText = "ERR";
+        titleSpan.innerText = "Zodiac Signs Required";
+        breakdownDiv.innerHTML = "Please select the Sun signs for both individuals before calculating.";
+        return; // Зупиняє функцію, запит на сервер НЕ йде
+    }
 
-    const data = {
-        name: document.getElementById('user-name').value,
-        email: document.getElementById('user-email').value,
-        subject: document.getElementById('msg-subject').value,
-        message: document.getElementById('user-message').value
-    };
+    // 2. Перевірка: чи взагалі введені дати?
+    if (!date1 || !date2) {
+        scoreSpan.innerText = "ERR";
+        titleSpan.innerText = "Birth Dates Required";
+        breakdownDiv.innerHTML = "Please provide exact birth dates for both individuals.";
+        return;
+    }
 
-    fetch(form.action, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
+    // 3. Перевірка: чи дати адекватні (не з майбутнього і не з Середньовіччя)?
+    const parsedDate1 = new Date(date1);
+    const parsedDate2 = new Date(date2);
+    const minDate = new Date("1900-01-01");
+    const today = new Date(); // Поточний час
+
+    if (isNaN(parsedDate1.getTime()) || isNaN(parsedDate2.getTime()) || 
+        parsedDate1 < minDate || parsedDate2 < minDate || 
+        parsedDate1 > today || parsedDate2 > today) {
+        
+        scoreSpan.innerText = "ERR";
+        titleSpan.innerText = "Invalid Time Line";
+        breakdownDiv.innerHTML = "Please enter valid birth dates (between 1900 and today's date). We cannot calculate synastry for time travelers.";
+        return;
+    }
+
+    try {
+        const response = await fetch(COMPATIBILITY_WORKER_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sign1, date1, sign2, date2 })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server returned HTTP status ${response.status}`);
         }
-    }).then(r => {
-        if (r.ok) {
-            btn.innerText = "Message Sent ✓";
-            btn.style.background = "#22c55e";
-            form.reset();
-        } else {
-            btn.innerText = "Something went wrong. Try again.";
-            btn.style.background = "#ef4444";
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.error || "Unknown calculation error");
         }
-    });
+
+        // ==========================================
+        // PHASE 2 RENDERING: Static Natal Synastry
+        // ==========================================
+        scoreSpan.innerText = `${data.synastry.score}`; 
+        titleSpan.innerText = data.synastry.title;
+        verdictP.innerText = data.synastry.verdict;
+
+        // Display calculated planets alongside elemental analysis
+        const planetsInfo = `
+            <div style="background: rgba(212, 175, 55, 0.1); padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem;">
+                <strong>Calculated Natal Placements:</strong><br>
+                ✦ Person 1: Moon in ${data.person1.moon}, Venus in ${data.person1.venus}, Mars in ${data.person1.mars}<br>
+                ✦ Person 2: Moon in ${data.person2.moon}, Venus in ${data.person2.venus}, Mars in ${data.person2.mars}
+            </div>
+        `;
+        breakdownDiv.innerHTML = planetsInfo + data.synastry.details;
+
+        // ==========================================
+        // PHASE 3 RENDERING: Dynamic Astro-Weather
+        // ==========================================
+        const weatherScoreEl = document.getElementById('weatherScore');
+        const weatherVerdictEl = document.getElementById('weatherVerdict');
+        const weatherDetailsEl = document.getElementById('weatherDetails');
+
+        if (weatherScoreEl && data.weather) {
+            weatherScoreEl.innerText = `${data.weather.weatherScore}%`;
+            weatherVerdictEl.innerText = data.weather.weatherVerdict;
+            weatherDetailsEl.innerText = data.weather.transitDetails;
+        }
+
+    } catch (error) {
+        console.error("Natal Engine Communication Failure:", error);
+        scoreSpan.innerText = "---";
+        titleSpan.innerText = "Cosmic Disconnection";
+        breakdownDiv.innerHTML = `Unable to reach the Cloudflare Worker. Details: ${error.message}`;
+    }
 }
 // ==========================================
 // AURA COLOR MEMORY SYSTEM & WIDGET
@@ -1009,6 +1129,7 @@ function applyAuraColor(color) {
     document.documentElement.style.setProperty('--glow-color', color);
     document.documentElement.style.setProperty('--glow-color-dim', `${color}33`);
     document.documentElement.style.setProperty('--glow-color-mid', `${color}66`);
+    
     
     // Оновлюємо колір для Canvas (зірок)
     if (typeof currentAuraColor !== 'undefined') {
@@ -1238,3 +1359,302 @@ function shareDestiny() {
             });
     }
 }
+// ==========================================
+// WIDGETS: MOON PHASE & ASTRO WEATHER
+// ==========================================
+function initAstroWidgets() {
+    const moonPhaseEl = document.getElementById('moon-phase-name');
+    const moonIconEl = document.getElementById('moon-phase-icon');
+    const astroWeatherEl = document.getElementById('astro-weather-text');
+
+    if (!moonPhaseEl || !astroWeatherEl) return; // Запобіжник
+
+    // 1. Математичний розрахунок фази Місяця
+    const now = new Date();
+    // Відома дата нового місяця (базова точка відліку)
+    const baseNewMoon = new Date(2000, 0, 6, 18, 14);
+    const lunarDays = 29.53058770576; // Тривалість синодичного місяця
+    
+    const diffDays = (now - baseNewMoon) / (1000 * 60 * 60 * 24);
+    const currentCycle = (diffDays % lunarDays) / lunarDays; // Значення від 0 до 1
+
+    let phaseName = "";
+    let phaseIcon = "";
+
+    if (currentCycle < 0.03 || currentCycle > 0.97) { phaseName = "New Moon"; phaseIcon = "🌑"; }
+    else if (currentCycle < 0.22) { phaseName = "Waxing Crescent"; phaseIcon = "🌒"; }
+    else if (currentCycle < 0.28) { phaseName = "First Quarter"; phaseIcon = "🌓"; }
+    else if (currentCycle < 0.47) { phaseName = "Waxing Gibbous"; phaseIcon = "🌔"; }
+    else if (currentCycle < 0.53) { phaseName = "Full Moon"; phaseIcon = "🌕"; }
+    else if (currentCycle < 0.72) { phaseName = "Waning Gibbous"; phaseIcon = "🌖"; }
+    else if (currentCycle < 0.78) { phaseName = "Last Quarter"; phaseIcon = "🌗"; }
+    else { phaseName = "Waning Crescent"; phaseIcon = "🌘"; }
+
+    moonPhaseEl.innerText = phaseName;
+    if (moonIconEl) moonIconEl.innerText = phaseIcon;
+
+    // 2. Генерація професійної Астро-погоди (динамічно під дату)
+    const weatherList = [
+        "Solar winds are calm; excellent energy for analytical focus and structured coding.",
+        "High planetary resonance today. Intuitive decision-making is heavily favored.",
+        "Mercury aligns with Jupiter: expansive communication and clarity in negotiations.",
+        "Lunar energy shifts toward Earth signs—ground your ideas into practical projects today."
+    ];
+    // Обираємо погоду залежно від дня року, щоб вона була стабільною весь день
+    const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24);
+    astroWeatherEl.innerText = weatherList[dayOfYear % weatherList.length];
+}
+
+document.addEventListener('DOMContentLoaded', initAstroWidgets);
+// ==========================================
+// TAROT SYSTEM: 78-CARD AI ORACLE
+// ==========================================
+
+// 1. Initialize the Tarot Deck (Memory Optimized Generation)
+const tarotDeck = [];
+
+const majorArcanaNames = [
+    "The Fool", "The Magician", "The High Priestess", "The Empress", "The Emperor", 
+    "The Hierophant", "The Lovers", "The Chariot", "Strength", "The Hermit", 
+    "Wheel of Fortune", "Justice", "The Hanged Man", "Death", "Temperance", 
+    "The Devil", "The Tower", "The Star", "The Moon", "The Sun", 
+    "Judgement", "The World"
+];
+
+// Generate Major Arcana
+majorArcanaNames.forEach((name, index) => {
+    tarotDeck.push({
+        id: `major_${index}`,
+        name: name,
+        type: "Major Arcana",
+        imageUrl: `assets/tarot/major_${index}.webp`
+    });
+});
+
+// Generate Minor Arcana
+const suits = ["Wands", "Cups", "Swords", "Pentacles"];
+const courtCards = ["Page", "Knight", "Queen", "King"];
+
+suits.forEach(suit => {
+    for (let i = 1; i <= 14; i++) {
+        let cardName = "";
+        if (i === 1) cardName = `Ace of ${suit}`;
+        else if (i >= 2 && i <= 10) cardName = `${i} of ${suit}`;
+        else cardName = `${courtCards[i - 11]} of ${suit}`;
+
+        tarotDeck.push({
+            id: `minor_${suit.toLowerCase()}_${i}`,
+            name: cardName,
+            type: `Minor Arcana - ${suit}`,
+            imageUrl: `assets/tarot/${suit.toLowerCase()}_${i}.webp`
+        });
+    }
+});
+
+// 2. Core Shuffle Engine (Fisher-Yates Algorithm)
+function shuffleTarotDeck(deck) {
+    const shuffled = [...deck]; // Create a shallow copy to prevent mutating the master deck
+    
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        // Generate a random index ranging from 0 to i
+        const j = Math.floor(Math.random() * (i + 1));
+        
+        // Swap elements seamlessly
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    
+    return shuffled;
+}
+
+// 3. Draw The Arcana Spread (Past, Present, Future)
+function drawArcanaSpread() {
+    const activeDeck = shuffleTarotDeck(tarotDeck);
+    
+    // Extract top 3 mathematically randomized cards
+    const spread = {
+        past: activeDeck[0],
+        present: activeDeck[1],
+        future: activeDeck[2]
+    };
+    
+    console.log("🔮 The Arcana Spread initialized:", spread);
+    return spread;
+}
+// 4. Render the Spread into the DOM
+function drawTarot() {
+    const container = document.getElementById('tarotResult');
+    if (!container) return;
+
+    // Generate the 3 unique cards
+    const spread = drawArcanaSpread();
+    const layout = [
+        { key: 'past', label: 'Past', data: spread.past },
+        { key: 'present', label: 'Present', data: spread.present },
+        { key: 'future', label: 'Future', data: spread.future }
+    ];
+
+    let htmlOutput = "";
+
+    layout.forEach(item => {
+        htmlOutput += `
+            <div class="tarot-card" onclick="this.classList.toggle('flipped')">
+                <div class="tarot-inner">
+                    <div class="tarot-front">✧</div>
+                    <div class="tarot-back">
+                        <div class="tarot-position-label">${item.label}</div>
+                        <div class="tarot-card-title">${item.data.name}</div>
+                        <div class="tarot-card-type">${item.data.type}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = htmlOutput;
+
+    // NEW: Trigger the AI connection after dealing the cards
+    fetchTarotReading(spread);
+}
+
+// 5. Fetch AI Interpretation from Cloudflare Worker
+async function fetchTarotReading(spread) {
+    const container = document.getElementById('tarotResult');
+    
+    // Check if reading box exists, if not, create it dynamically
+    let readingBox = document.getElementById('tarot-interpretation');
+    if (!readingBox) {
+        readingBox = document.createElement('div');
+        readingBox.id = 'tarot-interpretation';
+        readingBox.className = 'oracle-reading';
+        // Insert right after the tarot grid
+        container.parentNode.insertBefore(readingBox, container.nextSibling);
+    }
+
+    // Show mystical loading state
+    readingBox.style.display = 'block';
+    readingBox.innerHTML = `
+        <div class="oracle-loader">
+            <span class="glow-text">The Oracle is consulting the ether...</span>
+        </div>
+    `;
+
+    try {
+        const response = await fetch("https://tarot-oracle-api.astroinsight.workers.dev/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(spread)
+        });
+
+        if (!response.ok) throw new Error("Network disruption");
+
+        const data = await response.json();
+        
+        if (data.error) throw new Error(data.error);
+
+        // Inject the AI reading and format it
+        readingBox.innerHTML = `<div class="reading-content">${data.reading}</div>`;
+        
+        // Smoothly scroll down to the reading
+        readingBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    } catch (error) {
+        console.error("Fetch error:", error);
+        readingBox.innerHTML = `
+            <div class="reading-error">
+                The connection to the stars was lost. Please draw the cards again.
+            </div>
+        `;
+    }
+}
+// ==========================================
+// DYNAMIC SITE LOGO & DOUBLE FLIP PRELOADER
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const preloader = document.getElementById("astro-preloader");
+    
+    // Елементи, які летять
+    const introLogo = document.getElementById("intro-logo-container");
+    const introTitle = document.getElementById("intro-title");
+    
+    // Елементи, куди летять
+    const siteLogo = document.getElementById("site-logo-container");
+    const siteTitle = document.getElementById("site-title-container");
+
+    const introPlayed = sessionStorage.getItem('introPlayed');
+
+    fetch('logo.svg')
+        .then(response => {
+            if (!response.ok) throw new Error('Помилка завантаження logo.svg');
+            return response.text();
+        })
+        .then(svgData => {
+            if (siteLogo) siteLogo.innerHTML = svgData;
+
+            // Якщо перший вхід і всі елементи на місці
+            if (!introPlayed && preloader && introLogo && siteLogo && introTitle && siteTitle) {
+                
+                document.body.classList.add('no-scroll');
+                introLogo.innerHTML = svgData;
+                
+                // Тимчасово ховаємо справжні елементи в шапці
+                siteLogo.style.opacity = '0';
+                siteTitle.style.opacity = '0'; 
+
+                setTimeout(() => {
+                // Координати для Лого
+                const introLogoRect = introLogo.getBoundingClientRect();
+                const targetLogoRect = siteLogo.getBoundingClientRect();
+                const logoDeltaX = targetLogoRect.left - introLogoRect.left;
+                const logoDeltaY = targetLogoRect.top - introLogoRect.top;
+                const logoScale = targetLogoRect.width / introLogoRect.width;
+
+                // Координати для Тексту
+                const introTitleRect = introTitle.getBoundingClientRect();
+                const targetTitleRect = siteTitle.getBoundingClientRect();
+                const titleDeltaX = targetTitleRect.left - introTitleRect.left;
+                const titleDeltaY = targetTitleRect.top - introTitleRect.top;
+                const titleScale = targetTitleRect.width / introTitleRect.width;
+
+                // МАГІЯ: Розчиняємо лише чорний фон шторки!
+                preloader.style.background = 'transparent';
+                preloader.style.pointerEvents = 'none';
+
+                // ЗАПУСК ПОЛЬОТУ
+                introLogo.style.transform = `translate(${logoDeltaX}px, ${logoDeltaY}px) scale(${logoScale})`;
+                introTitle.style.transform = `translate(${titleDeltaX}px, ${titleDeltaY}px) scale(${titleScale})`;
+
+                setTimeout(() => {
+                    // 1. Вмикаємо справжні елементи в шапці (робимо безшовну підміну)
+                    siteLogo.style.opacity = '1'; 
+                    siteTitle.style.opacity = '1'; 
+                    
+                    // 2. Даємо команду прелоадеру стати повністю прозорим
+                    preloader.style.opacity = '0'; 
+
+                    // 3. Чекаємо 400мс, поки він візуально зникне, і тоді видаляємо його з коду
+                    setTimeout(() => {
+                        preloader.remove(); // Видаляємо DOM-елемент остаточно
+                        document.body.classList.remove('no-scroll'); // Повертаємо скрол
+                        sessionStorage.setItem('introPlayed', 'true'); 
+                    }, 400);
+
+                }, 1200);
+
+            }, 1800);
+
+            } else {
+                // ПОВТОРНИЙ ВХІД (Без заставки)
+                if (siteLogo) siteLogo.style.opacity = '1';
+                if (siteTitle) siteTitle.style.opacity = '1';
+                if (preloader) preloader.remove();
+                document.body.classList.remove('no-scroll');
+            }
+        })
+        .catch(error => {
+            console.error('Помилка завантаження логотипу:', error);
+            if (siteLogo) siteLogo.style.opacity = '1';
+            if (siteTitle) siteTitle.style.opacity = '1';
+            if (preloader) preloader.remove();
+            document.body.classList.remove('no-scroll');
+        });
+});
