@@ -61,28 +61,35 @@
                 </div>
             </div>
 
-            <form class="contact-form" action="https://formspree.io/f/mqeobjed" method="POST">
+            <!-- Formspree action eltávolítva, ID hozzáadva -->
+            <form class="contact-form" id="support-form">
                 <div class="form-group">
                     <label for="user-name">Your Name</label>
-                    <input type="text" id="user-name" placeholder="Seeker Name" required autocomplete="name">
+                    <!-- name="name" hozzáadva -->
+                    <input type="text" id="user-name" name="name" placeholder="Seeker Name" required autocomplete="name">
                 </div>
 
                 <div class="form-group">
                     <label for="user-email">Email Address</label>
-                    <input type="email" id="user-email" placeholder="name@domain.com" required autocomplete="email">
+                    <!-- name="email" hozzáadva -->
+                    <input type="email" id="user-email" name="email" placeholder="name@domain.com" required autocomplete="email">
                 </div>
 
                 <div class="form-group">
                     <label for="msg-subject">Subject</label>
-                    <input type="text" id="msg-subject" placeholder="What are you experiencing?" required>
+                    <!-- name="subject" hozzáadva -->
+                    <input type="text" id="msg-subject" name="subject" placeholder="What are you experiencing?" required>
                 </div>
 
                 <div class="form-group">
                     <label for="user-message">Message</label>
-                    <textarea id="user-message" placeholder="Describe your cosmic block or inquiry in detail..." required></textarea>
+                    <!-- name="message" hozzáadva -->
+                    <textarea id="user-message" name="message" placeholder="Describe your cosmic block or inquiry in detail..." required></textarea>
                 </div>
 
-                <button type="submit" class="submit-btn" onclick="handleFormSubmit(event)">Send Message</button>
+                <button type="submit" class="submit-btn">Send Message</button>
+                <!-- Ide kerül a siker/hiba üzenet -->
+                <div id="form-response" style="margin-top: 15px; text-align: center; font-weight: bold;"></div>
             </form>
         </div>
     </div>
@@ -101,6 +108,47 @@
         <a href="support.html">Contact Support</a>
     </div>
     </footer>
+
+    <!-- JS a Google Apps Script API híváshoz -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('support-form');
+            const responseDiv = document.getElementById('form-response');
+
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); 
+
+                    const scriptURL = 'https://script.google.com/macros/s/AKfycbxcRUvUiiVmMbhS4d31enDkfHLGp9Cj0xVHzOvL6029xGlY2VojsQ0nmB7CIRGENIVOzQ/exec'; 
+                    const formData = new FormData(form);
+
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    const originalText = submitButton.textContent;
+                    submitButton.disabled = true;
+                    submitButton.textContent = 'Sending...';
+
+                    fetch(scriptURL, { method: 'POST', body: formData })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.result === 'success') {
+                                responseDiv.innerHTML = '<p style="color: #4CAF50;">Your message has been sent successfully!</p>';
+                                form.reset();
+                            } else {
+                                responseDiv.innerHTML = '<p style="color: #f44336;">There was an error sending your message.</p>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error!', error.message);
+                            responseDiv.innerHTML = '<p style="color: #f44336;">Network error occurred.</p>';
+                        })
+                        .finally(() => {
+                            submitButton.disabled = false;
+                            submitButton.textContent = originalText;
+                        });
+                });
+            }
+        });
+    </script>
 
     <script src="script.js?v=20260612"></script>
 </body>
