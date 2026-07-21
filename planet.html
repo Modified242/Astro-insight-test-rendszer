@@ -11,10 +11,10 @@
     <canvas id="starlight-canvas"></canvas>
 
     <nav class="navbar">
-        <a href="index.html" class="nav-logo-link">
+        <a href="index.html" class="nav-logo-link" style="text-decoration: none; color: inherit; display: inline-flex;">
             <div class="nav-logo">
-                <img src="logo.png" alt="Astro Insight Logo" class="logo-img">
-                <span>Astro Insight</span>
+                <div class="logo-svg-container" id="site-logo-container"></div>
+                <span class="nav-title">Astro Insight</span>
             </div>
         </a>
         
@@ -26,7 +26,23 @@
                     <a href="planet.html">Planets</a>
                 </div>
             </div>
-            <a href="index.html">← Back to Astro Insight</a>
+            <a href="index.html">Home</a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+        
+        <div class="nav-links" id="desktopNav">
+            <div class="nav-dropdown">
+                <a href="articles.html" class="dropbtn" style="color: var(--glow-color);">Articles ▾</a>
+                <div class="dropdown-content">
+                    <a href="zodiacs.html">Zodiac Signs</a>
+                    <a href="planet.html">Planets</a>
+                </div>
+            </div>
+            <a href="index.html">Home</a>
         </div>
 
         <div class="hamburger" onclick="toggleMobileMenu()">
@@ -111,11 +127,6 @@
                 image: "sun.webp",
                 content: "The Sun represents your core identity, life force, and vital spirit. It is the essence of who you are shining out into the world."
             },
-            Pluto: {
-                title: "Pluto: Lord of Transformation",
-                image: "pluto.webp",
-                content: "Pluto governs regeneration, deep subconscious shifts, power dynamics, and spiritual rebirth through destruction."
-            },
             Jupiter: {
                 title: "Jupiter: The Great Benefic",
                 image: "jupiter.webp",
@@ -135,7 +146,12 @@
                 title: "Neptune: The Divine Mystic",
                 image: "neptune.webp",
                 content: "Neptune rules dreams, illusions, spirituality, psychic sensitivity, and the dissolution of boundaries."
-            }
+             },
+          Pluto: {
+                title: "Pluto: Lord of Transformation",
+                image: "pluto.webp",
+                content: "Pluto governs regeneration, deep subconscious shifts, power dynamics, and spiritual rebirth through destruction."
+             }
         };
 
         document.addEventListener("DOMContentLoaded", () => {
