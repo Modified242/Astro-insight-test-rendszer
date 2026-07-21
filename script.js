@@ -1658,3 +1658,46 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.classList.remove('no-scroll');
         });
 });
+// --- SUPPORT FORM GOOGLE APPS SCRIPT BEKÜLDÉS ---
+document.addEventListener('DOMContentLoaded', () => {
+    const supportForm = document.getElementById('support-form');
+    const responseDiv = document.getElementById('form-response');
+
+    // Csak akkor fut le a kód, ha a support oldalon vagyunk (létezik a form)
+    if (supportForm) {
+        supportForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+
+            // A telepített Google Apps Script URL-ed
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbxcRUvUiiVmMbhS4d31enDkfHLGp9Cj0xVHzOvL6029xGlY2VojsQ0nmB7CIRGENIVOzQ/exec'; 
+            const formData = new FormData(supportForm);
+
+            const submitButton = supportForm.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            
+            // Gomb vizuális állapota küldés közben
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+
+            fetch(scriptURL, { method: 'POST', body: formData })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.result === 'success') {
+                        responseDiv.innerHTML = '<p style="color: #4CAF50;">Your message has been sent successfully!</p>';
+                        supportForm.reset();
+                    } else {
+                        responseDiv.innerHTML = '<p style="color: #f44336;">There was an error sending your message.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    responseDiv.innerHTML = '<p style="color: #f44336;">Network error occurred.</p>';
+                })
+                .finally(() => {
+                    // Gomb visszaállítása az eredeti állapotba
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalText;
+                });
+        });
+    }
+});
