@@ -8,14 +8,21 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <div id="astro-preloader">
+        <div class="preloader-content">
+            <div id="intro-logo-container"></div>
+            <h1 class="intro-title" id="intro-title">Astro Insight</h1>
+        </div>
+    </div>
     
     <canvas id="starlight-canvas"></canvas>
 
     <nav class="navbar">
         <a href="index.html" class="nav-logo-link" style="text-decoration: none; color: inherit; display: inline-flex;">
             <div class="nav-logo">
-                <img src="logo.png" alt="Astro Insight Logo" class="logo-img">
-                Astro Insight
+                <div class="logo-svg-container" id="site-logo-container"></div>
+                <span id="site-title-container" class="nav-title">Astro Insight</span>
             </div>
         </a>
         
@@ -68,21 +75,30 @@
             <div class="zodiac-grid" id="zodiacGrid"></div>
         </section>
 
+        <!-- ================= PHASE 2: ADVANCED ASTRO COMPATIBILITY MODULE ================= -->
         <section id="sync" class="compatibility-section">
             <div class="compatibility-container">
-                <h2>Astro Compatibility</h2>
-                <p class="compatibility-subtitle">Discover how your cosmic energies align with another soul</p>
+                <h2>Cosmic Resonance Engine</h2>
+                <p class="compatibility-subtitle">Multi-Planetary Synastry based on Exact Birth Dates</p>
                 
                 <div class="compatibility-form">
+                    
                     <div class="select-group">
-                        <label>Your Sign</label>
-                        <div class="custom-select" id="custom-dropdown-1">
-                            <input type="hidden" id="sign1" value="">
-                            <div class="select-trigger">
-                                <div class="selected-content">Select sign...</div>
-                                <span class="arrow">▼</span>
+                        <div class="input-wrapper">
+                            <label>Your Sign</label>
+                            <div class="custom-select" id="custom-dropdown-1">
+                                <input type="hidden" id="sign1" value="">
+                                <div class="select-trigger">
+                                    <div class="selected-content">Select sign...</div>
+                                    <span class="arrow">▼</span>
+                                </div>
+                                <ul class="custom-options"></ul>
                             </div>
-                            <ul class="custom-options"></ul>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <label for="date1">Exact Birth Date</label>
+                            <input type="date" id="date1" class="gold-select" value="1995-05-14" min="1900-01-01" max="2026-12-31">
                         </div>
                     </div>
 
@@ -91,38 +107,57 @@
                     </div>
 
                     <div class="select-group">
-                        <label>Partner's Sign</label>
-                        <div class="custom-select" id="custom-dropdown-2">
-                            <input type="hidden" id="sign2" value="">
-                            <div class="select-trigger">
-                                <div class="selected-content">Select sign...</div>
-                                <span class="arrow">▼</span>
+                        <div class="input-wrapper">
+                            <label>Partner's Sign</label>
+                            <div class="custom-select" id="custom-dropdown-2">
+                                <input type="hidden" id="sign2" value="">
+                                <div class="select-trigger">
+                                    <div class="selected-content">Select sign...</div>
+                                    <span class="arrow">▼</span>
+                                </div>
+                                <ul class="custom-options"></ul>
                             </div>
-                            <ul class="custom-options"></ul>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <label for="date2">Exact Birth Date</label>
+                            <input type="date" id="date2" class="gold-select" value="1997-08-20" min="1900-01-01" max="2026-12-31">
                         </div>
                     </div>
+
                 </div>
 
-                <button class="compat-btn" onclick="checkCompatibility()">
-                    <span>Reveal Connection ⟡</span>
+                <button class="compat-btn" onclick="calculateCompatibility()">
+                    <span>Calculate Natal Synastry ⟡</span>
                 </button>
 
-                <div id="compatibility-result" class="compat-result-box" style="display: none;">
+                <div id="compatibilityResult" class="compat-result-box hidden">
                     <div class="compat-score-circle">
-                        <span id="compat-total">0</span><span style="font-size: 1.5rem; margin-left: 2px;">%</span>
+                        <span id="syncScore">0</span><span style="font-size: 1.5rem; margin-left: 2px;">%</span>
                     </div>
                     
+                    <h3 id="syncTitle" style="color: var(--glow-color); margin-top: 15px;">Affinity Level</h3>
+                    <p id="syncVerdict" class="sync-verdict" style="margin-bottom: 20px; font-style: italic;"></p>
+                    
                     <div class="compat-analytics">
-                        <div class="insight-box strength-box">
-                            <h4 style="color: #4CAF50;">✨ Cosmic Strength</h4>
-                            <p id="compat-strength">...</p>
+                        <div class="insight-box strength-box" style="width: 100%; margin-bottom: 15px;">
+                            <h4 style="color: #4CAF50;">✨ Planetary Analysis</h4>
+                            <div id="syncBreakdown" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; text-align: left;"></div>
                         </div>
-                        <div class="insight-box growth-box">
-                            <h4 style="color: #FF9800;">⚠️ Area of Growth</h4>
-                            <p id="compat-growth">...</p>
+
+                        <div class="insight-box growth-box" style="width: 100%; border-left: 4px solid #00BCD4;">
+                            <h4 style="color: #00BCD4;">⚡ Real-Time Astro-Weather</h4>
+                            <div style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #00BCD4;" id="weatherScore">--%</div>
+                                <div style="text-align: left;">
+                                    <strong id="weatherVerdict" style="color: #e2e8f0; display: block; margin-bottom: 5px;">Awaiting Forecast...</strong>
+                                    <span id="weatherDetails" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; display: block;"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </section>
 
@@ -216,7 +251,14 @@
         <span class="divider">|</span>
         <a href="support.html">Contact Support</a>
     </div>
+    
+    <div class="social-links">
+        <a href="#" target="_blank" rel="noopener">Instagram</a>
+        <a href="#" target="_blank" rel="noopener">Facebook</a>
+        <a href="#" target="_blank" rel="noopener">X</a>
+    </div>
 </footer>
+        
     <script src="script.js?v=20260612"></script>
 </body>
 </html>
