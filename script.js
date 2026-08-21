@@ -1783,3 +1783,152 @@ document.addEventListener('DOMContentLoaded', () => {
         el.addEventListener('mouseleave', () => customCursor.classList.remove('hovering'));
     });
 })();
+
+// ==========================================
+// ZODIAC MATCH BLITZ LOGIC
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Only initialize if we are on the quiz page
+    if (!document.getElementById('blitz-text-panel')) return;
+    initBlitzGame();
+});
+
+let blitzState = {
+    selectedText: null,
+    selectedIcon: null,
+    correct: 0,
+    wrong: 0,
+    guessesRemaining: 15,
+    timeLeft: 60,
+    timerActive: true,
+    timerInterval: null
+};
+
+// Utility to shuffle arrays
+function shuffleArray(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+function initBlitzGame() {
+    const textPanel = document.getElementById('blitz-text-panel');
+    const iconPanel = document.getElementById('blitz-icon-panel');
+    
+    // Extract array from the master zodiacData object in script.js
+    const zodiacArray = Object.values(zodiacData);
+    
+    const texts = shuffleArray([...zodiacArray]);
+    const icons = shuffleArray([...zodiacArray]);
+
+    // Render Text Cards
+    texts.forEach(zodiac => {
+        const btn = document.createElement('div');
+        btn.className = 'blitz-card blitz-text-card';
+        btn.textContent = zodiac.name;
+        btn.dataset.zodiac = zodiac.name;
+        btn.onclick = () => handleBlitzSelection(btn, 'text');
+        textPanel.appendChild(btn);
+    });
+
+    // Render Icon Cards utilizing the native SVG from zodiacData
+    icons.forEach(zodiac => {
+        const btn = document.createElement('div');
+        btn.className = 'blitz-card blitz-icon-card';
+        btn.style.color = zodiac.aura; // Applies specific sign color to the SVG
+        btn.innerHTML = zodiac.svgIcon; 
+        btn.dataset.zodiac = zodiac.name;
+        btn.onclick = () => handleBlitzSelection(btn, 'icon');
+        iconPanel.appendChild(btn);
+    });
+
+    startBlitzTimer();
+}
+
+function handleBlitzSelection(element, type) {
+    if (element.classList.contains('matched') || !blitzState.timerActive) return;
+
+    if (element.classList.contains('selected')) {
+        element.classList.remove('selected');
+        type === 'text' ? blitzState.selectedText = null : blitzState.selectedIcon = null;
+        return;
+    }
+
+    // Clear previous selection in the same column
+    document.querySelectorAll(`.blitz-${type}-card.selected`).forEach(el => el.classList.remove('selected'));
+    
+    element.classList.add('selected');
+    if (type === 'text') blitzState.selectedText = element;
+    if (type === 'icon') blitzState.selectedIcon = element;
+
+    if (blitzState.selectedText && blitzState.selectedIcon) {
+        setTimeout(checkBlitzMatch, 200); // Slight delay for visual feedback
+    }
+}
+
+function checkBlitzMatch() {
+    const textVal = blitzState.selectedText.dataset.zodiac;
+    const iconVal = blitzState.selectedIcon.dataset.zodiac;
+
+    blitzState.guessesRemaining--;
+
+    if (textVal === iconVal) {
+        blitzState.correct++;
+        blitzState.selectedText.classList.add('matched');
+        blitzState.selectedIcon.classList.add('matched');
+        if (typeof playSound === "function") playSound('success'); // Hook into your existing audio system
+    } else {
+        blitzState.wrong++;
+        // Optional error flash
+        blitzState.selectedText.style.borderColor = '#ef4444';
+        blitzState.selectedIcon.style.borderColor = '#ef4444';
+        setTimeout(() => {
+            if(blitzState.selectedText) blitzState.selectedText.style.borderColor = '';
+            if(blitzState.selectedIcon) blitzState.selectedIcon.style.borderColor = '';
+        }, 300);
+    }
+
+    blitzState.selectedText.classList.remove('selected');
+    blitzState.selectedIcon.classList.remove('selected');
+    blitzState.selectedText = null;
+    blitzState.selectedIcon = null;
+
+    updateBlitzStats();
+    checkBlitzWinCondition();
+}
+
+function updateBlitzStats() {
+    document.getElementById('blitz-correct').textContent = blitzState.correct;
+    document.getElementById('blitz-wrong').textContent = blitzState.wrong;
+    document.getElementById('blitz-score').textContent = `${blitzState.correct}/12`;
+    document.getElementById('blitz-guesses').textContent = blitzState.guessesRemaining;
+}
+
+function startBlitzTimer() {
+    blitzState.timerInterval = setInterval(() => {
+        blitzState.timeLeft--;
+        const minutes = Math.floor(blitzState.timeLeft / 60).toString().padStart(2, '0');
+        const seconds = (blitzState.timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('blitz-timer').textContent = `${minutes}:${seconds}`;
+
+        if (blitzState.timeLeft <= 0) {
+            endBlitzGame("Time's up! The stars have shifted.");
+        }
+    }, 1000);
+}
+
+function checkBlitzWinCondition() {
+    if (blitzState.correct === 12) {
+        endBlitzGame("Cosmic Alignment Achieved! You matched them all.");
+    } else if (blitzState.guessesRemaining <= 0) {
+        endBlitzGame("Out of guesses! The constellation fades.");
+    }
+}
+
+function endBlitzGame(message) {
+    clearInterval(blitzState.timerInterval);
+    blitzState.timerActive = false;
+    setTimeout(() => {
+        alert(message);
+        // Reset logic can be hooked here or prompt a page reload
+    }, 300);
+}
