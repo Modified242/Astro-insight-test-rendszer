@@ -66,8 +66,8 @@ body {
 #starlight-canvas {
     display: block;
     position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
+    top: 15px; left: 0;
+    width: 100vw; height: calc(100vh - 15px);
     background: radial-gradient(circle at center, var(--bg-dark) 0%, var(--bg-body) 100%);
     background-size: cover;       
     background-repeat: no-repeat; 
@@ -100,7 +100,7 @@ body {
     justify-content: center;
     
     /* НАЙГОЛОВНІШИЙ РЯДОК: відсікає все, що намагається вилізти за межі 50х50 */
-    overflow: hidden !important; 
+    overflow: visible !important; 
     
     transition: opacity 0.4s ease; 
 }
@@ -979,7 +979,7 @@ input[type="date"].gold-select::-webkit-calendar-picker-indicator:hover {
     font-style: italic;
 }
 /* ==========================================
-   ASTRO INSIGHT PRELOADER
+   ASTRO INSIGHT PRELOADER (CLEANED & OPTIMIZED)
    ========================================== */
 body.no-scroll { overflow: hidden; height: 100vh; }
 
@@ -999,14 +999,15 @@ body.no-scroll { overflow: hidden; height: 100vh; }
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 600px;
+    width: 100%;
+    max-width: 600px; /* Гнучкий розмір замість жорсткого для захисту мобілок */
     text-align: center;
 }
 
 /* Великий логотип по центру прелоадера */
 #intro-logo-container {
-    width: 500px; 
-    height: 500px;
+    width: 280px; 
+    height: 280px; /* Ідеальний квадрат 1:1 */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1018,6 +1019,7 @@ body.no-scroll { overflow: hidden; height: 100vh; }
 #intro-logo-container svg {
     width: 100%; height: 100%;
     filter: drop-shadow(0 0 30px var(--glow-color, #d4af37));
+    transform: scale(1.8);
 }
 
 #intro-logo-container .cls-1, 
@@ -1029,10 +1031,10 @@ body.no-scroll { overflow: hidden; height: 100vh; }
     fill: var(--glow-color, #d4af37) !important;
 }
 
-/* Напис Astro Insight */
+/* Напис Astro Insight на прелоадері */
 .intro-title {
-    margin-top: -100px; /* Наш підібраний від'ємний margin */
-    font-size: 4rem;   /* Було 3rem. Робимо текст більшим під стати великому логотипу */
+    margin-top: -20px; /* Підтягуємо текст до квадрата */
+    font-size: 4rem;
     color: var(--glow-color, #d4af37);
     text-transform: uppercase;
     text-shadow: 0 0 20px var(--glow-color, #d4af37);
@@ -1040,14 +1042,16 @@ body.no-scroll { overflow: hidden; height: 100vh; }
     display: inline-block;
     transform-origin: top left;
     margin-left: 0; 
+    white-space: nowrap; /* Забороняємо перенос тексту */
     animation: textReveal 1.5s ease-out forwards 0.3s;
-    transition: transform 1.2s cubic-bezier(0.77, 0, 0.17, 1);
+    transition: transform 1.2s cubic-bezier(0.77, 0, 0.17, 1), opacity 0.5s ease;
 }
 
 @keyframes textReveal {
     0% { letter-spacing: 30px; opacity: 0; }
-    100% { letter-spacing: 8px; opacity: 1; }
+    100% { letter-spacing: 2px; opacity: 1; }
 }
+
 /* ==========================================
    СТИЛІ ДЛЯ ТЕКСТУ В ШАПЦІ (Місце посадки)
    ========================================== */
@@ -1057,33 +1061,389 @@ body.no-scroll { overflow: hidden; height: 100vh; }
     color: var(--glow-color, #d4af37);
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-left: -10px;
+    margin-left: 10px; /* Безпечний та гармонійний відступ */
     text-shadow: 0 0 8px var(--glow-color, #d4af37);
     transition: color 0.5s ease, text-shadow 0.5s ease;
 }
 
 /* ==========================================
-   ОНОВЛЕНИЙ ТЕКСТ ПРЕЛОАДЕРА (Щоб він міг летіти)
+   МОБІЛЬНА АДАПТАЦІЯ ДЛЯ ПРЕЛОАДЕРА
    ========================================== */
-.intro-title {
-    margin-top: -100px;
-    font-size: 4rem; /* Робимо його великим по центру */
-    color: var(--glow-color, #d4af37);
-    text-transform: uppercase;
-    text-shadow: 0 0 15px var(--glow-color, #d4af37);
-    opacity: 0;
+@media (max-width: 768px) {
+    #intro-logo-container {
+        width: 300px;  /* Пропорційне зменшення для телефонів */
+        height: 300px; 
+    }
+    .intro-title {
+        font-size: 2.2rem;
+        margin-top: 10px;
+    }
+    .nav-title {
+        font-size: 1.2rem;
+        margin-left: 8px;
+    }
+}
+/* =========================================
+   CUSTOM COSMIC CURSOR (Astro Insight)
+   ========================================= */
+
+/* Застосовуємо ТІЛЬКИ для пристроїв із точною мишкою (ПК/Ноутбуки) */
+@media (pointer: fine) {
+    /* Жорстко ховаємо ВСІ системні курсори (стрілки, ручки, палички) на ВСІХ елементах */
+    *, *::before, *::after {
+        cursor: none !important;
+    }
     
-    /* ВАЖЛИВО ДЛЯ ПОЛЬОТУ: */
-    display: inline-block;
-    transform-origin: top left;
-    margin-left: 0; 
-    
-    /* Анімації */
-    animation: textReveal 1.5s ease-out forwards 0.3s;
-    transition: transform 1.2s cubic-bezier(0.77, 0, 0.17, 1), opacity 0.5s ease;
+    #cursor-dot, #cursor-aura {
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none; /* ДУЖЕ ВАЖЛИВО: дозволяє клікати крізь курсор */
+        border-radius: 50%;
+        z-index: 99999; /* Поверх усіх інших елементів */
+        transform: translate(-50%, -50%); /* Центруємо відносно координат */
+    }
+
+    /* Центральна зірочка (рухається миттєво) */
+    #cursor-dot {
+        width: 6px;
+        height: 6px;
+        background-color: var(--glow-color, #d4af37);
+        box-shadow: 0 0 10px var(--glow-color, #d4af37);
+    }
+
+    /* Орбіта/Аура (рухається із затримкою) */
+    #cursor-aura {
+        width: 36px;
+        height: 36px;
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+        transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+        will-change: transform; /* Підказка для браузера: вмикає GPU-прискорення */
+    }
+
+    /* Стан "Увага": коли курсор наведено на посилання чи кнопку */
+    #cursor-aura.hovering {
+        width: 55px;
+        height: 55px;
+        background-color: rgba(212, 175, 55, 0.1);
+        border-color: var(--glow-color, #d4af37);
+    }
+}
+/* =========================================
+   КАСТОМІЗАЦІЯ ТЕКСТУ ТА ВВОДУ
+   ========================================= */
+
+/* 1. Золота блимаюча каретка для полів вводу */
+input, textarea {
+    caret-color: var(--glow-color, #d4af37);
 }
 
-@keyframes textReveal {
-    0% { letter-spacing: 30px; opacity: 0; }
-    100% { letter-spacing: 2px; opacity: 1; } /* Фінальний letter-spacing такий самий, як у шапці */
+/* 2. Космічне золоте виділення тексту */
+::selection {
+    background-color: rgba(212, 175, 55, 0.4); /* Напівпрозорий золотий */
+    color: #fff; /* Текст стає білим для контрасту */
+    text-shadow: 0 0 5px rgba(212, 175, 55, 0.8); /* Легке світіння виділеного тексту */
+}
+
+/* 3. Ховаємо стандартний текстовий курсор */
+p, h1, h2, h3, h4, h5, h6, span, li, input, textarea {
+    cursor: none;
+}
+
+/* 4. Новий стан Аури над текстом (Витягується в лінію) */
+#cursor-aura.text-hover {
+    width: 4px;
+    height: 28px; /* Робимо високим */
+    border-radius: 2px;
+    background-color: rgba(212, 175, 55, 0.6);
+    border: none;
+    box-shadow: 0 0 10px var(--glow-color, #d4af37);
+}
+/* ==========================================
+   INTERACTIVE TOOLTIPS (INFO ICONS)
+   ========================================== */
+.info-tooltip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid var(--glow-color);
+    color: var(--glow-color);
+    font-size: 0.9rem;
+    font-family: sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    vertical-align: middle;
+    margin-left: 12px;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 0 5px var(--glow-color-dim);
+    transition: all 0.3s ease;
+}
+
+/* Світіння при наведенні */
+.info-tooltip:hover {
+    background: var(--glow-color);
+    color: var(--bg-body);
+    box-shadow: 0 0 15px var(--glow-color);
+}
+
+/* Сама плашка підказки (Glassmorphism) */
+.info-tooltip::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 160%; /* Виринає зверху над іконкою */
+    left: 50%;
+    transform: translateX(-50%) translateY(15px);
+    width: max-content;
+    max-width: 250px; /* Щоб текст не був нескінченно довгим */
+    padding: 12px 18px;
+    background: rgba(15, 23, 42, 0.85); /* Темно-синій матовий фон */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glow-color);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 0.95rem;
+    font-family: 'Playfair Display', serif;
+    font-weight: normal;
+    text-align: center;
+    line-height: 1.5;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Плавна пружинка */
+    z-index: 1000;
+}
+
+/* Маленький золотий трикутник, що вказує на іконку */
+.info-tooltip::before {
+    content: '';
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%) translateY(15px);
+    border-width: 7px;
+    border-style: solid;
+    border-color: var(--glow-color) transparent transparent transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000;
+}
+
+/* Анімація появи при наведенні (або тапі на телефоні) */
+.info-tooltip:hover::after,
+.info-tooltip:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Мобільна адаптація: щоб текст не вилазив за екран */
+@media (max-width: 768px) {
+    .info-tooltip::after {
+        white-space: normal;
+        width: 220px;
+        font-size: 0.9rem;
+    }
+}
+/* ==========================================
+   POSITIONING FOR COSMIC INSIGHT (OMEN BOX) TOOLTIP
+   ========================================== */
+#itOmen {
+    position: relative; /* База для координат */
+}
+
+/* Ставимо іконку по центру правого краю контейнера */
+#itOmen .info-tooltip {
+    position: absolute;
+    right: 15px;           /* Прив'язка до правого краю */
+    left: auto;
+    top: 50%;              /* Опускаємо на 50% висоти */
+    transform: translateY(-50%); /* Ідеальне вертикальне центрування */
+    margin-left: 0;
+}
+
+/* Підказка відкривається зверху над іконкою і зміщується вліво */
+#itOmen .info-tooltip::after {
+    left: auto;
+    right: 0;
+    bottom: 160%;
+    top: auto;
+    transform: translateY(15px);
+}
+
+/* Золотий трикутник вказівника точно під іконку */
+#itOmen .info-tooltip::before {
+    left: auto;
+    right: 5px;
+    bottom: 120%;
+    top: auto;
+    border-color: var(--glow-color) transparent transparent transparent;
+    transform: translateY(15px);
+}
+
+/* Анімація появления при наведенні */
+#itOmen .info-tooltip:hover::after,
+#itOmen .info-tooltip:hover::before {
+    transform: translateY(0);
+}
+/* ==========================================
+   TOOLTIPS FOR TWO-COLUMN GRID WIDGETS
+   ========================================== */
+.two-col-grid .info-tooltip::after {
+    max-width: 210px; /* Зменшена ширина для комфортного читання у вузьких колонках */
+}
+
+@media (max-width: 768px) {
+    .two-col-grid .info-tooltip::after {
+        max-width: 190px;
+    }
+}
+/* ==========================================
+   MODAL ACTION BUTTONS TOOLTIPS
+   ========================================== */
+.modal-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.btn-with-tooltip {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+    gap: 8px;
+}
+
+.btn-with-tooltip .glow-btn {
+    flex: 1; /* Кнопка займає весь доступний простір */
+}
+
+/* Налаштування позиціонування підказки над кнопками */
+.btn-with-tooltip .info-tooltip::after {
+    bottom: 140%;
+    left: auto;
+    right: -10px; /* Прив'язуємо правий край підказки до іконки, текст росте вліво */
+    transform: translateY(10px); /* Прибрали translateX */
+    max-width: 240px;
+    z-index: 2050; /* Вище за модальне вікно */
+}
+
+/* Налаштовуємо золотий трикутник-вказівник */
+.btn-with-tooltip .info-tooltip::before {
+    bottom: 110%;
+    left: auto;
+    right: 5px; /* Стрілочка вказує рівно на іконку ? */
+    transform: translateY(10px);
+    z-index: 2050;
+}
+
+/* Анімація появи (плавний рух тільки вгору) */
+.btn-with-tooltip .info-tooltip:hover::after,
+.btn-with-tooltip .info-tooltip:hover::before {
+    transform: translateY(0);
+}
+
+/* Адаптація для мобільних пристроїв */
+@media (max-width: 768px) {
+    .modal-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .btn-with-tooltip {
+        width: 100%;
+    }
+}
+#custom-svg-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 38px;  /* Компактний та зручний розмір курсора */
+    height: 38px;
+    pointer-events: none;
+    z-index: 99999;
+    filter: drop-shadow(0 0 5px var(--glow-color, #d4af37));
+    transition: transform 0.05s ease-out, width 0.2s ease, height 0.2s ease, filter 0.2s ease;
+}
+
+#custom-svg-cursor svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* При наведенні на кнопки курсор трохи більшає і яскравіше світиться */
+#custom-svg-cursor.hovering {
+    width: 48px;
+    height: 48px;
+    filter: drop-shadow(0 0 15px var(--glow-color, #d4af37));
+}
+
+
+h2, h3, h4, .omen-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; 
+    gap: 10px;       
+}
+
+.info-tooltip {
+    flex-shrink: 0; 
+    margin-left: 0 !important; 
+}
+
+
+#itOmen .info-tooltip {
+    position: relative !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+}
+
+@media (max-width: 768px) {
+  
+    .info-tooltip::after,
+    #itOmen .info-tooltip::after,
+    .btn-with-tooltip .info-tooltip::after {
+        position: fixed !important;
+        left: 15px !important;
+        right: 15px !important;
+        bottom: 25px !important;
+        top: auto !important;
+        width: auto !important;
+        max-width: none !important;
+        margin: 0 !important;
+        transform: translateY(20px) !important; 
+        z-index: 999999 !important; 
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+  
+    .info-tooltip:hover::after,
+    .info-tooltip:active::after,
+    #itOmen .info-tooltip:hover::after,
+    .btn-with-tooltip .info-tooltip:hover::after {
+        transform: translateY(0) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+
+    .info-tooltip::before,
+    #itOmen .info-tooltip::before,
+    .btn-with-tooltip .info-tooltip::before {
+        display: none !important;
+    }
 }

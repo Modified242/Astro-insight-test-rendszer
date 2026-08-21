@@ -23,6 +23,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#ef4444', colorName: 'Crimson Red',
         planet: 'Mars', element: 'Fire', energy: 'Dynamic, leading, spark',
+        luckyNumbers: '1 - 9 - 14',
         points: [[10, 80], [25, 60], [40, 35], [45, 10], [75, 50], [95, 70]],
         links: [[0, 1], [1, 2], [2, 3], [2, 4], [4, 5]]
     },
@@ -38,6 +39,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#22c55e', colorName: 'Emerald Green',
         planet: 'Venus', element: 'Earth', energy: 'Stable, sensual, confident',
+        luckyNumbers: '2 - 6 - 11',
         points: [[10, 25], [30, 10], [45, 30], [45, 45], [30, 50], [35, 60], [50, 55], [45, 70], [55, 80], [75, 100], [75, 45], [90, 45]],
         links: [[0, 4], [1, 2], [2, 3], [3, 4], [3, 6], [4, 5], [5, 7], [6, 7], [3, 10], [10, 11], [7, 8], [8, 9]]
     },
@@ -53,6 +55,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#eab308', colorName: 'Golden Yellow',
         planet: 'Mercury', element: 'Air', energy: 'Intellectual, quick, mutable',
+        luckyNumbers: '3 - 5 - 14',
         points: [[25, 10], [25, 28], [10, 25], [20, 45], [30, 65], [20, 85], [40, 85], [40, 30], [60, 32], [90, 35], [55, 20], [45, 8], [65, 55], [55, 75], [80, 70], [95, 90]],
         links: [[0, 1], [1, 2], [1, 3], [3, 4], [4, 5], [4, 6], [1, 7], [7, 8], [8, 9], [8, 10], [10, 11], [8, 12], [12, 13], [12, 14], [14, 15]]
     },
@@ -76,6 +79,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#cbd5e1', colorName: 'Silver',
         planet: 'Moon', element: 'Water', energy: 'Intuitive, empathetic, soft',
+        luckyNumbers: '2 - 7 - 16',
         points: [[50, 10], [55, 35], [50, 50], [20, 70], [80, 80]],
         links: [[0, 1], [1, 2], [2, 3], [2, 4]]
     },
@@ -95,6 +99,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#f59e0b', colorName: 'Radiant Gold',
         planet: 'Sun', element: 'Fire', energy: 'Majestic, creative, solar',
+        luckyNumbers: '1 - 4 - 10',
         points: [[10, 80], [30, 60], [40, 80], [75, 80], [80, 60], [70, 40], [60, 25], [85, 10], [95, 20]],
         links: [[0, 1], [1, 2], [0, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8]]
     },
@@ -109,6 +114,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#d4a373', colorName: 'Earthy Brown',
         planet: 'Mercury', element: 'Earth', energy: 'Analytical, orderly, pure',
+        luckyNumbers: '3 - 5 - 15',
         points: [[5, 60], [20, 50], [35, 45], [50, 35], [40, 20], [65, 40], [75, 35], [90, 25], [85, 10], [70, 15], [55, 55], [60, 75], [40, 75], [25, 65], [10, 75]],
         links: [[0, 1], [1, 2], [1, 13], [13, 14], [13, 12], [2, 3], [3, 4], [3, 5], [2, 10], [5, 10], [10, 11], [5, 6], [6, 7], [7, 8], [8, 9]]
     },
@@ -126,6 +132,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#93c5fd', colorName: 'Pastel Blue',
         planet: 'Venus', element: 'Air', energy: 'Harmonious, aesthetic, diplomatic',
+        luckyNumbers: '6 - 15 - 24',
         points: [[10, 80], [20, 65], [35, 50], [25, 30], [50, 10], [85, 30], [75, 55], [90, 70]],
         links: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [3, 5], [5, 6], [6, 7]]
     },
@@ -140,6 +147,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#991b1b', colorName: 'Deep Red',
         planet: 'Pluto', element: 'Water', energy: 'Intense, transformational, mysterious',
+        luckyNumbers: '8 - 11 - 18',
         points: [[35, 35], [20, 45], [10, 55], [25, 70], [45, 70], [60, 60], [65, 45], [75, 35], [80, 25], [85, 20], [90, 5], [100, 15], [95, 35]],
         links: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 10], [9, 11], [9, 12]]
     },
@@ -154,6 +162,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#a855f7', colorName: 'Deep Purple',
         planet: 'Jupiter', element: 'Fire', energy: 'Optimistic, expansive, philosophical',
+        luckyNumbers: '3 - 9 - 12',
         points: [[50, 70], [0, 40], [40, 35], [10, 10], [10, -10], [20, -40], [40, -50], [60, -30], [70, -55], [68, -80], [80, -35], [90, -25], [70, -17], [110, -30], [135, -35], [117, -10], [140, -10], [105, 15], [125, 35]],
         links: [[0, 1], [1, 2], [1, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [7, 10], [10, 11], [11, 12], [11, 13], [13, 14], [13, 15], [15, 16], [15, 17], [17, 18]]
     },
@@ -176,6 +185,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#475569', colorName: 'Dark Grey',
         planet: 'Saturn', element: 'Earth', energy: 'Disciplined, ambitious, grounded',
+        luckyNumbers: '4 - 8 - 13',
         points: [[90, 15], [85, 25], [80, 35], [50, 40], [40, 38], [20, 35], [10, 35], [35, 65], [55, 75], [65, 65]],
         links: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 2]]
     },
@@ -195,6 +205,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#06b6d4', colorName: 'Electric Blue',
         planet: 'Uranus', element: 'Air', energy: 'Visionary, eccentric, independent',
+        luckyNumbers: '4 - 7 - 11',
         points: [[5, 55], [25, 35], [35, 25], [10, -5], [40, -40], [65,-40], [70,-10], [90, -20], [65, 15], [75, 55], [102, 10], [125, 35]],
         links: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [7, 10], [10, 11]]
     },
@@ -207,6 +218,7 @@ const zodiacData = {
                   </svg>`,
         aura: '#14b8a6', colorName: 'Sea Green',
         planet: 'Neptune', element: 'Water', energy: 'Dreamy, compassionate, mystic',
+        luckyNumbers: '3 - 9 - 16',
         points: [[80, 40], [90, 35], [95, 25], [85, 20], [75, 30], [65, 33], [55, 40], [45, 43], [35, 48], [25, 52], [15, 65], [22, 40], [18, 25], [8, 20], [13, 10]],
         links: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 0], [4, 5], [5, 6], [6, 7], [7, 8], [8, 9], [9, 10], [10, 11], [11, 12], [12, 13], [13, 14], [14, 12]]
     }
@@ -500,10 +512,17 @@ async function openModal(sign) {
             </a>
         `;
     }
-    document.getElementById('saveBtn').style.display = 'inline-block';
-    document.getElementById('saveBtn').innerText = "Inscribe to Grimoire";
+    // БЕЗПЕЧНИЙ ПОКАЗ: повертаємо весь блок (кнопку + знак питання)
+    const saveBtn = document.getElementById('saveBtn');
+    if (saveBtn) {
+        saveBtn.innerText = "Inscribe to Grimoire";
+        if (saveBtn.parentElement) {
+            saveBtn.parentElement.style.display = 'flex'; // Вмикаємо flex для контейнера
+        } else {
+            saveBtn.style.display = 'inline-block';
+        }
+    }
     document.getElementById('fortuneModal').style.display = "block";
-    
     // Заповнюємо астрологічні поля
     document.getElementById('modalPlanet').innerHTML = `<a href="planet.html?name=${zData.planet}" style="color: var(--glow-color); text-decoration: underline; cursor: pointer;">${zData.planet}</a>`;
     document.getElementById('modalElement').innerText = zData.element;
@@ -515,7 +534,7 @@ async function openModal(sign) {
     document.getElementById('luckyColorName').innerText = zData.colorName;
 
     // Щасливі числа
-    document.getElementById('luckyNumbers').innerText = Array.from({length: 3}, () => Math.floor(Math.random() * 9) + 1).join(' - ');
+    document.getElementById('luckyNumbers').innerText = zData.luckyNumbers;
 
     try { switchTab(null, 'Insight'); } catch(e) {} 
     
@@ -772,7 +791,14 @@ function openSavedModal(index) {
 
     document.getElementById('signTitle').innerText = pureSign + " (Archived)";
     document.getElementById('fortuneModal').style.display = "block";
-    document.getElementById('saveBtn').style.display = 'none';
+    
+    // БЕЗПЕЧНЕ ПРИХОВУВАННЯ: ховаємо весь блок (кнопку + знак питання)
+    const saveBtn = document.getElementById('saveBtn');
+    if (saveBtn && saveBtn.parentElement) {
+        saveBtn.parentElement.style.display = 'none';
+    } else if (saveBtn) {
+        saveBtn.style.display = 'none'; // Запобіжник, якщо обгортки раптом немає
+    }
 
     // ВІДНОВЛЮЄМО АСТРО-ПАСПОРТ (Якщо в пам'яті порожньо - беремо з бази zodiacData)
     document.getElementById('modalPlanet').innerText = item.planet || fallbackData.planet || "Unknown";
@@ -1701,3 +1727,59 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+// =========================================
+// СИСТЕМА КАСТОМНОГО КУРСОРА (Cosmic Satellite)
+// =========================================
+(function initCustomCursor() {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+
+    // Створюємо контейнер для нашого нового курсора
+    const customCursor = document.createElement('div');
+    customCursor.id = 'custom-svg-cursor';
+    
+    // Вставляємо твій SVG прямо всередину
+    customCursor.innerHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 304.61 296.96">
+            <defs>
+                <style>
+                    .cls-1 { fill:none; stroke:var(--glow-color, #d4af37); stroke-miterlimit:10; stroke-width:3px; }
+                    .cls-2 { fill:var(--glow-color, #d4af37); stroke:var(--glow-color, #d4af37); stroke-miterlimit:10; stroke-width:3px; }
+                </style>
+            </defs>
+            <g id="Kurzor">
+                <path class="cls-1" d="M203.29,108.32c4.07.23,40,2.88,62.26,33.93,14.33,20,15,40.55,15.13,47.25.15,7.74.24,35.39-21.1,58.46C238,271.31,210,273.28,203.36,273.55c-32.39,1.34-53.94-17.06-58.65-21.29-3.6-3.24-27.79-25.74-27.64-62a83.89,83.89,0,0,1,43.14-72.49A81.93,81.93,0,0,1,203.29,108.32Zm-7.09,45.2c-2.31-4-8.34-14.13-20.17-19.8A36.32,36.32,0,0,0,164,130.23a34.34,34.34,0,0,0-17.19,3,32.19,32.19,0,0,0-10.95,8.34c-1.48,3.08-7.06,15.63-2.12,29.39,5.82,16.23,21.86,21.84,27.77,23.91,19.45,6.8,36.75-.45,41.34-2.56C203.74,186.38,205.58,169.74,196.2,153.52ZM206.53,224c2,4.47,7.45,17,20.3,23a31.77,31.77,0,0,0,13.57,3.24A30.42,30.42,0,0,0,254.35,247a28.77,28.77,0,0,0,9.58-8.1c1.56-2.48,8-13.43,4.61-26.14-4-15.08-18.8-21-24.1-23.11-19.36-7.75-37.47.45-41.35,2.32A55,55,0,0,0,206.53,224Zm-36.42-39.34c-5.67.51-19.36,1.77-29.14,12.32a39.67,39.67,0,0,0-8,13.47,32.46,32.46,0,0,0-2.14,14.16,28.84,28.84,0,0,0,4,12.72c6.91,11.13,20.59,12.87,22.61,13.1,16,1.79,27.78-9.47,30.81-12.36,17.91-17.1,14.85-42.83,14.38-46.32A56.78,56.78,0,0,0,170.11,184.65Zm67.62,13.2c4.23-.79,18.87-3.54,27.45-15.73A31.29,31.29,0,0,0,271,167.65a32.25,32.25,0,0,0-1.12-12.52c-.78-2.69-2.43-8.42-7.29-13.07-7.28-7-17-6.93-20-6.91-13.75.08-23.16,8.93-25.78,11.39C199.31,163,202.61,188.73,203.09,192,207.64,194.48,221,201,237.73,197.85Zm-10,20.08c3.91,1.8,17.45,8,31.49,3a31.35,31.35,0,0,0,13.09-8.47,27,27,0,0,0,6-27.46A30,30,0,0,0,268,170.64c-11-8.62-24.31-7.07-27.71-6.68-24,2.78-36.29,26.81-37.46,29.18C205.09,197.8,212.27,210.84,227.71,217.93Zm-58.16-56.26c-4.29-1.32-18.78-5.77-31.94,1.12a37.91,37.91,0,0,0-12,10.23,28.35,28.35,0,0,0-5.44,11.33,27.87,27.87,0,0,0,1.66,16.51,31,31,0,0,0,11.38,13.53c10.84,7.78,22.74,7.5,25.88,7.42,26.55-.62,42.84-27.82,44-29.81C201,187.64,191.1,168.29,169.55,161.67ZM239,171.2c2.53-3.31,10.71-14,9.53-28A33.49,33.49,0,0,0,243,126.93a27.54,27.54,0,0,0-8.22-8.22,28.49,28.49,0,0,0-16.8-4.11,29.48,29.48,0,0,0-13.45,3.93c-10.44,5.92-14.16,16.56-15.58,20.62-8.48,24.25,11,49.4,12.79,51.58C206.05,190.32,226.2,188,239,171.2Zm-20.36-9.9c1.29-6.27,3.12-15.13-.74-25.4a40.44,40.44,0,0,0-15.88-19.24,28.08,28.08,0,0,0-11.39-4.48A27.33,27.33,0,0,0,174,115.3a28.19,28.19,0,0,0-9,7.8,33,33,0,0,0-6.45,15c-2.39,14,5,25.68,7.47,29.51,11.6,18.27,31.58,23,36.61,24.09A63.88,63.88,0,0,0,218.67,161.3Zm-45.2,44.45c-4.88,4.13-11.79,10-15.08,20.46a40.39,40.39,0,0,0,.64,24.93,28.14,28.14,0,0,0,6.2,10.56,27.29,27.29,0,0,0,15.07,7.84,28.17,28.17,0,0,0,11.88-.61,33,33,0,0,0,14.35-7.86c11.48-10.41,12.23-25.29,12.32-27.83.26-7.68-1.8-13.28-5.59-23.57a120.68,120.68,0,0,0-8.37-18A64,64,0,0,0,173.47,205.75Zm13.45,17.37c-1.75,8.4-3.46,16.66.59,25.74,5,11.2,15.43,16.13,18,17.32a28.32,28.32,0,0,0,11.83,3.16,27.31,27.31,0,0,0,16.24-5,28.3,28.3,0,0,0,8-8.77,33.1,33.1,0,0,0,4.71-15.67c.86-15.34-9-26.43-10.77-28.48-5.48-6.2-11.55-9.34-19.63-13.52a101.08,101.08,0,0,0-14-6A74.31,74.31,0,0,0,186.92,223.12Zm-37.7-31.64c0,28.66,23.68,52.73,52.47,52.47,28.33-.25,51.3-24,51.54-52,.24-28.33-22.79-52.66-51.54-52.92S149.22,162.88,149.22,191.48Z"/>
+                <path class="cls-2" d="M24.3,29.37l95.07,188c-9.29-28.17-3.42-59.87,16.72-82.46q1.42-1.6,2.93-3.12L28.11,26.42Z"/>
+                <path class="cls-1" d="M31.79,23.58l-3.68,2.84L139,131.8c22-22.24,54.86-30,84.51-21Z"/>
+            </g>
+        </svg>
+    `;
+
+    document.body.appendChild(customCursor);
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let cursorX = mouseX;
+    let cursorY = mouseY;
+
+    window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+
+    function animateCursor() {
+        // LERP анімація для плавності
+        cursorX += (mouseX - cursorX) * 0.65;
+        cursorY += (mouseY - cursorY) * 0.65;
+
+        customCursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+        requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+
+    // Hover ефект (збільшення/світіння при наведенні на кнопки)
+    const clickableElements = document.querySelectorAll('a, button, .card, .dropbtn, .hamburger, .info-tooltip');
+    clickableElements.forEach(el => {
+        el.addEventListener('mouseenter', () => customCursor.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => customCursor.classList.remove('hovering'));
+    });
+})();

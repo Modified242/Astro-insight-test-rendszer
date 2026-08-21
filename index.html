@@ -60,17 +60,19 @@
     
     <div class="container">
         <header>
-            <h1>Astro Insight</h1>
-            <p>Your Traditional Guide to the Stars</p>
+            <h1>Your Traditional Guide to the Stars</h1>
         </header>
 
         <section class="omen-box" id="itOmen">
             <span class="omen-label">Cosmic Insight:</span>
-            <span id="omenText">Loading the wisdom of the ancients...</span>
+            <span id="omenText">A daily-changing cosmic message that (sets the mood of the page and) gives you a small insight for the day.</span>
+            
+            <!-- Знак питання тепер окремо від тексту -->
+            <span class="info-tooltip" data-tooltip="A daily-changing cosmic message that (sets the mood of the page and) gives you a small insight for the day.">?</span>
         </section>
 
         <section class="core-box" id="core">
-            <h3>Celestial Readings</h3>
+            <h3>Celestial Readings <span class="info-tooltip" data-tooltip="Choose a zodiac sign to open its daily, weekly, and monthly readings. This also changes the page’s aura to match the selected sign.">?</span></h3>
             <p class="subtitle">Select your sign to align the stars and reveal your destiny.</p>
             <div class="zodiac-grid" id="zodiacGrid"></div>
         </section>
@@ -78,7 +80,7 @@
         <!-- ================= PHASE 2: ADVANCED ASTRO COMPATIBILITY MODULE ================= -->
         <section id="sync" class="compatibility-section">
             <div class="compatibility-container">
-                <h2>Cosmic Resonance Engine</h2>
+                <h2>Cosmic Resonance Engine <span class="info-tooltip" data-tooltip="A compatibility tool that compares two people using their signs, birth dates, the planetary positions on those birth dates, and today’s planetary movement.">?</span></h2>
                 <p class="compatibility-subtitle">Multi-Planetary Synastry based on Exact Birth Dates</p>
                 
                 <div class="compatibility-form">
@@ -141,14 +143,14 @@
                     
                     <div class="compat-analytics">
                         <div class="insight-box strength-box" style="width: 100%; margin-bottom: 15px;">
-                            <h4 style="color: #4CAF50;">✨ Planetary Analysis</h4>
+                            <h4 style="color: #00BCD4;">✨ Planetary Analysis <span class="info-tooltip" data-tooltip="A deeper part of the compatibility result that looks at Moon, Venus, and Mars to explain emotional connection, attraction, and chemistry.">?</span></h4>
                             <div id="syncBreakdown" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; text-align: left;"></div>
                         </div>
 
-                        <div class="insight-box growth-box" style="width: 100%; border-left: 4px solid #00BCD4;">
-                            <h4 style="color: #00BCD4;">⚡ Real-Time Astro-Weather</h4>
+                        <div class="insight-box growth-box" style="width: 100%; border-left: 4px solid #4CAF50;">
+                            <h4 style="color: #4CAF50;">⚡ Real-Time Astro-Weather <span class="info-tooltip" data-tooltip="A relationship-energy forecast for today, based on both birth dates and today’s planetary movement.">?</span></h4>
                             <div style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
-                                <div style="font-size: 2rem; font-weight: bold; color: #00BCD4;" id="weatherScore">--%</div>
+                                <div style="font-size: 2rem; font-weight: bold; color: #4CAF50;" id="weatherScore">--%</div>
                                 <div style="text-align: left;">
                                     <strong id="weatherVerdict" style="color: #e2e8f0; display: block; margin-bottom: 5px;">Awaiting Forecast...</strong>
                                     <span id="weatherDetails" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; display: block;"></span>
@@ -162,7 +164,7 @@
         </section>
 
         <section class="tarot-box" id="tarot">
-            <h3>The Arcana Spread</h3>
+            <h3>The Arcana Spread <span class="info-tooltip" data-tooltip="Draw three tarot cards for Past, Present, and Future, then receive an interpretation of the spread.">?</span></h3>
             <p class="subtitle">Draw three cards to unveil the path of Past, Present, and Future.</p>
             <button class="glow-btn" onclick="drawTarot()">Consult the Deck</button>
             <div id="tarotResult" class="tarot-grid"></div>
@@ -170,7 +172,7 @@
 
         <div class="two-col-grid">
             <section class="analyzer-box" id="analyzer">
-                <h3>Name Numerology</h3>
+                <h3>Name Numerology <span class="info-tooltip" data-tooltip="Enter any name to receive a symbolic reading based on its sound, characters, and energy.">?</span></h3>
                 <div class="ask-input-group">
                     <input type="text" id="usernameInput" placeholder="e.g., Alexander">
                     <button class="glow-btn" onclick="analyzeUsername()">Analyze</button>
@@ -179,7 +181,7 @@
             </section>
 
             <section class="ask-box" id="askOracle">
-                <h3>The Seer's Sphere</h3>
+                <h3>The Seer's Sphere <span class="info-tooltip" data-tooltip="Ask a question and receive a mystical reflection from the sphere. Treat it as guidance for thought, not a guaranteed prediction.">?</span></h3>
                 <div class="ask-input-group">
                     <input type="text" id="questionInput" placeholder="Ask your question...">
                     <button class="glow-btn" onclick="getMagicAnswer()">Ask</button>
@@ -199,7 +201,7 @@
         </section> -->
 
         <section class="archive-box">
-            <h3>Personal Grimoire</h3>
+            <h3>Personal Grimoire <span class="info-tooltip" data-tooltip="Your saved reading archive. Readings are saved only in this browser, so they may disappear if browser data is cleared or if you use another device.">?</span></h3>
             <div id="archiveContainer"><p class="subtitle">Your saved readings will be preserved here...</p></div>
         </section>
 <div id="fortuneModal" class="modal">
@@ -231,9 +233,16 @@
             <div id="tab-weekly" class="tab-content"><p id="fortuneTextWeekly">Loading...</p></div>
             <div id="tab-monthly" class="tab-content"><p id="fortuneTextMonthly">Loading...</p></div>
 
-            <div class="modal-actions">
-                <button id="saveBtn" class="glow-btn" onclick="saveToArchive()">Inscribe to Grimoire</button>
-                <button id="shareBtn" class="glow-btn outline" onclick="shareDestiny()">Share Fate</button>
+           <div class="modal-actions">
+                <div class="btn-with-tooltip">
+                    <button id="saveBtn" class="glow-btn" onclick="saveToArchive()">Inscribe to Grimoire</button>
+                    <span class="info-tooltip" data-tooltip="Preserves this complete reading and planetary aspects inside your browser's Personal Grimoire.">?</span>
+                </div>
+                
+                <div class="btn-with-tooltip">
+                    <button id="shareBtn" class="glow-btn outline" onclick="shareDestiny()">Share Fate</button>
+                    <span class="info-tooltip" data-tooltip="Copies your current horoscope reading and custom cosmic aura link directly to your clipboard.">?</span>
+                </div>
             </div>
         </div> </div>
 </div>
@@ -253,9 +262,9 @@
     </div>
     
     <div class="social-links">
-        <a href="#" target="_blank" rel="noopener">Instagram</a>
-        <a href="#" target="_blank" rel="noopener">Facebook</a>
-        <a href="#" target="_blank" rel="noopener">X</a>
+         <a href="https://www.instagram.com/_astroinsight_/" target="_blank" rel="noopener">Instagram</a>
+         <a href="https://www.facebook.com/profile.php?id=61589576716944" target="_blank" rel="noopener">Facebook</a>
+         <a href="https://x.com/_Astro_Insight_" target="_blank" rel="noopener">X</a>
     </div>
 </footer>
         
