@@ -191,11 +191,7 @@ select:focus, input:focus { border-color: var(--glow-color); }
 .result-text { margin-top: 15px; font-style: italic; color: var(--glow-color); font-size: 1.2rem; min-height: 25px;}
 
 /* Zodiac Grid */
-.zodiac-grid { 
-    display: grid; 
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 15px; 
-}
+.zodiac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
 .card {
     background: rgba(0,0,0,0.4); padding: 25px 10px; border-radius: 8px; cursor: pointer;
     border: 1px solid rgba(255,255,255,0.05); transition: 0.5s;
