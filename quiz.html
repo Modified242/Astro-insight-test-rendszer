@@ -81,18 +81,21 @@
                     <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Match the zodiac signs to their ruling planetary bodies.</p>
                     <span class="sign-motto" style="color: #f59e0b;">Play Now ⟡</span>
                 </div>
-<div class="card" style="padding: 30px 15px;" onclick="openGame('archetype')">
+
+                <div class="card" style="padding: 30px 15px;" onclick="openGame('archetype')">
                     <div class="icon" style="color: #a855f7; font-size: 3rem; margin-bottom: 15px;">🎭</div>
                     <h3 style="color: #a855f7;">Archetype Oracle</h3>
                     <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Who would do this? Guess the sign based on relatable cosmic situations.</p>
                     <span class="sign-motto" style="color: #a855f7;">Play Now ⟡</span>
                 </div>
+
                 <div class="card" style="padding: 30px 15px;" onclick="openGame('truth')">
                     <div class="icon" style="color: #ef4444; font-size: 3rem; margin-bottom: 15px;">⚖️</div>
                     <h3 style="color: #ef4444;">Cosmic Truths</h3>
                     <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Fact or fiction? Test your astrological knowledge in a rapid-fire True or False quiz.</p>
                     <span class="sign-motto" style="color: #ef4444;">Play Now ⟡</span>
                 </div>
+
                 <div class="card" style="padding: 30px 15px;" onclick="openGame('alchemist')">
                     <div class="icon" style="color: #3b82f6; font-size: 3rem; margin-bottom: 15px;">⚗️</div>
                     <h3 style="color: #3b82f6;">Element Alchemist</h3>
@@ -101,7 +104,6 @@
                 </div>
             </div>
         </div>
-        
 
         <!-- GAME VIEW 1: ZODIAC MATCH BLITZ -->
         <div id="blitzView" style="display: none;">
@@ -143,7 +145,7 @@
             </div>
         </div>
 
-       <!-- GAME VIEW 2: ELEMENT ALCHEMIST -->
+        <!-- GAME VIEW 2: ELEMENT ALCHEMIST -->
         <div id="alchemistView" style="display: none;">
             <header style="text-align: center; margin-bottom: 30px;">
                 <h1 style="color: #3b82f6; text-transform: uppercase; letter-spacing: 3px;">Element Alchemist</h1>
@@ -186,7 +188,6 @@
 
         <!-- GAME VIEW 3: ARCHETYPE ORACLE -->
         <div id="archetypeView" style="display: none;">
-            <!-- ... Archetype belső kódja változatlan ... -->
             <header style="text-align: center; margin-bottom: 30px;">
                 <h1 style="color: #a855f7; text-transform: uppercase; letter-spacing: 3px;">Archetype Oracle</h1>
                 <p class="subtitle">Who would do this? Guess the correct sign in 90 seconds!</p>
@@ -222,7 +223,6 @@
         
         <!-- GAME VIEW 4: CELESTIAL RULERS -->
         <div id="rulerView" style="display: none;">
-            <!-- ... Rulers belső kódja változatlan ... -->
             <header style="text-align: center; margin-bottom: 30px;">
                 <h1 style="color: #f59e0b; text-transform: uppercase; letter-spacing: 3px;">Celestial Rulers</h1>
                 <p class="subtitle">Which planet rules this sign? Match as many as you can in 60 seconds!</p>
@@ -256,6 +256,7 @@
                 <div id="ruler-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%;"></div>
             </div>
         </div>
+
         <!-- GAME VIEW 5: COSMIC TRUTHS -->
         <div id="truthView" style="display: none;">
             <header style="text-align: center; margin-bottom: 30px;">

@@ -6,6 +6,41 @@ function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
 }
 
+// ==========================================
+// UNIFIED COSMIC MODAL (Alert helyett)
+// ==========================================
+function showCosmicModal(title, message, onRestart) {
+    const existingModal = document.getElementById('cosmicCustomModal');
+    if (existingModal) existingModal.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'cosmicCustomModal';
+    overlay.className = 'cosmic-modal-overlay';
+
+    overlay.innerHTML = `
+        <div class="cosmic-modal-box">
+            <h2 class="cosmic-modal-title">${title}</h2>
+            <p class="cosmic-modal-text">${message.replace(/\n/g, '<br>')}</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button class="glow-btn outline" id="modalHubBtn" style="padding: 10px 20px; font-size: 0.95rem;">← Hub</button>
+                <button class="glow-btn" id="modalRestartBtn" style="padding: 10px 20px; font-size: 0.95rem;">Play Again ⟲</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    document.getElementById('modalHubBtn').onclick = () => {
+        overlay.remove();
+        returnToHub();
+    };
+
+    document.getElementById('modalRestartBtn').onclick = () => {
+        overlay.remove();
+        onRestart();
+    };
+}
+
 // VIEW SWITCHING LOGIC
 function openGame(gameId) {
     document.getElementById('hubView').style.display = 'none';
@@ -184,14 +219,16 @@ function endBlitzGame(message) {
     clearInterval(blitzState.timerInterval);
     blitzState.timerActive = false;
     
+    let title = "Time's up!";
     let storedHighScore = parseInt(localStorage.getItem('astroBlitzHighScore') || 0);
     if (blitzState.correct > storedHighScore) {
         localStorage.setItem('astroBlitzHighScore', blitzState.correct);
         document.getElementById('blitz-highscore').textContent = blitzState.correct;
-        message = `New High Score! You matched ${blitzState.correct} pairs. \n\n` + message;
+        title = "New High Score! 🌟";
+        message = `You matched ${blitzState.correct} pairs.\n` + message;
     }
     
-    setTimeout(() => alert(message), 300);
+    showCosmicModal(title, message, () => resetBlitzGame());
 }
 
 
@@ -290,16 +327,18 @@ function endAlchemistGame() {
     clearInterval(alchemistState.timerInterval);
     alchemistState.timerActive = false;
     
+    let title = "Time's up!";
     let storedHighScore = parseInt(localStorage.getItem('astroAlchemistHighScore') || 0);
-    let msg = `Time's up! You correctly sorted ${alchemistState.score} signs.`;
+    let msg = `You correctly sorted ${alchemistState.score} signs.`;
     
     if (alchemistState.score > storedHighScore) {
         localStorage.setItem('astroAlchemistHighScore', alchemistState.score);
         document.getElementById('alchemist-highscore').innerText = alchemistState.score;
-        msg = `New High Score! You sorted ${alchemistState.score} signs!\n\n` + msg;
+        title = "New High Score! 🌟";
+        msg = `You sorted ${alchemistState.score} signs!\n` + msg;
     }
     
-    setTimeout(() => alert(msg), 100);
+    showCosmicModal(title, msg, () => initAlchemistGame());
 }
 
 // ==========================================
@@ -438,16 +477,18 @@ function endArchetypeGame() {
     clearInterval(archetypeState.timerInterval);
     archetypeState.timerActive = false;
     
+    let title = "Time's up!";
     let storedHighScore = parseInt(localStorage.getItem('astroArchetypeHighScore') || 0);
-    let msg = `Time's up! You correctly guessed ${archetypeState.score} archetypes.`;
+    let msg = `You correctly guessed ${archetypeState.score} archetypes.`;
     
     if (archetypeState.score > storedHighScore) {
         localStorage.setItem('astroArchetypeHighScore', archetypeState.score);
         document.getElementById('archetype-highscore').innerText = archetypeState.score;
-        msg = `New High Score! You read ${archetypeState.score} minds!\n\n` + msg;
+        title = "New High Score! 🌟";
+        msg = `You read ${archetypeState.score} minds!\n` + msg;
     }
     
-    setTimeout(() => alert(msg), 100);
+    showCosmicModal(title, msg, () => initArchetypeGame());
 }
 
 // ==========================================
@@ -582,16 +623,18 @@ function endRulerGame() {
     clearInterval(rulerState.timerInterval);
     rulerState.timerActive = false;
     
+    let title = "Time's up!";
     let storedHighScore = parseInt(localStorage.getItem('astroRulerHighScore') || 0);
-    let msg = `Time's up! You matched ${rulerState.score} planets.`;
+    let msg = `You matched ${rulerState.score} planets.`;
     
     if (rulerState.score > storedHighScore) {
         localStorage.setItem('astroRulerHighScore', rulerState.score);
         document.getElementById('ruler-highscore').innerText = rulerState.score;
-        msg = `New High Score! You mastered ${rulerState.score} planetary domains!\n\n` + msg;
+        title = "New High Score! 🌟";
+        msg = `You mastered ${rulerState.score} planetary domains!\n` + msg;
     }
     
-    setTimeout(() => alert(msg), 100);
+    showCosmicModal(title, msg, () => initRulerGame());
 }
 
 // ==========================================
@@ -714,14 +757,16 @@ function endTruthGame() {
     clearInterval(truthState.timerInterval);
     truthState.timerActive = false;
     
+    let title = "Time's up!";
     let storedHighScore = parseInt(localStorage.getItem('astroTruthHighScore') || 0);
-    let msg = `Time's up! You scored ${truthState.score} points.`;
+    let msg = `You scored ${truthState.score} points.`;
     
     if (truthState.score > storedHighScore) {
         localStorage.setItem('astroTruthHighScore', truthState.score);
         document.getElementById('truth-highscore').innerText = truthState.score;
-        msg = `New High Score! You unlocked ${truthState.score} cosmic truths!\n\n` + msg;
+        title = "New High Score! 🌟";
+        msg = `You unlocked ${truthState.score} cosmic truths!\n` + msg;
     }
     
-    setTimeout(() => alert(msg), 100);
+    showCosmicModal(title, msg, () => initTruthGame());
 }
