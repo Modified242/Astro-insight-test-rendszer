@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetary Guide — Astro Insight</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="starlight-canvas"></canvas>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo-link" style="text-decoration: none; color: inherit; display: inline-flex;">
+            <div class="nav-logo">
+                <div class="logo-svg-container" id="site-logo-container"></div>
+                <span class="nav-title">Astro Insight</span>
+            </div>
+        </a>
+        
+        <div class="nav-links" id="desktopNav">
+            <div class="nav-dropdown">
+                <a href="articles.html" class="dropbtn" style="color: var(--glow-color);">Articles ▾</a>
+                <div class="dropdown-content">
+                    <a href="zodiacs.html">Zodiac Signs</a>
+                    <a href="planet.html">Planets</a>
+                </div>
+            </div>
+            <a href="index.html">Home</a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+        
+        <div class="nav-links" id="desktopNav">
+            <div class="nav-dropdown">
+                <a href="articles.html" class="dropbtn" style="color: var(--glow-color);">Articles ▾</a>
+                <div class="dropdown-content">
+                    <a href="zodiacs.html">Zodiac Signs</a>
+                    <a href="planet.html">Planets</a>
+                </div>
+            </div>
+            <a href="index.html">Home</a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        <a href="index.html">Home</a>
+        <a href="zodiacs.html">Zodiac Signs</a>
+        <a href="planet.html" style="color: var(--glow-color);">Planets</a>
+    </div>
+
+    <div class="container" style="margin-top: 140px;">
+        
+        <div id="articleView" style="display: none;">
+            <header style="text-align: center;">
+                <img id="planetImage" src="" alt="Planet View" style="width: 250px; height: 250px; object-fit: cover; border-radius: 50%; border: 2px solid var(--glow-color); box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); margin-bottom: 20px;">
+                <h1 id="planetTitle" style="color: var(--glow-color); text-transform: uppercase; letter-spacing: 3px; margin-top: 10px;"></h1>
+                <p class="subtitle" id="planetSubtitle">Ruling Planetary Energy</p>
+            </header>
+            <section style="text-align: left; line-height: 1.8; font-size: 1.15rem;">
+                <div id="planetContent"></div>
+                <div style="margin-top: 40px; text-align: center;">
+                    <a href="planet.html" class="glow-btn outline" style="text-decoration: none; display: inline-block;">View All Planets</a>
+                </div>
+            </section>
+        </div>
+
+        <div id="listView" style="display: none;">
+            <header>
+                <h1 style="color: var(--glow-color); text-transform: uppercase; letter-spacing: 3px;">Planetary Guide</h1>
+                <p class="subtitle">Select a celestial body to explore its cosmic influence</p>
+            </header>
+            <div class="zodiac-grid" id="planetsGrid">
+                </div>
+        </div>
+
+    </div>
+
+    <script>
+        // БАЗА ДАНИХ ДЛЯ ROLANDEX (Сюди він просто вставлятиме готові тексти)
+        const planetArticles = {
+    Jupiter: {
+        title: "Jupiter ♃",
+        image: "jupiter.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>Jupiter is the planet that looks at the horizon and wonders why anyone accepted the fence. In astrology, Jupiter is connected to expansion, optimism, wisdom, abundance, opportunity, and luck. It wants life to grow wider. More knowledge, more experience, more confidence, more meaning, more room to breathe. It is the part of us that believes there might be something worthwhile beyond the familiar road. But Jupiter does not only hand out golden tickets like a cheerful cosmic billionaire. It enlarges whatever it touches. That can mean hope becoming courage, talent becoming mastery, and opportunity becoming a new life. It can also mean confidence becoming arrogance, appetite becoming excess, and one harmless idea becoming a sermon nobody asked to attend.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Jupiter</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Gas giant</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Social planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ♃</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Sagittarius; traditionally Pisces</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About 12 years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> About one year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> About once a year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Expansion, belief, wisdom, opportunity, growth, abundance</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Luck, faith, learning, generosity, travel, meaning, excess</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What Jupiter Represents</h3>
+            <p>Jupiter represents the instinct to move beyond the borders of what we already know. It rules the questions that ask not only how to live, but why: What do I believe? What makes life meaningful? What could I become if I stopped treating my current limits as permanent walls?. This is why Jupiter is associated with philosophy, higher education, travel, spirituality, law, teaching, and the search for truth. All of these pull the mind beyond its usual neighbourhood. Jupiter is also called the planet of luck, but its luck is not always a bag of money falling through the ceiling. More often, it appears as an opening: the right person, a sudden invitation, a useful idea, or enough confidence to take a chance. Jupiter may open the door, but someone still has to walk through it. At its deepest, Jupiter describes what gives us faith in life. Not necessarily religious faith, but the private belief that effort can lead somewhere, pain can teach something, and tomorrow does not have to be a photocopy of today.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How It Shows Up in the Birth Chart</h3>
+            <p>Jupiter’s zodiac sign shows how a person seeks growth, develops confidence, and makes sense of the world. A fire-sign Jupiter may grow through risk and direct experience, while an earth-sign Jupiter may trust what can be built, tested, and made useful. The house containing Jupiter shows where life may offer more room, possibility, or growth. This area can feel naturally promising, although it may also become the place where “just one more” quietly turns into twelve. Its aspects to other planets show how easily Jupiter’s optimism works with the rest of the chart. Sometimes belief receives support. Sometimes it has to mature through disappointment before it stops confusing hope with certainty. Because Jupiter takes roughly twelve years to circle the zodiac, its return to its birth position often marks a new chapter of growth, exploration, or renewed belief.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>Healthy Jupiter is generous without needing to stand above anyone. It learns, teaches, shares, travels, laughs, and remains open to possibilities without abandoning common sense at the airport. This expression understands that abundance is not only possession. It can be knowledge shared freely, encouragement given at the right moment, or the ability to make another person feel that their future still has doors. Healthy Jupiter does not deny difficulty. It remembers that a difficult chapter is not the whole story.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>Jupiter’s shadow appears when expansion loses proportion. Optimism can become carelessness. Confidence can become superiority. Faith can harden into self-righteousness. A love of pleasure can become overindulgence, while a hunger for experience can leave someone constantly chasing the next horizon without understanding the one beneath their feet. Jupiter may promise more than reality can carry. It can assume everything will somehow work out, then look genuinely offended when consequences arrive with paperwork. The greatest danger is believing that bigger automatically means better. A louder opinion is not wiser. A longer journey is not always meaningful. A life can expand in every direction and still remain hollow at the centre.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>Jupiter is the road widening after years spent walking in a single lane. It is the teacher who makes knowledge feel alive, the suitcase packed for somewhere unfamiliar, the moment joy begins to feel possible again. It reminds us that growth needs courage, but also direction. Not everything deserves to become larger. Fear should not. Ego should not. The damage we excuse should not. Jupiter’s real gift is not endless more. It is the ability to recognise which parts of life are worth giving more space. Sometimes luck is not having the whole world placed into your hands. Sometimes it is realizing that the world within your reach is larger than you think.</p>
+        `
+    },
+    Mars: {
+        title: "Mars ♂",
+        image: "mars.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>Mars is the planet that gets us out of the chair. It is the heat behind desire, the pressure behind action, and the instinct that says, “Enough,” when something has gone too far. Mars does not sit around making beautiful plans for the life it might eventually live. It wants movement, effort, pursuit, contact, risk, and proof that the blood is still circulating. Named after the Roman god of war, Mars is often reduced to anger and conflict. Those things belong to it, absolutely, but they are only part of the story. Mars also rules courage, ambition, physical energy, sexual desire, boundaries, competition, and the ability to fight for something instead of quietly watching it disappear. Without Mars, wanting remains a thought. Mars turns wanting into movement.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Mars</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Personal planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ♂</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Aries; traditionally Scorpio</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About two years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> Usually six to seven weeks, longer during retrograde periods</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> Roughly once every 26 months</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Action, desire, courage, anger, conflict, instinct, pursuit</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Motivation, passion, sexuality, competition, defense, directness</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What Mars Represents</h3>
+            <p>Mars represents how we go after what we want. Venus may show what attracts us, but Mars shows what makes us move toward it. It describes pursuit: how we begin, compete, defend ourselves, take risks, express anger, and respond when life places resistance in front of us. It is also closely tied to desire. Not only sexual desire, although Mars certainly knows its way around that room. It is the deeper hunger to act, touch, win, build, chase, prove, protect, or experience something directly. Mars is where the body and will shake hands. This planet also describes our relationship with conflict. Some people confront problems immediately. Others wait, plan, avoid, explode, negotiate, or let resentment grow behind a calm face. Mars does not simply tell us whether someone is “aggressive.” It shows the style their force tends to take.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How Mars Shows Up in the Birth Chart</h3>
+            <p>Your Mars sign describes how you act, pursue, compete, and become angry. A fire-sign Mars may move quickly and trust instinct. An earth-sign Mars may act more carefully, but with greater endurance. Air Mars placements often fight through words, ideas, or strategy, while water Mars placements may be driven by emotion, intuition, protection, or feelings they have never fully released. The house containing Mars shows where this energy tends to seek action. Someone with Mars strongly connected to career may pour enormous force into achievement, while Mars in a relationship-focused part of the chart may make closeness, attraction, and conflict especially active territories. Aspects to Mars describe how easily this force cooperates with the rest of the personality. Depending on its aspects, Mars may work naturally with the rest of the chart, clash with it, or feel pulled in several directions at once.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>Healthy Mars knows that force is not the same as destruction. It gives us the courage to say no, leave what is harming us, defend someone vulnerable, begin the difficult task, survive rejection, and try again after failure knocks the air out of us. It helps anger become information instead of a weapon. At its best, Mars creates directness. It does not expect people to read smoke signals from the other side of the room. It names the problem, protects the boundary, and uses energy where energy is actually needed. Healthy Mars can compete without treating every person as an enemy. It can want intensely without believing desire creates ownership. It can fight without forgetting what the fight was supposed to protect.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>Unhealthy Mars becomes movement without direction. Anger may turn cruel, impatience may bulldoze other people, and competition may infect situations that never needed a winner. Someone may start fights simply because conflict makes them feel powerful, alive, or temporarily safe from vulnerability. Mars can also appear as recklessness: acting before consequences have even put their shoes on. Desire can become entitlement. Courage can become foolishness. Self-protection can become permanent hostility. But blocked Mars is not automatically peaceful either. Anger pushed underground does not vanish. It may return through resentment, passive aggression, exhaustion, self-sabotage, or an explosion caused by anger that was given nowhere else to go. Mars needs a healthy way out. Otherwise, trapped anger begins burning through the walls.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>Mars is the clenched fist, the end of hesitation, the racing heartbeat, and the first step taken while fear is still arguing against it. It is the part of us that refuses to remain only an idea. Its lesson is not that life should become one endless battlefield. Quite the opposite. Mars teaches us to choose what deserves our force. Not every irritation deserves war. Not every desire deserves pursuit. Not every obstacle deserves to be smashed apart. But some doors do need opening. Some boundaries do need defending. Some dreams will remain dreams until we place our weight behind them. Mars is the fire that asks what we are willing to do about what we want.</p>
+        `
+    },
+    Mercury: {
+        title: "Mercury ☿",
+        image: "mercury.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>Mercury is the planet most people remember only when it appears to start moving backward and their phone suddenly behaves as if it has developed free will. But blaming Mercury retrograde for every late reply, missed train, and regrettable message leaves out nearly everything that makes this planet interesting. In astrology, Mercury rules the machinery behind thought and communication. It is how the mind gathers information, sorts it, names it, and sends it back into the world. Every question, joke, explanation, argument, confession, typo, and perfectly timed comeback passes through Mercury’s territory. Mercury is the bridge between what happens inside the head and what finally escapes through the mouth.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Mercury</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Personal planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ☿</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Gemini and Virgo</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About one year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> Usually two to three weeks, longer during retrograde periods</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> Usually three or four times each year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Communication, thought, language, learning, information, movement</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Speech, writing, logic, curiosity, messages, mental speed</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What Mercury Represents</h3>
+            <p>Mercury represents the mind in motion. It is not intelligence measured by grades, degrees, or how convincingly someone can use the word “therefore.”. Mercury describes how we notice things, ask questions, solve problems, remember details, exchange information, and make sense of whatever life has dropped onto our desk. It also rules language and expression. Some people think aloud. Some polish every sentence before releasing it. Others communicate through stories, jokes, sharp observations, endless questions, or a silence so specific that it still feels like a reply. Mercury also carries movement. The mythological Mercury was a messenger moving between worlds. Astrologically, this becomes messages, travel, trade, connections, and information constantly passing between people. The Moon feels. Venus values. Mars acts. Mercury asks, “Okay, but what exactly is going on here?”.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How It Shows Up in the Birth Chart</h3>
+            <p>Your Mercury sign shows the style of your mind and communication. Mercury in Aries may speak quickly and directly, occasionally launching the sentence before checking where it will land. Mercury in Taurus may take longer to form an opinion, but once the thought settles, moving it can require construction equipment. Mercury in Gemini may chase several ideas at once, while Mercury in Virgo examines the wiring to discover why one light keeps flickering. The house containing Mercury shows where your mind becomes especially active. In the relationship area, Mercury may create a strong need for conversation and mental exchange. In the career area, it may appear through writing, teaching, planning, speaking, selling, or managing information. Connections with other planets add another layer. Mercury linked with Mars can make words faster and sharper. With Saturn, communication may become careful, serious, or restrained. These connections do not decide whether someone communicates well or badly. They describe what joins the conversation inside them.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>At its healthiest, Mercury creates curiosity without chaos and intelligence without arrogance. Healthy Mercury listens as well as it speaks. It can change its mind without treating the change as a personal defeat. It asks questions to understand, not merely while waiting for an opening to prove someone wrong. It helps people translate themselves. Feelings become words. Confusion becomes a question. A complicated thought becomes something another person can finally hold. Healthy Mercury can explain without making the listener feel stupid and disagree without turning every conversation into verbal fencing. When new information arrives, Mercury can redraw the map instead of angrily insisting the road should still be where it was yesterday.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>Mercury’s shadow appears when the mind never stops moving long enough to understand what it has collected. Curiosity can become gossip. Cleverness can become manipulation. Adaptability can become dishonesty with excellent vocabulary. Someone may talk around a feeling, overexplain it, make a joke about it, and still never admit that it hurt. An overactive Mercury can produce nervous energy, scattered attention, overthinking, and the mental equivalent of twenty-seven browser tabs, one of which is playing music but cannot be found. Communication can also become performance. A person may focus so much on sounding intelligent, funny, calm, or correct that the truth gets dressed, edited, and pushed behind the curtain. Mercury must learn that understanding is not measured by word count. Sometimes the smartest sentence is a question. Sometimes it is an apology. Sometimes it is shutting up long enough to hear the answer.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>Mercury is the thought caught before it disappears, the question that changes the direction of a conversation, and the moment a feeling finally finds the right words. It turns what lives inside one person into something another can understand. Through Mercury, humans trade facts, stories, warnings, promises, nonsense, and pieces of themselves. But communication is more than producing sound in another person’s direction. Mercury reaches its healthiest expression when thought becomes connection—when words do not merely leave the mouth, but actually arrive somewhere. Mercury’s greatest gift is not simply giving us something to say. It is helping one mind genuinely reach another.</p>
+        `
+    },
+    Moon: {
+        title: "The Moon ☽",
+        image: "moon.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>The Moon is who you become when nobody needs anything impressive from you. It is the exhausted version reaching for comfort after a difficult day, the reaction that appears before the polished response, and the strange ache a familiar song can awaken without permission. While the Sun speaks about identity, purpose, and the person we are learning to become, the Moon lives closer to the nervous system. It shows what makes us feel safe, what unsettles us, and what the heart does before the mind prepares a speech. The Moon is not simply endless crying beneath a blanket. It represents emotional survival: how we protect ourselves, restore ourselves, and recognize what allows us to feel safe again.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Moon</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Earth’s natural satellite</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Luminary</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ☽</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Cancer</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About 27–28 days</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> Roughly two and a half days</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> No</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Emotions, instincts, needs, memory, habits, comfort, home</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Inner world, emotional safety, moods, belonging, private self</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What the Moon Represents</h3>
+            <p>In astrology, the Moon represents the private self—the part that does not always care whether its reaction looks reasonable from the outside. It governs emotional needs, instinctive habits, memory, attachment, comfort, and our first response when life touches something tender. The Moon remembers what the conscious mind may have packed away. A smell, a room, or a sentence spoken in a particular tone can make an old feeling return with surprising clarity. It is also connected to home, but home can be a person, routine, language, meal, playlist, or any place where the body stops waiting for something to go wrong. The Moon shows what we need to remain emotionally alive inside the identity we build.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How It Shows Up in the Birth Chart</h3>
+            <p>Your Moon sign describes the style of your emotional world. A fire Moon may react quickly and need movement, honesty, or passion. An earth Moon may seek stability and practical support. An air Moon often processes feelings through words, ideas, or distance, while a water Moon may experience emotion as something immersive and difficult to separate into neat little boxes. The Moon’s house shows which area of life is most closely tied to emotional security. Its connections with other planets reveal whether those needs work naturally with the rest of the personality or regularly pull it in conflicting directions. Because the Moon moves quickly, people born only a few days apart can have different Moon signs. This is one reason two people with the same Sun sign may seem nothing alike beneath the surface. The Sun may describe the direction of the life; the Moon describes the weather travelling with it.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>A healthy Moon knows how to feel without handing every feeling the steering wheel. It recognizes needs before they become silent punishment, sudden withdrawal, or a breakdown caused by twelve small things that were supposedly “fine.”. It knows when a familiar coping mechanism has stopped being protection and become a cage. Healthy lunar energy creates inner safety rather than demanding that the outside world remain perfectly gentle. It allows tenderness without helplessness, memory without imprisonment, and care without control. It can nurture others without becoming responsible for everybody’s emotional weather. It also understands that needing reassurance, privacy, softness, or time is not embarrassing. Needs become dangerous when buried alive and expected to stay quiet.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>The Moon’s shadow appears when instinct becomes unconscious repetition. Someone may keep choosing what feels familiar even when the familiar hurts. They may retreat instead of communicating, cling instead of trusting, or expect another person to read an emotional language they never actually taught them. The Moon can make memory feel like prophecy: because something happened before, the body assumes it will happen again. Protection becomes overprotection. Comfort becomes stagnation. Sensitivity becomes defensiveness. A temporary mood quietly puts on a crown and begins ruling the entire kingdom. There is also the danger of confusing emotional truth with objective truth. A feeling is real because it is being felt, but that does not make every fear or interpretation correct. The Moon must be heard, not blindly obeyed.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>The Moon is the room inside the birth chart where the lights are softer and the doors are not open to everyone. It holds the habits we barely notice, the memories beneath ordinary objects, and the instinct that reaches for safety before pride can interfere. The Moon does not ask who you are when the world is watching. It asks who remains when the performance ends, the room becomes quiet, and your heart no longer has an audience. A healthy Moon does not promise a life without tides. It teaches us how to stop drowning in every wave—and how to recognize the waters which finally feel like home.</p>
+        `
+    },
+    Neptune: {
+        title: "Neptune ♆",
+        image: "neptune.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>Neptune rules the things that can move us deeply without ever becoming fully tangible. It lives in dreams that cling to us after waking, music that makes an old memory breathe again, the strange certainty of intuition before thought catches up, and the feeling that something holds a meaning words cannot quite convey. Neptune rules the invisible waters beneath ordinary life: imagination, spirituality, compassion, longing, fantasy, sacrifice, and illusion. It can open the heart beyond its usual borders, but it can also blur those borders until nobody knows where reality ends and wishful thinking begins. This planet does not always lie. Sometimes it simply shows us what we want to believe and lets us lie to ourselves.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Neptune</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Ice giant</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Outer planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ♆</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Pisces (modern rulership)</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About 165 years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> About 14 years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> About once a year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Dreams, intuition, imagination, spirituality, compassion, illusion</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Fantasy, surrender, empathy, mystery, escapism, divine longing</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What Neptune Represents</h3>
+            <p>Neptune represents the part of us that wants to dissolve separation. It reaches for the feeling of becoming one with another person, a piece of art, a belief, nature, or something larger than the individual self. Under Neptune, the walls between “me” and “everything else” become thinner. This is why Neptune is connected to empathy, creativity, spirituality, dreams, and unconditional love. It allows people to sense what cannot always be measured. It gives imagination enough water to grow strange and beautiful things. But Neptune also rules fog. A blurred boundary can create connection, but it can also create confusion. The same energy that produces vision can produce delusion. The same compassion that heals can become martyrdom. The same hope that keeps someone alive can keep them waiting beside a door that will never open. Neptune can place a halo around almost anything.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How It Shows Up in the Birth Chart</h3>
+            <p>Because Neptune moves slowly, its zodiac sign is shared by an entire generation. It describes some of the collective dreams, ideals, and illusions of that period. Its house placement becomes more personal. The house shows where someone may dream, idealize, sacrifice, escape, or search for something beyond ordinary reality. Neptune in the relationship area, for example, may appear as deep romantic sensitivity, but also as a tendency to fall for potential rather than the person standing in front of them. Its aspects show how Neptune interacts with other parts of the personality. Connected strongly to Mercury, it may bring poetic thought and intuitive communication, but also make facts slippery when emotions become involved. Neptune rarely speaks in clean sentences. It prefers symbols, moods, dreams, impressions, and the feeling that an answer exists before we can put it into words.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>A healthy Neptune keeps imagination alive without using it to replace reality. It can appear as artistic sensitivity, spiritual depth, emotional generosity, strong intuition, and the ability to understand suffering without immediately judging it. Neptune helps people create beauty from emotions and experiences that ordinary language cannot fully express. At its best, this planet teaches surrender—not giving up, but understanding that control has limits. Some things cannot be forced, solved, scheduled, or analysed until they produce a perfect answer. Sometimes we have to listen, trust, grieve, forgive, or let the water carry away what our hands cannot keep. Healthy Neptune also needs boundaries. Compassion is not self-erasure. Faith is not denial. A dream becomes far more powerful when it has something solid to stand on.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>Neptune’s shadow begins when the fog becomes more comfortable than the truth. This can show up as escapism, denial, addiction, projection, confusion, vague promises, victim-saviour dynamics, or repeatedly believing a beautiful story after reality has already corrected it several times. Neptune can make red flags look like rose petals under flattering light. It can convince someone that suffering proves love, that potential matters more than behaviour, or that avoiding a problem counts as spiritually rising above it. The danger is not imagination itself. The danger is imagination becoming a hiding place from reality. Neptune must learn that reality is not always the enemy of magic. Sometimes reality is the shore a dream can return to before it drifts too far into dangerous waters.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>Neptune is the ocean at night: beautiful, endless, reflective, and impossible to fully read from the surface. It reminds us that human life is not built only from facts, plans, and things we can touch. We also live through longing, symbols, music, faith, dreams, memories, and feelings too large for ordinary language. But not every light beneath the water is a treasure, and not every beautiful possibility is meant to become reality. Neptune teaches us to remain open without becoming lost, compassionate without abandoning ourselves, and hopeful without handing reality over to fantasy. Dreams need water to carry them, but they also need a shore in sight so they do not lose their way.</p>
+        `
+    },
+    Pluto: {
+        title: "Pluto ♇",
+        image: "pluto.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>Pluto is not one to quietly mind its own business in a birth chart. Astrologically, Pluto is connected to transformation, power, endings, rebirth, obsession, control, buried fear, and the parts of us we would rather keep locked in the basement. Pluto has little interest in the shiny, dressed-up version of ourselves we put on display. It wants to know what lies beneath it: the fears, desires, wounds, and truths we would rather keep hidden. Its work can feel brutal because Pluto rarely changes things with a polite adjustment. It strips away what has become false, hollow, poisoned, or impossible to carry. But destruction is only half of what Pluto represents. Pluto is also connected to what comes after the collapse: survival, rebuilding, and rebirth.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Pluto</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Dwarf planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Outer planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ♇</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Scorpio (modern rulership)</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About 248 years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> Varies widely, roughly 12–31 years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> About once a year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Transformation, power, death and rebirth, shadow, control, regeneration</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Deep change, survival, hidden forces, endings, renewal, inner power</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What Pluto Represents</h3>
+            <p>Pluto represents the forces that change us so deeply that returning to the old version becomes impossible. This can involve loss, truth, desire, fear, shame, trauma, power, secrecy, survival, or anything carrying enough emotional weight to reshape a person from the inside. Pluto is often connected to death, but not only physical death. It can describe the death of an identity, relationship, belief, illusion, or way of living. It rules the moment when “I can keep doing this” finally becomes a lie the soul refuses to repeat. Pluto also deals with power: who has it, who wants it, who fears losing it, and what people become willing to do when they feel powerless. Sometimes that power appears openly. Other times, it hides inside silence, emotional leverage, secrecy, or the need to control every outcome.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How It Shows Up in the Birth Chart</h3>
+            <p>Pluto’s placement in the birth chart shows which area of life may carry its themes most strongly. When Pluto is in the fourth house, transformation, fear, control, and regeneration may become connected to family, roots, or the emotional past. In the tenth house, the same themes may emerge through ambition, career, reputation, status, or the need to leave a lasting mark on the world. Its aspects show how Pluto interacts with other parts of the personality. A strong connection to the Moon may intensify emotional life. A connection to Venus may make love, trust, and attachment feel unusually powerful. A strong connection between Pluto and Mars may bring tremendous will, desire, rage, endurance, or conflict around control. None of this automatically means tragedy. Pluto does not arrive only to ruin the furniture. It shows where life may demand honesty beyond comfort and growth beyond surface-level change.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>Healthy Pluto energy creates emotional courage. It allows someone to look directly at what hurts, understand where it came from, and stop letting it operate from the shadows. Instead of pretending fear does not exist, Pluto learns its name. Instead of denying anger, it asks what caused it and what the feeling may be trying to protect. Instead of preserving an old wound forever, it turns the scar into information. At its best, Pluto helps people survive endings, rebuild after loss, release outgrown identities, and fear their own depth less. Healthy Pluto does not need to dominate a room. Its power lies in reminding us that even when life tears down an old structure, we still have the strength to build again.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>Pluto’s darker side appears when intensity becomes addiction. It may take the form of jealousy, paranoia, manipulation, obsession, possessiveness, revenge, secrecy, emotional testing, or the need to control people before they get the chance to cause pain. Pluto may become so afraid of powerlessness that it creates the destruction it was trying to prevent. It can also hold onto suffering when pain becomes part of a person’s identity. Letting go may feel like losing proof that the wound mattered. This can create a need to understand every detail of what happened—who caused it, why they did it, and what may still be hidden beneath the surface. The darker Pluto does not merely want an answer. It wants the confession, the hidden motive, the locked drawer, and the truth beneath the truth. Sometimes this need to uncover everything reveals something real. Sometimes it digs so deep that there is no solid ground left for trust to stand on. Pluto must learn that vulnerability is not surrender, and control is not the same as safety.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>Pluto is the locked room, the buried memory, and the truth that can no longer be ignored once it comes to light. It is the bad “ending”, the silence afterward, but also the first proof that the story is not really over. Pluto asks what must die so something more honest can live. Not every transformation needs fire, ruins, and a dramatic soundtrack. But some parts of us do not change through gentle suggestions. Some chains only loosen when we finally admit they are chains. Sometimes the version of ourselves built for survival becomes so familiar that we begin to mistake it for who we are. The deepest transformation Pluto represents begins when we no longer need to remain the person that pain forced us to become.</p>
+        `
+    },
+    Saturn: {
+        title: "Saturn ♄",
+        image: "saturn.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>Saturn has one of the worst reputations in astrology. Mention Venus and people think of love. Mention Jupiter and they expect luck. Mention Saturn and suddenly everyone checks whether the doors are locked. But Saturn is not interested in ruining lives for entertainment. It represents time, limits, responsibility, structure, discipline, consequences, and the slow process of becoming someone who can carry their own weight. Saturn does not hand out gold stars for potential. It looks at what has actually been built and what collapses the moment life leans against it. Saturn can feel heavy because growth often does. Still, this planet is not only the wall blocking the road. It is also the strength developed while learning how to climb it.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Saturn</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Gas giant</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Social planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ♄</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Capricorn; traditionally Aquarius</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About 29.5 years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> About two and a half years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> About once a year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Discipline, time, boundaries, responsibility, maturity, consequences</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Structure, patience, limits, life lessons, commitment, authority</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What Saturn Represents</h3>
+            <p>Saturn represents the parts of life that cannot be rushed, wished away, or avoided forever. It governs boundaries, rules, duty, authority, patience, long-term effort, and the reality that every choice eventually becomes part of something larger. Saturn asks uncomfortable but necessary questions: What are you responsible for? What must be practised instead of merely desired? Which excuses have expired?. This is where Saturn differs from simple negativity. A locked door can feel restrictive, but walls also keep a house standing. A deadline creates pressure, but without one, certain dreams may remain attractive ideas for twenty years. Saturn gives form to what would otherwise stay loose, unfinished, and permanently “coming soon.”. Its lessons are rarely instant. Saturn works through repetition, delay, effort, and consequence. It teaches the kind of confidence that arrives after you have failed, stood back up, and continued anyway.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How It Shows Up in the Birth Chart</h3>
+            <p>The sign of Saturn describes how someone approaches discipline, fear, responsibility, and personal authority. It can show the parts of life in which confidence develops slowly, mistakes feel unusually serious, and responsibility regularly takes priority over rest. The house containing Saturn points to the area of life where these lessons appear most clearly. This may involve relationships, family, career, self-expression, communication, identity, or another major part of life. At first, this area can feel limited or demanding. Over time, it may become one of the strongest parts of the chart precisely because it required real work. Saturn’s aspects show how this serious, disciplined energy interacts with the rest of the chart. It may support other planets with patience and control or create tension through fear, pressure, and restraint. Then there is the Saturn return, which occurs around ages twenty-nine, fifty-eight, and eighty-seven. These periods are often associated with major reality checks, commitments, endings, and decisions about the shape of one’s life. Saturn turns its attention to everything labelled ‘temporary’ and asks how long that excuse was supposed to last.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>A healthy Saturn creates stability without turning life into a prison. It appears as patience, self-respect, realistic planning, emotional boundaries, reliability, and the ability to continue after motivation has packed its bags and disappeared. Saturn understands that inspiration is wonderful, but it cannot always be trusted to show up for work. This planet also teaches the difference between restriction and protection. Saying no can preserve energy. A routine can support freedom instead of destroying it. Responsibility can feel heavy, but it can also create independence. The person who learns to manage their time, choices, promises, and limits becomes harder for chaos to throw around. Healthy Saturn does not demand perfection. It asks for honesty, effort, and foundations strong enough to hold what we keep saying we want.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>When Saturn becomes distorted, discipline turns into punishment. Its shadow can appear as fear, rigidity, pessimism, shame, emotional coldness, controlling behaviour, overwork, and the belief that rest must always be earned through suffering. Someone may become so afraid of failure that they never begin, or so obsessed with responsibility that they forget life is also meant to contain warmth. Saturn can create an inner authority figure who never clocks out. A mistake stops being something to learn from and starts feeling like a verdict. Every delay feels like personal failure. Even success may receive nothing more than a tired nod before the next impossible standard is placed on the table. The lesson is not to destroy structure, but to stop using structure as a weapon against the self. A strong foundation should support a life, not bury it beneath concrete.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>Saturn is the clock, the boundary, the promise kept after the mood has changed, and the step repeated until weak legs become steady. It rarely gives the fastest reward, but speed is not its language. Saturn values what can survive time: the skill learned properly, the trust built slowly, the life that can stand because someone finally stopped decorating the cracks and repaired them. Its lesson is not that life must be miserable to have meaning. It is that some things become meaningful because we stayed long enough to build them well. Saturn reminds us that maturity is not losing softness, joy, or imagination. It is becoming strong enough to protect them.</p>
+        `
+    },
+    Sun: {
+        title: "The Sun ☉",
+        image: "sun.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>The Sun hardly needs an introduction. It is the centre of our solar system, the light and warmth keeping life on Earth awake, and in astrology, the place where identity, vitality, purpose, and the desire to become fully oneself meet. When people say, “I’m a Leo,” “I’m a Taurus,” or “I’m definitely not acting like a Scorpio,” they are usually talking about their Sun sign. It is astrology’s most famous placement, but fame has made it slightly misunderstood. The Sun is not your entire personality squeezed into one zodiac sign. It is closer to the part of you trying to become fully, unmistakably yourself.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Sun</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Star and central body of the solar system</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Luminary</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ☉</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Leo</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About one year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> About one month</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> No</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Identity, vitality, ego, confidence, purpose, creativity, will</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Visibility, self-expression, life force, conscious direction</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What the Sun Represents</h3>
+            <p>In astrology, the Sun represents the core around which the rest of the personality gathers. It is your sense of “I am”: the identity you recognize as yours, the qualities you want to develop, and the life that feels most honest when you are living it properly. This does not make the Sun some flawless “true self” hidden beneath every bad habit and awkward decision. It is more like an inner direction. The Sun shows what helps you feel alive, purposeful, and present inside your own existence. It also represents ego, which has been given a suspiciously evil reputation. Ego is not automatically arrogance. Without some sense of self, a person becomes emotionally shapeless, constantly borrowing identities from whoever happens to be standing nearby. The Sun gives the personality a spine and asks it to stand without apologizing for taking up space. Because it is connected to visibility, the Sun also shows what we want to express and be recognized for. It is the part of us that does not merely want to survive, but wants its existence to carry a signature.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How It Shows Up in the Birth Chart</h3>
+            <p>Your Sun sign describes the style through which this identity develops. An Aries Sun may discover itself through action, courage, and movement. A Virgo Sun may build identity through usefulness, improvement, and competence. A Pisces Sun may feel most alive through imagination, compassion, and connection to something larger than the individual self. The sign explains how the Sun shines, but the house shows where its light is most urgently needed. A Sun in the tenth house may seek purpose through career, achievement, or public contribution. In the fourth house, identity may grow through home, family, roots, and private emotional foundations. Aspects to the Sun add another layer. Saturn can make confidence slower, heavier, or more carefully earned. Jupiter may enlarge self-belief and ambition. Neptune can blur identity, adding imagination but sometimes making the person unsure where they end and everybody else begins. This is why two people with the same Sun sign can feel completely different. The Sun gives the chart its centre, but everything surrounding it shapes how that light reaches the world.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>A healthy Sun creates confidence without requiring an audience to kneel. It allows someone to know who they are while remaining curious about who they may become. They can express themselves, create, lead, choose, and take pride in their life without treating every disagreement as an assassination attempt against their identity. Healthy solar energy is warm. It does not make everyone else smaller. It gives other people enough light to see themselves more clearly too.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>When the Sun is overfed, confidence can swell into arrogance. The person may need constant praise, control every room, or treat attention like oxygen. Their identity becomes so heavily guarded that admitting fault feels like watching the whole palace collapse because one brick cracked. But solar problems do not always look loud. Sometimes the Sun is underdeveloped rather than inflated. A person may hide their abilities, copy stronger personalities, avoid visibility, or feel guilty whenever they take pride in themselves. Instead of becoming the centre of their own life, they remain a supporting character in one that technically belongs to them. The shadow of the Sun lives at both extremes: believing you are the only person who matters, or living as though you do not matter at all. Its lesson is not to become larger than everyone else. It is to become large enough to inhabit your own life fully.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>The Sun is the warm centre, the steady pulse, and the quiet internal answer to the question, “Who is living this life?”. It does not describe every room inside you, but it helps hold the house together. The Moon may carry your private tides, Venus your attraction, and Mars your fire, but the Sun asks what all of it is becoming. The Sun does not need you to be the brightest person in every room. It asks you to stop dimming the light that is actually yours.</p>
+        `
+    },
+    Uranus: {
+        title: "Uranus ♅",
+        image: "uranus.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>Uranus is the planet that asks why we keep following rules that stopped making sense years ago. In astrology, Uranus represents sudden change, freedom, originality, rebellion, innovation, and the need to live more honestly. It is the force that interrupts stale routines, challenges inherited rules, and introduces ideas that initially sound ridiculous—until everyone is using them ten years later. Astronomically, Uranus is already committed to being different. It rotates almost completely on its side, takes about 84 Earth years to orbit the Sun, and became the first planet discovered with the help of a telescope when William Herschel found it in 1781. Even before we get into its astrological meaning, Uranus refuses to stand normally in the group photo.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Uranus</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Ice giant</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Outer planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ♅</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Aquarius (modern rulership)</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About 84 years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> Roughly seven years</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> About once a year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Freedom, change, awakening, rebellion, innovation, individuality</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Breakthroughs, disruption, originality, liberation, sudden shifts</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What Uranus Represents</h3>
+            <p>Uranus represents the part of us that cannot remain asleep forever. It rules breakthroughs, independence, unconventional thinking, social change, technology, experimentation, and the sudden realization that a rule has been followed for years without anyone remembering why. Where Saturn protects structure, Uranus tests whether that structure still deserves to exist. This does not mean Uranus hates every tradition. It hates captivity disguised as tradition. It becomes active when safety has quietly turned into limitation, when belonging requires self-erasure, or when the familiar has become too small for the person living inside it. Uranian change can feel like lightning: sudden, revealing, and strong enough to split an old certainty in half. Once something has been seen clearly, returning to the old version of life becomes much harder.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How It Shows Up in the Birth Chart</h3>
+            <p>Because Uranus moves slowly, people born within the same several-year period usually share its zodiac sign. This makes Uranus partly generational, describing how an age group approaches freedom, progress, rebellion, and change. Its house placement makes the story more personal. The house shows where someone may resist control, seek independence, experience disruption, or refuse to follow the standard script. Uranus in the career area may need an unusual path. In relationships, it may demand space, honesty, or a bond that does not resemble the traditional template. Its aspects show how easily this restless energy cooperates with the rest of the chart. Strong Uranus connections can create originality, sharp intuition, and the courage to live differently. They can also make stability feel suspiciously similar to a cage. Uranus does not automatically make someone strange. It shows the part of life where being “normal” may cost them too much.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>A healthy Uranus does not rebel merely to create smoke. It changes what needs changing. This can appear as independent thought, creative problem-solving, openness to new ideas, and the courage to question systems everyone else accepts without inspection. Uranus can help a person stop performing an identity that no longer fits them and build a life with more breathing room. At its best, this planet understands that freedom is not simply escaping responsibility. It is choosing consciously instead of obeying automatically. It breaks patterns without breaking everything nearby just to prove that it can. Healthy Uranian energy also leaves space for other people to be different. It does not demand individuality and then punish anyone whose individuality looks unfamiliar.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>Uranus has little patience for stagnation, but it can become addicted to disruption. Its shadow may reject routines, commitments, or authority before checking whether they are actually harmful. It can mistake unpredictability for freedom and emotional distance for independence. Sometimes the person is not escaping a cage. They are simply running from anything that asks for consistency or commitment. There can also be a rebellious ego: the belief that being different automatically means being wiser. Uranus may become so determined not to follow the crowd that the crowd still controls its direction—just in reverse. Sudden change can be necessary, but destroying every bridge rarely creates freedom. Sometimes it only destroys the way back without opening a way forward.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>Uranus is the crack appearing in a wall everyone assumed was permanent. It is the strange idea, the unexpected turn, and the refusal to keep shrinking for a life that no longer fits. It reminds us that stability without freedom can become a beautifully decorated prison. But change without purpose can become chaos with better branding. Uranus does not ask us to destroy everything familiar. It asks us to notice what has become false, outdated, or too narrow—and become brave enough to look beyond it. Change is not always about becoming someone new. Sometimes it is about having the courage to own who we really are.</p>
+        `
+    },
+    Venus: {
+        title: "Venus ♀",
+        image: "venus.webp",
+        content: `
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Intro</h3>
+            <p>Venus is usually introduced as the planet of love, which is true, but it also makes the planet sound like astrology’s full-time relationship department. Venus reaches further than romance. It describes what attracts us, what softens us, what we enjoy, and what feels valuable enough to keep close. It appears in the people we desire, the beauty we notice, the music that stays with us, and the small pleasures that make an ordinary day feel worth living. Venus is not only asking, “Who do you love?”. It is also asking, “What makes you say yes?”.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Basic Facts</h3>
+            <ul style="list-style-type: none; padding: 0; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 8px; border-left: 3px solid var(--glow-color);">
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Category:</strong> Venus</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astronomical type:</strong> Planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Astrological type:</strong> Personal planet</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Symbol:</strong> ♀</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Ruling sign(s):</strong> Taurus and Libra</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Cycle through the zodiac:</strong> About one year</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Time in each sign:</strong> Usually three to four weeks, longer during retrograde periods</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Retrograde:</strong> About every 18 months</li>
+                <li style="margin-bottom: 8px;"><strong style="color: var(--glow-color);">Represents:</strong> Love, attraction, pleasure, beauty, harmony, values, self-worth</li>
+                <li style="margin-bottom: 0;"><strong style="color: var(--glow-color);">Associated themes:</strong> Relationships, taste, art, affection, social charm, money, desire</li>
+            </ul>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">What Venus Represents</h3>
+            <p>Venus represents attraction in the widest sense of the word. It shows what pulls us closer instead of making us reach for the nearest exit. In relationships, Venus describes how we express affection, what kind of attention feels meaningful, and what qualities attract us. Outside romance, it shapes taste, style, pleasure, friendship, creativity, and the way we create harmony with others. Venus is different from the Moon and Mars. The Moon describes emotional needs and instinctive comfort. Mars describes desire, pursuit, heat, and action. Venus is the part that chooses what it likes and decides whether something feels beautiful, enjoyable, or worth returning to. It also rules value. This can mean money and possessions, but it reaches deeper into self-worth. Venus asks what we believe we deserve, what we are willing to receive, and whether we allow ourselves to enjoy what makes us happy or dismiss it as an unnecessary luxury. Basically, Venus has opinions about the person, the atmosphere, the lighting, the music, and whether the affection feels sincere or mass-produced.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">How Venus Shows Up in the Birth Chart</h3>
+            <p>A Venus sign shows the style through which love, attraction, pleasure, and taste are expressed. Venus in a fire sign may love boldly, playfully, and visibly. In earth, affection may become steady, physical, practical, and connected to reliability. Air Venus often needs conversation, mental chemistry, freedom, or a strong social bond. Water Venus may seek emotional intimacy, tenderness, imagination, and the feeling of being understood beneath the obvious words. These are broad patterns, not the full story of how someone loves. The house containing Venus shows where these themes become especially important, whether through creativity, home, career, friendship, or partnership. Its connections with other planets can make affection feel easier, more cautious, intense, idealistic, proud, or tangled in conflict. Venus can also describe how someone spends money, decorates a room, chooses clothes, handles social tension, or makes another person feel welcome. Sometimes it is a love letter. Sometimes it is the exact song, meal, scent, or tiny detail that changes the whole atmosphere.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Healthy Expression</h3>
+            <p>Healthy Venus allows pleasure without shame and affection without games. It knows love is not something we must earn by becoming endlessly agreeable, beautiful, useful, or easy to keep. It can give without secretly keeping score and receive without immediately searching for the hidden price. A well-expressed Venus values mutuality. It enjoys closeness without turning it into ownership, appreciates beauty without worshipping appearances, and understands that peace is not the same as avoiding every uncomfortable conversation. Healthy Venus does not need everyone to desire it before it believes it deserves care. It chooses relationships because they are nourishing, not simply because being chosen feels flattering. There is nothing shameful about enjoying life. Rest, art, touch, laughter, romance, comfort, and beauty are not useless decorations around “real life.”. They are part of what makes life feel real, not just merely lived.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Shadow Side</h3>
+            <p>Venus becomes difficult when the desire to be loved becomes more important than love itself. It may chase attention, approval, beauty, status, comfort, or the appearance of harmony. People-pleasing can replace honesty. Conflict may be avoided until resentment starts growing behind the nice curtains. The shadow of Venus can become possessive, jealous, indulgent, vain, or emotionally transactional. Affection turns into currency: “I gave you this, so now you owe me reassurance, loyalty, admiration, or peace.”. Sometimes Venus wants to be wanted more than it actually wants the person. It can mistake chemistry for compatibility, attention for affection, and being desired for being valued. It may stay inside a relationship because it looks beautiful, feels familiar, or protects a comfortable life, even when the heart is no longer truly there.</p>
+
+            <h3 style="color: var(--glow-color); margin-top: 30px; margin-bottom: 15px; font-size: 1.6rem; letter-spacing: 1px;">Outro</h3>
+            <p>Venus lives in everything that turns grey survival into a colourful life. It is the softened voice, the favourite song attached to a memory, the meal made with care, the room arranged until it feels like ours, and the person with whom affection does not need to feel complicated. Venus teaches us to notice what we are drawn toward, but also to question why. Not every beautiful thing is good for us. Not every pleasant thing deserves permanence. And not everyone who wants us knows how to value us. At its healthiest, Venus is not about making everyone want us. It asks us to choose with the same care we put into trying to be chosen.</p>
+        `
+    }
+};
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Зчитуємо ?name=Знак із URL
+            const params = new URLSearchParams(window.location.search);
+            const planetName = params.get("name");
+
+            const articleView = document.getElementById("articleView");
+            const listView = document.getElementById("listView");
+
+            if (planetName && planetArticles[planetName]) {
+                // РЕЖИМ СТАТТІ: Якщо в URL вказано планету, показуємо статтю
+                listView.style.display = "none";
+                articleView.style.display = "block";
+
+                document.getElementById("planetTitle").innerText = planetArticles[planetName].title;
+                // ПІДСТАВЛЯЄМО ФОТО:
+                document.getElementById("planetImage").src = planetArticles[planetName].image;
+                document.getElementById("planetContent").innerHTML = `<p>${planetArticles[planetName].content}</p>`;
+                document.title = `${planetName} — Planetary Guide`;
+            } else {
+                // РЕЖИМ СПИСКУ: Якщо планету не обрано, будуємо гарну сітку вибору
+                articleView.style.display = "none";
+                listView.style.display = "block";
+/*  */
+                const grid = document.getElementById("planetsGrid");
+                grid.innerHTML = "";
+
+                // Автоматично генеруємо картки для кожної планети
+                Object.keys(planetArticles).forEach(name => {
+                    const card = document.createElement("div");
+                    card.className = "card";
+                    card.style.padding = "30px 10px";
+                    card.innerHTML = `
+                        <img src="${planetArticles[name].image}" style="width: 120px; height: 120px; border-radius: 50%; margin-bottom: 15px; border: 1px solid var(--glow-color-dim); object-fit: contain; background: rgba(0,0,0,0.2); padding: 5px;">
+                        <h3 style="margin: 0 0 10px 0; color: var(--glow-color);">${name}</h3>
+                        <span class="sign-motto">Explore Energy ⟡</span>
+                    `;
+                    card.onclick = () => {
+                        window.location.href = `planet.html?name=${name}`;
+                    };
+                    grid.appendChild(card);
+                });
+            }
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+   <footer class="site-footer">
+        <p>&copy; 2026 Astro Insight. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <span class="divider">|</span>
+            <a href="privacy.html">Privacy Policy</a>
+            <span class="divider">|</span>
+            <a href="terms.html">Terms & Conditions</a>
+            <span class="divider">|</span>
+            <a href="helpcenter.html">Help Center</a>
+            <span class="divider">|</span>
+            <a href="support.html">Contact Support</a>
+        </div>
+         <div class="social-links">
+             <a href="https://www.instagram.com/_astroinsight_/" target="_blank" rel="noopener">Instagram</a>
+             <a href="https://www.facebook.com/profile.php?id=61589576716944" target="_blank" rel="noopener">Facebook</a>
+             <a href="https://x.com/_Astro_Insight_" target="_blank" rel="noopener">X</a>
+        </div>
+    </footer>
+</html>

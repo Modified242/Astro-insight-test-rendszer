@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Astro Insight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- МАГІЧНИЙ ФОН (Додано) -->
+    <canvas id="starlight-canvas"></canvas>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo-link" style="text-decoration: none; color: inherit; display: inline-flex;">
+            <div class="nav-logo">
+                <div class="logo-svg-container" id="site-logo-container"></div>
+                <span class="nav-title">Astro Insight</span>
+            </div>
+        </a>
+        
+        <div class="nav-links" id="desktopNav">
+            <div class="nav-dropdown">
+                <a href="articles.html" class="dropbtn" style="color: var(--glow-color);">Articles ▾</a>
+                <div class="dropdown-content">
+                    <a href="zodiacs.html">Zodiac Signs</a>
+                    <a href="planet.html">Planets</a>
+                </div>
+            </div>
+            <a href="index.html">Home</a>
+        </div>
+
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <main class="about-container">
+        <!-- Вступний текст -->
+        <section class="about-intro">
+            <h1>About Astro Insight</h1>
+            <p class="hero-text">
+                <strong>Astro Insight</strong> is one of those <em>"What I wish I had when I was starting out"</em> resources. Not everyone has the time or desire to sift through confusing, dry astrology textbooks, and overpriced private readings aren't right for everyone anyway. This project is designed to fill in the gap for people who want to explore the cosmos on their own terms but still want high-quality, modern, and easy-to-understand guidance.
+            </p>
+        </section>
+        
+        <!-- Сітка з 4 карток -->
+        <section class="about-features">
+            <h2>What you can expect at Astro Insight</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h4>A complete roadmap</h4>
+                    <p>Our free, comprehensive forecasts and guides will help you navigate the movements of the planets, no matter if you are just starting out or already know your entire birth chart by heart.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Practical self-discovery</h4>
+                    <p>The most valuable knowledge is the kind you can actually use. We design our forecasts to give you real, everyday insights for career, love, and personal growth—instead of empty predictions.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Receive support</h4>
+                    <p>Navigating cosmic chaos is much easier together. Join us across our social platforms to chat about retrograde periods, share your experiences, and get your questions answered by the community.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>Constantly evolving</h4>
+                    <p>We aren't stuck in the past. We are continuously updating our features and content to bring you the freshest, most accurate, and highly engaging digital experience right to your screen.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="site-footer">
+    <p>&copy; 2026 Astro Insight. All rights reserved.</p>
+    <div class="footer-links">
+        <a href="about.html">About</a>
+        <span class="divider">|</span>
+        <a href="privacy.html">Privacy Policy</a>
+        <span class="divider">|</span>
+        <a href="terms.html">Terms & Conditions</a>
+        <span class="divider">|</span>
+        <a href="helpcenter.html">Help Center</a>
+        <span class="divider">|</span>
+        <a href="support.html">Contact Support</a>
+    </div>
+     <div class="social-links">
+         <a href="https://www.instagram.com/_astroinsight_/" target="_blank" rel="noopener">Instagram</a>
+         <a href="https://www.facebook.com/profile.php?id=61589576716944" target="_blank" rel="noopener">Facebook</a>
+         <a href="https://x.com/_Astro_Insight_" target="_blank" rel="noopener">X</a>
+     </div>
+</footer>
+        
+    <script src="script.js?v=20260612"></script>
+</body>
+</html>
