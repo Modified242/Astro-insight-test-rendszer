@@ -191,7 +191,11 @@ select:focus, input:focus { border-color: var(--glow-color); }
 .result-text { margin-top: 15px; font-style: italic; color: var(--glow-color); font-size: 1.2rem; min-height: 25px;}
 
 /* Zodiac Grid */
-.zodiac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+.zodiac-grid { 
+    display: grid; 
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 15px; 
+}
 .card {
     background: rgba(0,0,0,0.4); padding: 25px 10px; border-radius: 8px; cursor: pointer;
     border: 1px solid rgba(255,255,255,0.05); transition: 0.5s;
@@ -1497,13 +1501,13 @@ h2, h3, h4, .omen-box {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    padding: 30px;
+    padding: 25px; /* Kicsit kisebb belső margó, hogy még kompaktabb legyen */
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-content: flex-start;
+    align-content: center; /* flex-start helyett center, hogy középre rendezze a gombokat */
     gap: 15px;
-    min-height: 400px;
+    /* A min-height: 400px; sort teljesen kitöröltük! */
 }
 
 .blitz-card {
@@ -1559,4 +1563,58 @@ h2, h3, h4, .omen-box {
         gap: 20px;
         align-items: center;
     }
+}
+.blitz-card svg path,
+.blitz-card svg circle,
+.blitz-card svg rect,
+.blitz-card svg polygon {
+    fill: currentColor !important;
+}
+
+/* Ha az SVG vonalakat (stroke) is használ, azokat is átszínezzük */
+.blitz-card svg [stroke]:not([stroke="none"]) {
+    stroke: currentColor !important;
+}
+/* ==========================================
+   GAME 7: TAROT MEMORY MATRIX
+   ========================================== */
+.tarot-memory-card {
+    width: 100%; 
+    height: 80px; 
+    position: relative; 
+    cursor: pointer;
+    transform-style: preserve-3d; 
+    transition: transform 0.5s;
+}
+.tarot-memory-card.flipped { 
+    transform: rotateY(180deg); 
+}
+.tarot-memory-card.matched { 
+    visibility: hidden; 
+    opacity: 0; 
+    transition: visibility 0s 0.5s, opacity 0.5s; 
+}
+.tmc-face {
+    position: absolute; 
+    width: 100%; 
+    height: 100%; 
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    border-radius: 6px;
+    font-size: 1.1rem; 
+    color: #fff; 
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.tmc-back { 
+    background: rgba(255,255,255,0.05); 
+}
+.tmc-front { 
+    background: rgba(192, 132, 252, 0.2); 
+    border-color: #c084fc; 
+    transform: rotateY(180deg); 
+    text-align: center; 
+    padding: 5px;
 }
