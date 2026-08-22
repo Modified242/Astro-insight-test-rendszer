@@ -6,6 +6,7 @@
     <title>Astro Insight | Celestial Oracle</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="sub.css">
 </head>
 <body>
 
@@ -30,8 +31,6 @@
             <a href="index.html#core">Readings</a>
             <a href="index.html#sync">Compatibility</a>
             <a href="index.html#tarot">Arcana</a>
-            
-            <!-- Az inline színezés eltávolítva -->
             <a href="quiz.html">Astro Quizzes</a>
             
             <div class="nav-dropdown">
@@ -53,8 +52,6 @@
         <a href="index.html#core" onclick="toggleMobileMenu()">Readings</a>
         <a href="index.html#sync" onclick="toggleMobileMenu()">Compatibility</a>
         <a href="index.html#tarot" onclick="toggleMobileMenu()">Arcana</a>
-        
-        <!-- Mobilon is eltávolítva a színezés -->
         <a href="quiz.html" onclick="toggleMobileMenu()">Astro Quizzes</a>
         
         <a href="articles.html" onclick="toggleMobileMenu()" style="font-size: 1.1rem; margin-top: 15px; letter-spacing: 1px; display: inline-block;">Articles</a>
@@ -75,8 +72,6 @@
         <section class="omen-box" id="itOmen">
             <span class="omen-label">Cosmic Insight:</span>
             <span id="omenText">A daily-changing cosmic message that (sets the mood of the page and) gives you a small insight for the day.</span>
-            
-            <!-- Знак питання тепер окремо від тексту -->
             <span class="info-tooltip" data-tooltip="A daily-changing cosmic message that (sets the mood of the page and) gives you a small insight for the day.">?</span>
         </section>
 
@@ -93,7 +88,6 @@
                 <p class="compatibility-subtitle">Multi-Planetary Synastry based on Exact Birth Dates</p>
                 
                 <div class="compatibility-form">
-                    
                     <div class="select-group">
                         <div class="input-wrapper">
                             <label>Your Sign</label>
@@ -135,7 +129,6 @@
                             <input type="date" id="date2" class="gold-select" value="1997-08-20" min="1900-01-01" max="2026-12-31">
                         </div>
                     </div>
-
                 </div>
 
                 <button class="compat-btn" onclick="calculateCompatibility()">
@@ -199,85 +192,101 @@
             </section>
         </div>
 
-        <!-- <section class="lead-box" id="leadGen">
-            <h3>Extended Lunar Calendar</h3>
-            <p class="subtitle">Subscribe to receive a detailed 30-day astral projection directly to your parchment.</p>
-            <div class="ask-input-group">
-                <input type="email" id="emailInput" placeholder="Your email address...">
-                <button id="leadBtn" class="glow-btn success-btn" onclick="submitLead()">Subscribe</button>
-            </div>
-            <p id="leadResult" class="result-text"></p>
-        </section> -->
-
         <section class="archive-box">
             <h3>Personal Grimoire <span class="info-tooltip" data-tooltip="Your saved reading archive. Readings are saved only in this browser, so they may disappear if browser data is cleared or if you use another device.">?</span></h3>
             <div id="archiveContainer"><p class="subtitle">Your saved readings will be preserved here...</p></div>
         </section>
-<div id="fortuneModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <span class="close-btn" onclick="document.getElementById('fortuneModal').style.display='none'">&times;</span>
-        </div>
-        
-        <div class="modal-body">
-            <h2 id="signTitle" class="glow-text"></h2>
+
+        <!-- ================= NEWSLETTER SUBSCRIPTION SECTION ================= -->
+        <!-- section class="newsletter-section" id="newsletter">
+            <h3>Join now and get your daily horoscope</h3>
+            <p class="subtitle">Enter your email to receive exclusive insights directly to your inbox.</p>
             
-            <div class="modal-tabs">
-                <button class="tab-btn active" onclick="switchTab(event, 'Insight')">Insight Transit</button>
-                <button class="tab-btn" onclick="switchTab(event, 'weekly')">Weekly Aspects</button>
-                <button class="tab-btn" onclick="switchTab(event, 'monthly')">Lunar Cycle</button>
-            </div>
-
-            <div class="lucky-attributes" id="luckyAttributes">
-                <div class="attribute-box"><span class="attr-label">Planet:</span> <span class="attr-value" id="modalPlanet"></span></div>
-                <div class="attribute-box"><span class="attr-label">Element:</span> <span class="attr-value" id="modalElement"></span></div>
-                <div class="attribute-box"><span class="attr-label">Aura:</span> <div class="color-preview" id="luckyColorBox"></div> <span class="attr-value" id="luckyColorName"></span></div>
-                <div class="attribute-box"><span class="attr-label">Numbers:</span> <span class="attr-value" id="luckyNumbers"></span></div>
-                <div class="attribute-box energy-box" style="flex: 1 1 100%; justify-content: center; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
-                    <span class="attr-label">Energy:</span> <span class="attr-value" id="modalEnergy" style="color: var(--glow-color); font-style: italic;"></span>
-                </div>
-            </div>
-
-            <div id="tab-Insight" class="tab-content active-content"><p id="fortuneTextInsight">Reading the stars...</p></div>
-            <div id="tab-weekly" class="tab-content"><p id="fortuneTextWeekly">Loading...</p></div>
-            <div id="tab-monthly" class="tab-content"><p id="fortuneTextMonthly">Loading...</p></div>
-
-           <div class="modal-actions">
-                <div class="btn-with-tooltip">
-                    <button id="saveBtn" class="glow-btn" onclick="saveToArchive()">Inscribe to Grimoire</button>
-                    <span class="info-tooltip" data-tooltip="Preserves this complete reading and planetary aspects inside your browser's Personal Grimoire.">?</span>
+            <form id="newsletterForm" class="newsletter-form">
+                <div class="sub-input-row">
+                    <input type="email" id="subscriberEmail" required placeholder="Enter your email...">
+                    <button type="submit" id="subBtn" class="glow-btn">Subscribe</button>
                 </div>
                 
-                <div class="btn-with-tooltip">
-                    <button id="shareBtn" class="glow-btn outline" onclick="shareDestiny()">Share Fate</button>
-                    <span class="info-tooltip" data-tooltip="Copies your current horoscope reading and custom cosmic aura link directly to your clipboard.">?</span>
+                <div class="sub-terms-row">
+                    <input type="checkbox" id="termsCheck" required>
+                    <label for="termsCheck">
+                        By subscribing, you agree to our <a href="./terms.html" target="_blank">Terms</a> & <a href="./privacy.html" target="_blank">Privacy</a>. *
+                    </label>
+                </div>
+            </form>
+            <p id="subResponse" class="result-text"></p>
+        </section >-->
+
+    </div>
+
+    <div id="fortuneModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-btn" onclick="document.getElementById('fortuneModal').style.display='none'">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <h2 id="signTitle" class="glow-text"></h2>
+                
+                <div class="modal-tabs">
+                    <button class="tab-btn active" onclick="switchTab(event, 'Insight')">Insight Transit</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'weekly')">Weekly Aspects</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'monthly')">Lunar Cycle</button>
+                </div>
+
+                <div class="lucky-attributes" id="luckyAttributes">
+                    <div class="attribute-box"><span class="attr-label">Planet:</span> <span class="attr-value" id="modalPlanet"></span></div>
+                    <div class="attribute-box"><span class="attr-label">Element:</span> <span class="attr-value" id="modalElement"></span></div>
+                    <div class="attribute-box"><span class="attr-label">Aura:</span> <div class="color-preview" id="luckyColorBox"></div> <span class="attr-value" id="luckyColorName"></span></div>
+                    <div class="attribute-box"><span class="attr-label">Numbers:</span> <span class="attr-value" id="luckyNumbers"></span></div>
+                    <div class="attribute-box energy-box" style="flex: 1 1 100%; justify-content: center; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        <span class="attr-label">Energy:</span> <span class="attr-value" id="modalEnergy" style="color: var(--glow-color); font-style: italic;"></span>
+                    </div>
+                </div>
+
+                <div id="tab-Insight" class="tab-content active-content"><p id="fortuneTextInsight">Reading the stars...</p></div>
+                <div id="tab-weekly" class="tab-content"><p id="fortuneTextWeekly">Loading...</p></div>
+                <div id="tab-monthly" class="tab-content"><p id="fortuneTextMonthly">Loading...</p></div>
+
+                <div class="modal-actions">
+                    <div class="btn-with-tooltip">
+                        <button id="saveBtn" class="glow-btn" onclick="saveToArchive()">Inscribe to Grimoire</button>
+                        <span class="info-tooltip" data-tooltip="Preserves this complete reading and planetary aspects inside your browser's Personal Grimoire.">?</span>
+                    </div>
+                    
+                    <div class="btn-with-tooltip">
+                        <button id="shareBtn" class="glow-btn outline" onclick="shareDestiny()">Share Fate</button>
+                        <span class="info-tooltip" data-tooltip="Copies your current horoscope reading and custom cosmic aura link directly to your clipboard.">?</span>
+                    </div>
                 </div>
             </div>
-        </div> </div>
-</div>
+        </div>
+    </div>
 
-<footer class="site-footer">
-    <p>&copy; 2026 Astro Insight. All rights reserved.</p>
-    <div class="footer-links">
-        <a href="about.html">About</a>
-        <span class="divider">|</span>
-        <a href="privacy.html">Privacy Policy</a>
-        <span class="divider">|</span>
-        <a href="terms.html">Terms & Conditions</a>
-        <span class="divider">|</span>
-        <a href="helpcenter.html">Help Center</a>
-        <span class="divider">|</span>
-        <a href="support.html">Contact Support</a>
-    </div>
-    
-    <div class="social-links">
-         <a href="https://www.instagram.com/_astroinsight_/" target="_blank" rel="noopener">Instagram</a>
-         <a href="https://www.facebook.com/profile.php?id=61589576716944" target="_blank" rel="noopener">Facebook</a>
-         <a href="https://x.com/_Astro_Insight_" target="_blank" rel="noopener">X</a>
-    </div>
-</footer>
+    <footer class="site-footer">
+        <p>&copy; 2026 Astro Insight. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="about.html">About</a>
+            <span class="divider">|</span>
+            <a href="privacy.html">Privacy Policy</a>
+            <span class="divider">|</span>
+            <a href="terms.html">Terms & Conditions</a>
+            <span class="divider">|</span>
+            <a href="helpcenter.html">Help Center</a>
+            <span class="divider">|</span>
+            <a href="support.html">Contact Support</a>
+        </div>
         
+        <div class="social-links">
+             <a href="https://www.instagram.com/_astroinsight_/" target="_blank" rel="noopener">Instagram</a>
+             <a href="https://www.facebook.com/profile.php?id=61589576716944" target="_blank" rel="noopener">Facebook</a>
+             <a href="https://x.com/_Astro_Insight_" target="_blank" rel="noopener">X</a>
+        </div>
+    </footer>
+            
     <script src="script.js?v=20260612"></script>
     <script src="celestial-readings.js?v=1"></script>
+    <script src="sub.js"></script>
 </body>
 </html>
