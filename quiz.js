@@ -73,7 +73,11 @@ function showCosmicModal(title, message, onRestart) {
 }
 
 // VIEW SWITCHING LOGIC
-const allGames = ['blitz', 'alchemist', 'archetype', 'ruler', 'truth', 'tracer', 'tarot', 'chemistry', 'retrograde', 'moon'];
+const allGames = [
+    'blitz', 'alchemist', 'archetype', 'ruler', 'truth', 'tracer', 
+    'tarot', 'chemistry', 'retrograde', 'moon', 
+    'aspects', 'houses', 'eclipse', 'balance', 'traveler'
+];
 
 function openGame(gameId) {
     document.getElementById('hubView').style.display = 'none';
@@ -92,6 +96,11 @@ function openGame(gameId) {
     else if (gameId === 'chemistry') { document.getElementById('chemistryView').style.display = 'block'; initChemistryGame(); }
     else if (gameId === 'retrograde') { document.getElementById('retrogradeView').style.display = 'block'; initRetrogradeGame(); }
     else if (gameId === 'moon') { document.getElementById('moonView').style.display = 'block'; initMoonGame(); }
+    else if (gameId === 'aspects') { document.getElementById('aspectsView').style.display = 'block'; initAspectsGame(); }
+    else if (gameId === 'houses') { document.getElementById('housesView').style.display = 'block'; initHousesGame(); }
+    else if (gameId === 'eclipse') { document.getElementById('eclipseView').style.display = 'block'; initEclipseGame(); }
+    else if (gameId === 'balance') { document.getElementById('balanceView').style.display = 'block'; initBalanceGame(); }
+    else if (gameId === 'traveler') { document.getElementById('travelerView').style.display = 'block'; initTravelerGame(); }
 }
 
 function returnToHub() {
@@ -111,6 +120,11 @@ function returnToHub() {
     if (typeof chemState !== 'undefined' && chemState.timerInterval) clearInterval(chemState.timerInterval);
     if (typeof retroState !== 'undefined' && retroState.timerInterval) clearInterval(retroState.timerInterval);
     if (typeof moonState !== 'undefined' && moonState.timerInterval) clearInterval(moonState.timerInterval);
+    if (typeof aspectsState !== 'undefined' && aspectsState.timerInterval) clearInterval(aspectsState.timerInterval);
+    if (typeof housesState !== 'undefined' && housesState.timerInterval) clearInterval(housesState.timerInterval);
+    if (typeof eclipseState !== 'undefined' && eclipseState.timerInterval) clearInterval(eclipseState.timerInterval);
+    if (typeof balanceState !== 'undefined' && balanceState.timerInterval) clearInterval(balanceState.timerInterval);
+    if (typeof travelerState !== 'undefined' && travelerState.timerInterval) clearInterval(travelerState.timerInterval);
 }
 
 // ==========================================
@@ -704,7 +718,6 @@ function endTracerGame(isWin = false) {
     showCosmicModal(title, msg, () => initTracerGame());
 }
 
-
 // ==========================================
 // GAME 7: TAROT MEMORY MATRIX
 // ==========================================
@@ -1029,4 +1042,309 @@ function endMoonGame(isWin = false) {
         title = "New High Score! 🌟"; msg = (isWin ? `Lunar Master!\n\n` : `Great timing!\n\n`) + msg;
     }
     showCosmicModal(title, msg, () => initMoonGame());
+}
+
+// ==========================================
+// GAME 11: ASPECT ALIGNMENT
+// ==========================================
+const aspectsData = [
+    { name: "Trine (120°)", desc: "Harmonious flow of energy, natural talents and effortless luck.", ans: "Harmonious" },
+    { name: "Square (90°)", desc: "Internal friction, dynamic tension, and catalyst for major growth.", ans: "Tension" },
+    { name: "Opposition (180°)", desc: "Awareness through relationships, mirroring, and balancing polarities.", ans: "Balance" },
+    { name: "Sextile (60°)", desc: "Opportunities, cooperative potential, and creative possibilities.", ans: "Opportunity" },
+    { name: "Conjunction (0°)", desc: "Intense fusion of planetary energies acting as one unified force.", ans: "Fusion" }
+];
+let aspectsState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+
+function initAspectsGame() {
+    if (aspectsState.timerInterval) clearInterval(aspectsState.timerInterval);
+    aspectsState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...aspectsData]), matchedCount: 0 };
+    document.getElementById('aspects-highscore').innerText = localStorage.getItem('astroAspectsHighScore') || 0;
+    document.getElementById('aspects-score').innerText = '0';
+    document.getElementById('aspects-timer').innerText = '01:00';
+    loadNextAspect();
+}
+function startAspectsTimer() {
+    aspectsState.timerInterval = setInterval(() => {
+        aspectsState.timeLeft--;
+        let mins = Math.floor(aspectsState.timeLeft / 60).toString().padStart(2, '0');
+        let secs = (aspectsState.timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('aspects-timer').innerText = `${mins}:${secs}`;
+        if (aspectsState.timeLeft <= 0) endAspectsGame(false);
+    }, 1000);
+}
+function loadNextAspect() {
+    if (aspectsState.pool.length === 0) aspectsState.pool = shuffleArray([...aspectsData]);
+    aspectsState.current = aspectsState.pool.pop();
+    document.getElementById('aspects-title').innerText = aspectsState.current.name;
+    document.getElementById('aspects-desc').innerText = `"${aspectsState.current.desc}"`;
+    
+    const allAns = [...new Set(aspectsData.map(a => a.ans))];
+    const wrong = shuffleArray(allAns.filter(a => a !== aspectsState.current.ans)).slice(0, 3);
+    const options = shuffleArray([aspectsState.current.ans, ...wrong]);
+    const container = document.getElementById('aspects-buttons');
+    container.innerHTML = '';
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'glow-btn outline'; btn.innerText = opt; btn.style.color = '#fff'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
+        btn.onclick = () => handleAspectGuess(opt, btn); container.appendChild(btn);
+    });
+}
+function handleAspectGuess(guess, btn) {
+    if (!aspectsState.timerActive) return;
+    if (!aspectsState.hasStarted) { aspectsState.hasStarted = true; startAspectsTimer(); }
+    if (guess === aspectsState.current.ans) {
+        aspectsState.score++; aspectsState.matchedCount++; document.getElementById('aspects-score').innerText = aspectsState.score;
+        btn.style.borderColor = '#22c55e'; btn.style.color = '#22c55e';
+    } else {
+        aspectsState.score = Math.max(0, aspectsState.score - 1); document.getElementById('aspects-score').innerText = aspectsState.score;
+        btn.style.borderColor = '#ef4444'; btn.style.color = '#ef4444';
+        aspectsState.pool.unshift(aspectsState.current); shuffleArray(aspectsState.pool);
+    }
+    setTimeout(() => { loadNextAspect(); }, 500);
+}
+function endAspectsGame(isWin = false) {
+    clearInterval(aspectsState.timerInterval); aspectsState.timerActive = false;
+    let stored = parseInt(localStorage.getItem('astroAspectsHighScore') || 0);
+    if (aspectsState.score > stored) { localStorage.setItem('astroAspectsHighScore', aspectsState.score); document.getElementById('aspects-highscore').innerText = aspectsState.score; }
+    showCosmicModal("Aspects Complete!", `Final Score: ${aspectsState.score}`, () => initAspectsGame());
+}
+
+// ==========================================
+// GAME 12: HOUSE RULER
+// ==========================================
+const housesData = [
+    { house: "1st House", domain: "Self, appearance, vitality & new beginnings" },
+    { house: "2nd House", domain: "Money, possessions, values & self-worth" },
+    { house: "3rd House", domain: "Communication, local travel, siblings & mind" },
+    { house: "4th House", domain: "Home, family, roots & emotional foundation" },
+    { house: "5th House", domain: "Romance, creativity, children & pleasure" },
+    { house: "6th House", domain: "Daily routine, health, work habits & service" },
+    { house: "7th House", domain: "Partnerships, marriage & open enemies" },
+    { house: "8th House", domain: "Transformation, shared wealth, rebirth & secrets" },
+    { house: "9th House", domain: "Higher learning, philosophy, long-distance travel & expansion" },
+    { house: "10th House", domain: "Career, public reputation, status & ambitions" },
+    { house: "11th House", domain: "Friendships, groups, community & future aspirations" },
+    { house: "12th House", domain: "Spirituality, subconscious, isolation & hidden things" }
+];
+let housesState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+
+function initHousesGame() {
+    if (housesState.timerInterval) clearInterval(housesState.timerInterval);
+    housesState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...housesData]), matchedCount: 0 };
+    document.getElementById('houses-highscore').innerText = localStorage.getItem('astroHousesHighScore') || 0;
+    document.getElementById('houses-score').innerText = '0';
+    document.getElementById('houses-timer').innerText = '01:00';
+    loadNextHouse();
+}
+function startHousesTimer() {
+    housesState.timerInterval = setInterval(() => {
+        housesState.timeLeft--;
+        let mins = Math.floor(housesState.timeLeft / 60).toString().padStart(2, '0');
+        let secs = (housesState.timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('houses-timer').innerText = `${mins}:${secs}`;
+        if (housesState.timeLeft <= 0) endHousesGame(false);
+    }, 1000);
+}
+function loadNextHouse() {
+    if (housesState.pool.length === 0) housesState.pool = shuffleArray([...housesData]);
+    housesState.current = housesState.pool.pop();
+    document.getElementById('houses-title').innerText = housesState.current.house;
+    
+    const wrong = shuffleArray(housesData.filter(h => h.domain !== housesState.current.domain)).slice(0, 3);
+    const options = shuffleArray([housesState.current.domain, ...wrong.map(w => w.domain)]);
+    const container = document.getElementById('houses-buttons');
+    container.innerHTML = '';
+    options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'glow-btn outline'; btn.innerText = opt; btn.style.color = '#fff'; btn.style.fontSize = '0.85rem'; btn.style.borderColor = 'rgba(255,255,255,0.2)';
+        btn.onclick = () => handleHouseGuess(opt, btn); container.appendChild(btn);
+    });
+}
+function handleHouseGuess(guess, btn) {
+    if (!housesState.timerActive) return;
+    if (!housesState.hasStarted) { housesState.hasStarted = true; startHousesTimer(); }
+    if (guess === housesState.current.domain) {
+        housesState.score++; housesState.matchedCount++; document.getElementById('houses-score').innerText = housesState.score;
+        btn.style.borderColor = '#22c55e'; btn.style.color = '#22c55e';
+        if (housesState.matchedCount >= 12) { endHousesGame(true); return; }
+    } else {
+        housesState.score = Math.max(0, housesState.score - 1); document.getElementById('houses-score').innerText = housesState.score;
+        btn.style.borderColor = '#ef4444'; btn.style.color = '#ef4444';
+        housesState.pool.unshift(housesState.current); shuffleArray(housesState.pool);
+    }
+    setTimeout(() => { loadNextHouse(); }, 500);
+}
+function endHousesGame(isWin = false) {
+    clearInterval(housesState.timerInterval); housesState.timerActive = false;
+    let stored = parseInt(localStorage.getItem('astroHousesHighScore') || 0);
+    if (housesState.score > stored) { localStorage.setItem('astroHousesHighScore', housesState.score); document.getElementById('houses-highscore').innerText = housesState.score; }
+    showCosmicModal("Houses Mastered!", `Final Score: ${housesState.score}`, () => initHousesGame());
+}
+
+// ==========================================
+// GAME 13: ECLIPSE ALCHEMIST
+// ==========================================
+const eclipseData = [
+    { text: "New beginnings, outward push, resetting identity and bold leaps.", ans: "Solar" },
+    { text: "Emotional release, endings, shadow work, and deep subconscious clearing.", ans: "Lunar" },
+    { text: "Aligns with the New Moon phase.", ans: "Solar" },
+    { text: "Aligns with the Full Moon phase.", ans: "Lunar" },
+    { text: "Directly affects vitality and external life paths.", ans: "Solar" },
+    { text: "Directly impacts inner world, dreams, and relationships.", ans: "Lunar" }
+];
+let eclipseState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+
+function initEclipseGame() {
+    if (eclipseState.timerInterval) clearInterval(eclipseState.timerInterval);
+    eclipseState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...eclipseData]), matchedCount: 0 };
+    document.getElementById('eclipse-highscore').innerText = localStorage.getItem('astroEclipseHighScore') || 0;
+    document.getElementById('eclipse-score').innerText = '0';
+    document.getElementById('eclipse-timer').innerText = '01:00';
+    loadNextEclipse();
+}
+function startEclipseTimer() {
+    eclipseState.timerInterval = setInterval(() => {
+        eclipseState.timeLeft--;
+        let mins = Math.floor(eclipseState.timeLeft / 60).toString().padStart(2, '0');
+        let secs = (eclipseState.timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('eclipse-timer').innerText = `${mins}:${secs}`;
+        if (eclipseState.timeLeft <= 0) endEclipseGame(false);
+    }, 1000);
+}
+function loadNextEclipse() {
+    if (eclipseState.pool.length === 0) eclipseState.pool = shuffleArray([...eclipseData]);
+    eclipseState.current = eclipseState.pool.pop();
+    document.getElementById('eclipse-scenario').innerText = `"${eclipseState.current.text}"`;
+}
+function handleEclipseGuess(guess) {
+    if (!eclipseState.timerActive) return;
+    if (!eclipseState.hasStarted) { eclipseState.hasStarted = true; startEclipseTimer(); }
+    const card = document.getElementById('eclipse-current-card');
+    if (guess === eclipseState.current.ans) {
+        eclipseState.score++; eclipseState.matchedCount++; document.getElementById('eclipse-score').innerText = eclipseState.score;
+        card.style.borderColor = '#22c55e';
+    } else {
+        eclipseState.score = Math.max(0, eclipseState.score - 1); document.getElementById('eclipse-score').innerText = eclipseState.score;
+        card.style.borderColor = '#ef4444';
+        eclipseState.pool.unshift(eclipseState.current); shuffleArray(eclipseState.pool);
+    }
+    setTimeout(() => { card.style.borderColor = '#8b5cf6'; loadNextEclipse(); }, 400);
+}
+function endEclipseGame(isWin = false) {
+    clearInterval(eclipseState.timerInterval); eclipseState.timerActive = false;
+    let stored = parseInt(localStorage.getItem('astroEclipseHighScore') || 0);
+    if (eclipseState.score > stored) { localStorage.setItem('astroEclipseHighScore', eclipseState.score); document.getElementById('eclipse-highscore').innerText = eclipseState.score; }
+    showCosmicModal("Eclipse Master!", `Final Score: ${eclipseState.score}`, () => initEclipseGame());
+}
+
+// ==========================================
+// GAME 14: ELEMENT BALANCE
+// ==========================================
+const balanceData = [
+    { text: "Spontaneous road trip with zero planning.", ans: "Fire" },
+    { text: "Baking sourdough bread and tending to house plants.", ans: "Earth" },
+    { text: "Debating philosophy over coffee for 4 hours.", ans: "Air" },
+    { text: "Crying while listening to an emotional indie playlist.", ans: "Water" },
+    { text: "Starting a high-intensity gym workout at 5 AM.", ans: "Fire" },
+    { text: "Organizing your entire bank account and budgeting spreadsheet.", ans: "Earth" }
+];
+let balanceState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+
+function initBalanceGame() {
+    if (balanceState.timerInterval) clearInterval(balanceState.timerInterval);
+    balanceState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...balanceData]), matchedCount: 0 };
+    document.getElementById('balance-highscore').innerText = localStorage.getItem('astroBalanceHighScore') || 0;
+    document.getElementById('balance-score').innerText = '0';
+    document.getElementById('balance-timer').innerText = '01:00';
+    loadNextBalance();
+}
+function startBalanceTimer() {
+    balanceState.timerInterval = setInterval(() => {
+        balanceState.timeLeft--;
+        let mins = Math.floor(balanceState.timeLeft / 60).toString().padStart(2, '0');
+        let secs = (balanceState.timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('balance-timer').innerText = `${mins}:${secs}`;
+        if (balanceState.timeLeft <= 0) endBalanceGame(false);
+    }, 1000);
+}
+function loadNextBalance() {
+    if (balanceState.pool.length === 0) balanceState.pool = shuffleArray([...balanceData]);
+    balanceState.current = balanceState.pool.pop();
+    document.getElementById('balance-scenario').innerText = `"${balanceState.current.text}"`;
+}
+function handleBalanceGuess(guess) {
+    if (!balanceState.timerActive) return;
+    if (!balanceState.hasStarted) { balanceState.hasStarted = true; startBalanceTimer(); }
+    const card = document.getElementById('balance-current-card');
+    if (guess === balanceState.current.ans) {
+        balanceState.score++; balanceState.matchedCount++; document.getElementById('balance-score').innerText = balanceState.score;
+        card.style.borderColor = '#22c55e';
+    } else {
+        balanceState.score = Math.max(0, balanceState.score - 1); document.getElementById('balance-score').innerText = balanceState.score;
+        card.style.borderColor = '#ef4444';
+        balanceState.pool.unshift(balanceState.current); shuffleArray(balanceState.pool);
+    }
+    setTimeout(() => { card.style.borderColor = '#10b981'; loadNextBalance(); }, 400);
+}
+function endBalanceGame(isWin = false) {
+    clearInterval(balanceState.timerInterval); balanceState.timerActive = false;
+    let stored = parseInt(localStorage.getItem('astroBalanceHighScore') || 0);
+    if (balanceState.score > stored) { localStorage.setItem('astroBalanceHighScore', balanceState.score); document.getElementById('balance-highscore').innerText = balanceState.score; }
+    showCosmicModal("Balanced Elements!", `Final Score: ${balanceState.score}`, () => initBalanceGame());
+}
+
+// ==========================================
+// GAME 15: CELESTIAL TIME TRAVELER
+// ==========================================
+const travelerData = [
+    { text: "Pluto was officially reclassified as a dwarf planet in 2006.", ans: true },
+    { text: "Astrology and Astronomy were treated as completely separate fields in ancient Babylon.", ans: false },
+    { text: "Uranus was discovered by astronomer William Herschel in 1781.", ans: true },
+    { text: "There are officially 13 recognized constellations in the zodiac belt, including Ophiuchus.", ans: true },
+    { text: "Halley's Comet passes close to Earth every 15 years.", ans: false }
+];
+let travelerState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+
+function initTravelerGame() {
+    if (travelerState.timerInterval) clearInterval(travelerState.timerInterval);
+    travelerState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...travelerData]), matchedCount: 0 };
+    document.getElementById('traveler-highscore').innerText = localStorage.getItem('astroTravelerHighScore') || 0;
+    document.getElementById('traveler-score').innerText = '0';
+    document.getElementById('traveler-timer').innerText = '01:00';
+    loadNextTraveler();
+}
+function startTravelerTimer() {
+    travelerState.timerInterval = setInterval(() => {
+        travelerState.timeLeft--;
+        let mins = Math.floor(travelerState.timeLeft / 60).toString().padStart(2, '0');
+        let secs = (travelerState.timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('traveler-timer').innerText = `${mins}:${secs}`;
+        if (travelerState.timeLeft <= 0) endTravelerGame(false);
+    }, 1000);
+}
+function loadNextTraveler() {
+    if (travelerState.pool.length === 0) travelerState.pool = shuffleArray([...travelerData]);
+    travelerState.current = travelerState.pool.pop();
+    document.getElementById('traveler-scenario').innerText = `"${travelerState.current.text}"`;
+}
+function handleTravelerGuess(guess) {
+    if (!travelerState.timerActive) return;
+    if (!travelerState.hasStarted) { travelerState.hasStarted = true; startTravelerTimer(); }
+    const card = document.getElementById('traveler-current-card');
+    if (guess === travelerState.current.ans) {
+        travelerState.score++; travelerState.matchedCount++; document.getElementById('traveler-score').innerText = travelerState.score;
+        card.style.borderColor = '#22c55e';
+    } else {
+        travelerState.score = Math.max(0, travelerState.score - 1); document.getElementById('traveler-score').innerText = travelerState.score;
+        card.style.borderColor = '#ef4444';
+        travelerState.pool.unshift(travelerState.current); shuffleArray(travelerState.pool);
+    }
+    setTimeout(() => { card.style.borderColor = '#f97316'; loadNextTraveler(); }, 400);
+}
+function endTravelerGame(isWin = false) {
+    clearInterval(travelerState.timerInterval); travelerState.timerActive = false;
+    let stored = parseInt(localStorage.getItem('astroTravelerHighScore') || 0);
+    if (travelerState.score > stored) { localStorage.setItem('astroTravelerHighScore', travelerState.score); document.getElementById('traveler-highscore').innerText = travelerState.score; }
+    showCosmicModal("Time Traveler!", `Final Score: ${travelerState.score}`, () => initTravelerGame());
 }

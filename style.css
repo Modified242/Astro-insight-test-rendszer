@@ -1614,3 +1614,11 @@ h2, h3, h4, .omen-box {
     text-align: center; 
     padding: 5px;
 }
+/* Reszponzív fix a kvíz kártyákhoz mobilon */
+@media (max-width: 768px) {
+    .zodiac-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* Mobilon 2 oszlopba rendezi a kártyákat */
+        gap: 12px !important;
+    }
+}
