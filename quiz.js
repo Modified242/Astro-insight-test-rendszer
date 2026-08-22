@@ -13,7 +13,7 @@ function shuffleArray(array) {
 }
 
 // ==========================================
-// UNIFIED COSMIC MODAL (Alert helyett)
+// UNIFIED COSMIC MODAL
 // ==========================================
 function showCosmicModal(title, message, onRestart) {
     if (!document.getElementById('cosmic-modal-styles')) {
@@ -337,27 +337,51 @@ function endAlchemistGame(isWin = false) {
 // ==========================================
 const archetypeScenarios = [
     { sign: "Aries", text: "Challenged a stranger to a race because they were walking too fast." },
+    { sign: "Aries", text: "Got impatient waiting for the microwave to finish and stopped it at 1 second." },
+    { sign: "Aries", text: "Started a DIY project at 2 AM and got angry when it wasn't finished by 3 AM." },
     { sign: "Taurus", text: "Refused to go out because their favorite sweatpants were in the wash." },
+    { sign: "Taurus", text: "Ordered takeout from the exact same restaurant for the 14th time in a row." },
+    { sign: "Taurus", text: "Bought an expensive silk pillowcase because 'sleep is an investment'." },
     { sign: "Gemini", text: "Sent 8 separate text messages instead of one long paragraph." },
+    { sign: "Gemini", text: "Started telling a story, got distracted, and finished a completely different story." },
+    { sign: "Gemini", text: "Googled a random fact at 3 AM and went down a 4-hour Wikipedia rabbit hole." },
     { sign: "Cancer", text: "Kept a movie ticket stub from 2014 because 'it holds emotional value'." },
+    { sign: "Cancer", text: "Canceled plans to stay home, wrap up in a blanket, and rewatch a comfort show." },
+    { sign: "Cancer", text: "Cooked a three-course meal for a friend who had a bad day." },
     { sign: "Leo", text: "Practiced their 'surprised face' in the mirror just in case they win an award." },
+    { sign: "Leo", text: "Accidentally turned a casual conversation into a 20-minute story about their own life." },
+    { sign: "Leo", text: "Bought a round of drinks for the whole bar just to feel the applause." },
+    { sign: "Virgo", text: "Corrected someone's grammar during an emotional argument." },
     { sign: "Virgo", text: "Made a detailed to-do list for their weekend relaxation time." },
+    { sign: "Virgo", text: "Re-organized their apps by color and function." },
     { sign: "Libra", text: "Took 45 minutes to decide what to watch on Netflix, then fell asleep." },
+    { sign: "Libra", text: "Agreed with both sides of an argument just to keep the peace." },
+    { sign: "Libra", text: "Spent 20 minutes curating the perfect aesthetic Instagram story." },
     { sign: "Scorpio", text: "Did deep background research on their new coworker before saying 'hello'." },
+    { sign: "Scorpio", text: "Remembered a minor insult from 5 years ago with perfect clarity." },
+    { sign: "Scorpio", text: "Found out their crush's entire dating history just by knowing their first name." },
     { sign: "Sagittarius", text: "Booked a flight to another country because they got bored on a Tuesday." },
+    { sign: "Sagittarius", text: "Accidentally insulted someone by being 'too honest'." },
+    { sign: "Sagittarius", text: "Agreed to give a presentation on a topic they know nothing about." },
     { sign: "Capricorn", text: "Scheduled a 'mental breakdown' into their calendar for exactly 7:30 PM." },
+    { sign: "Capricorn", text: "Felt a surge of romantic attraction when their partner paid a bill on time." },
+    { sign: "Capricorn", text: "Created a 5-year plan spreadsheet on a Saturday night." },
     { sign: "Aquarius", text: "Ghosted everyone for a week to 'recharge', then returned like nothing happened." },
-    { sign: "Pisces", text: "Cried because they saw an old man eating alone at a restaurant." }
+    { sign: "Aquarius", text: "Argued against a popular opinion just to play devil's advocate." },
+    { sign: "Aquarius", text: "Argued that aliens built the pyramids just to see people's reactions." },
+    { sign: "Pisces", text: "Cried because they saw an old man eating alone at a restaurant." },
+    { sign: "Pisces", text: "Fell in love with someone they made eye contact with on the train for 2 seconds." },
+    { sign: "Pisces", text: "Felt bad for an inanimate object and apologized to it." }
 ];
 
-let archetypeState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, currentScenario: null, hasStarted: false, questionPool: [], matchedCount: 0 };
+let archetypeState = { score: 0, timeLeft: 120, timerActive: false, timerInterval: null, currentScenario: null, hasStarted: false, questionPool: [], matchedCount: 0 };
 
 function initArchetypeGame() {
     if (archetypeState.timerInterval) clearInterval(archetypeState.timerInterval);
-    archetypeState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, currentScenario: null, hasStarted: false, questionPool: shuffleArray([...archetypeScenarios]), matchedCount: 0 };
+    archetypeState = { score: 0, timeLeft: 120, timerActive: true, timerInterval: null, currentScenario: null, hasStarted: false, questionPool: shuffleArray([...archetypeScenarios]), matchedCount: 0 };
     document.getElementById('archetype-highscore').innerText = localStorage.getItem('astroArchetypeHighScore') || 0;
     document.getElementById('archetype-score').innerText = '0';
-    document.getElementById('archetype-timer').innerText = '01:30';
+    document.getElementById('archetype-timer').innerText = '02:00';
     loadNextArchetype();
 }
 
@@ -813,17 +837,23 @@ const chemistryPairs = [
     { s1: "Leo", s2: "Scorpio", ans: "Challenging" }, { s1: "Aries", s2: "Cancer", ans: "Challenging" },
     { s1: "Gemini", s2: "Scorpio", ans: "Wildcard" }, { s1: "Aquarius", s2: "Taurus", ans: "Wildcard" },
     { s1: "Pisces", s2: "Sagittarius", ans: "Wildcard" }, { s1: "Virgo", s2: "Pisces", ans: "Challenging" },
-    { s1: "Libra", s2: "Aquarius", ans: "Soulmates" }, { s1: "Scorpio", s2: "Cancer", ans: "Soulmates" }
+    { s1: "Libra", s2: "Aquarius", ans: "Soulmates" }, { s1: "Scorpio", s2: "Cancer", ans: "Soulmates" },
+    { s1: "Aries", s2: "Aries", ans: "Wildcard" }, { s1: "Taurus", s2: "Scorpio", ans: "Soulmates" },
+    { s1: "Gemini", s2: "Sagittarius", ans: "Soulmates" }, { s1: "Cancer", s2: "Libra", ans: "Challenging" },
+    { s1: "Leo", s2: "Taurus", ans: "Challenging" }, { s1: "Virgo", s2: "Taurus", ans: "Soulmates" },
+    { s1: "Libra", s2: "Aries", ans: "Soulmates" }, { s1: "Scorpio", s2: "Aquarius", ans: "Challenging" },
+    { s1: "Sagittarius", s2: "Virgo", ans: "Challenging" }, { s1: "Capricorn", s2: "Taurus", ans: "Soulmates" },
+    { s1: "Aquarius", s2: "Leo", ans: "Soulmates" }, { s1: "Pisces", s2: "Gemini", ans: "Challenging" }
 ];
 
-let chemState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, currentPair: null, hasStarted: false, pool: [], matchedCount: 0 };
+let chemState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, currentPair: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initChemistryGame() {
     if (chemState.timerInterval) clearInterval(chemState.timerInterval);
-    chemState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, currentPair: null, hasStarted: false, pool: shuffleArray([...chemistryPairs]), matchedCount: 0 };
+    chemState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, currentPair: null, hasStarted: false, pool: shuffleArray([...chemistryPairs]), matchedCount: 0 };
     document.getElementById('chem-highscore').innerText = localStorage.getItem('astroChemHighScore') || 0;
     document.getElementById('chem-score').innerText = '0';
-    document.getElementById('chem-timer').innerText = '01:00';
+    document.getElementById('chem-timer').innerText = '01:30';
     loadNextChemCard();
 }
 
@@ -862,7 +892,7 @@ function handleChemGuess(guess) {
     
     setTimeout(() => {
         card.style.transform = 'none'; card.style.borderColor = '#f43f5e';
-        if (chemState.matchedCount >= 12) endChemGame(true);
+        if (chemState.matchedCount >= chemistryPairs.length) endChemGame(true);
         else loadNextChemCard();
     }, 400);
 }
@@ -887,17 +917,22 @@ const retrogradeScenarios = [
     { p: "Venus", text: "Text your ex 'I miss you'.", ans: false }, { p: "Venus", text: "Focus on self-care and a spa day.", ans: true },
     { p: "Mars", text: "Start a heated argument with a coworker.", ans: false }, { p: "Mars", text: "Reflect on where your anger comes from.", ans: true },
     { p: "Jupiter", text: "Make a massive, risky financial investment.", ans: false }, { p: "Jupiter", text: "Re-evaluate your long-term goals.", ans: true },
-    { p: "Mercury", text: "Buy an expensive new laptop.", ans: false }, { p: "Venus", text: "Get a drastic, spontaneous new haircut.", ans: false }
+    { p: "Mercury", text: "Buy an expensive new laptop.", ans: false }, { p: "Venus", text: "Get a drastic, spontaneous new haircut.", ans: false },
+    { p: "Mars", text: "Take a martial arts class to release stress.", ans: true }, { p: "Mars", text: "Launch a new business venture aggressively.", ans: false },
+    { p: "Jupiter", text: "Go on a spontaneous luxury vacation.", ans: false }, { p: "Jupiter", text: "Return to a spiritual text you read years ago.", ans: true },
+    { p: "Saturn", text: "Review your career boundaries.", ans: true }, { p: "Saturn", text: "Quit your job with no backup plan.", ans: false },
+    { p: "Uranus", text: "Make a sudden, irreversible life change.", ans: false }, { p: "Uranus", text: "Reflect on your need for personal freedom.", ans: true },
+    { p: "Neptune", text: "Start a creative dream journal.", ans: true }, { p: "Neptune", text: "Ignore red flags in a new relationship.", ans: false }
 ];
 
-let retroState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, currentScenario: null, hasStarted: false, pool: [], matchedCount: 0 };
+let retroState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, currentScenario: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initRetrogradeGame() {
     if (retroState.timerInterval) clearInterval(retroState.timerInterval);
-    retroState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, currentScenario: null, hasStarted: false, pool: shuffleArray([...retrogradeScenarios]), matchedCount: 0 };
+    retroState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, currentScenario: null, hasStarted: false, pool: shuffleArray([...retrogradeScenarios]), matchedCount: 0 };
     document.getElementById('retro-highscore').innerText = localStorage.getItem('astroRetroHighScore') || 0;
     document.getElementById('retro-score').innerText = '0';
-    document.getElementById('retro-timer').innerText = '01:00';
+    document.getElementById('retro-timer').innerText = '01:30';
     loadNextRetroCard();
 }
 
@@ -922,6 +957,8 @@ function handleRetroGuess(guess) {
     if (!retroState.hasStarted) { retroState.hasStarted = true; startRetroTimer(); }
     const card = document.getElementById('retro-current-card');
     
+    const btns = document.getElementById('retrogradeView').querySelectorAll('button');
+    
     if (guess === retroState.currentScenario.ans) {
         retroState.score++; retroState.matchedCount++; document.getElementById('retro-score').innerText = retroState.score;
         if (typeof playSound === 'function') playSound('success');
@@ -932,9 +969,11 @@ function handleRetroGuess(guess) {
         retroState.pool.unshift(retroState.currentScenario); shuffleArray(retroState.pool);
     }
     
+    btns.forEach(b => { if(!b.innerText.includes('Hub') && !b.innerText.includes('Restart')) b.disabled = true; });
     setTimeout(() => {
         card.style.transform = 'none'; card.style.borderColor = '#fbbf24';
-        if (retroState.matchedCount >= 10) endRetroGame(true);
+        btns.forEach(b => b.disabled = false);
+        if (retroState.matchedCount >= retrogradeScenarios.length) endRetroGame(true);
         else loadNextRetroCard();
     }, 400);
 }
@@ -1027,7 +1066,7 @@ function handleMoonGuess(guessedPhase, btnElement) {
     
     setTimeout(() => {
         card.style.transform = 'none';
-        if (moonState.matchedCount >= 8) endMoonGame(true);
+        if (moonState.matchedCount >= moonPhases.length) endMoonGame(true);
         else loadNextMoonCard();
     }, 600);
 }
@@ -1047,18 +1086,23 @@ function endMoonGame(isWin = false) {
 // ==========================================
 // GAME 11: ASPECT ALIGNMENT
 // ==========================================
-const aspectsData = [
-    { name: "Trine (120°)", desc: "Harmonious flow of energy, natural talents and effortless luck.", ans: "Harmonious" },
-    { name: "Square (90°)", desc: "Internal friction, dynamic tension, and catalyst for major growth.", ans: "Tension" },
-    { name: "Opposition (180°)", desc: "Awareness through relationships, mirroring, and balancing polarities.", ans: "Balance" },
-    { name: "Sextile (60°)", desc: "Opportunities, cooperative potential, and creative possibilities.", ans: "Opportunity" },
-    { name: "Conjunction (0°)", desc: "Intense fusion of planetary energies acting as one unified force.", ans: "Fusion" }
+const aspectsScenarios = [
+    { text: "A sudden clash of egos that forces both parties to grow.", ans: "Square" },
+    { text: "Effortless mutual understanding and shared luck.", ans: "Trine" },
+    { text: "Finding balance through a tug-of-war with a partner.", ans: "Opposition" },
+    { text: "A helpful opportunity presented by a casual acquaintance.", ans: "Sextile" },
+    { text: "Two energies fusing together, acting as a single intense force.", ans: "Conjunction" },
+    { text: "Feeling blocked, like hitting a brick wall in your career.", ans: "Square" },
+    { text: "Natural charisma that opens doors without trying.", ans: "Trine" },
+    { text: "Realizing your shadow self by looking at your known enemy.", ans: "Opposition" },
+    { text: "A spark of inspiration that requires you to take action to manifest.", ans: "Sextile" },
+    { text: "Total alignment of thoughts and actions; you speak and it happens.", ans: "Conjunction" }
 ];
 let aspectsState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initAspectsGame() {
     if (aspectsState.timerInterval) clearInterval(aspectsState.timerInterval);
-    aspectsState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...aspectsData]), matchedCount: 0 };
+    aspectsState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...aspectsScenarios]), matchedCount: 0 };
     document.getElementById('aspects-highscore').innerText = localStorage.getItem('astroAspectsHighScore') || 0;
     document.getElementById('aspects-score').innerText = '0';
     document.getElementById('aspects-timer').innerText = '01:00';
@@ -1074,12 +1118,11 @@ function startAspectsTimer() {
     }, 1000);
 }
 function loadNextAspect() {
-    if (aspectsState.pool.length === 0) aspectsState.pool = shuffleArray([...aspectsData]);
     aspectsState.current = aspectsState.pool.pop();
-    document.getElementById('aspects-title').innerText = aspectsState.current.name;
-    document.getElementById('aspects-desc').innerText = `"${aspectsState.current.desc}"`;
+    document.getElementById('aspects-title').innerText = "Cosmic Aspect";
+    document.getElementById('aspects-desc').innerText = `"${aspectsState.current.text}"`;
     
-    const allAns = [...new Set(aspectsData.map(a => a.ans))];
+    const allAns = ["Square", "Trine", "Opposition", "Sextile", "Conjunction"];
     const wrong = shuffleArray(allAns.filter(a => a !== aspectsState.current.ans)).slice(0, 3);
     const options = shuffleArray([aspectsState.current.ans, ...wrong]);
     const container = document.getElementById('aspects-buttons');
@@ -1093,15 +1136,25 @@ function loadNextAspect() {
 function handleAspectGuess(guess, btn) {
     if (!aspectsState.timerActive) return;
     if (!aspectsState.hasStarted) { aspectsState.hasStarted = true; startAspectsTimer(); }
+    const card = document.getElementById('aspects-current-card');
+    
     if (guess === aspectsState.current.ans) {
         aspectsState.score++; aspectsState.matchedCount++; document.getElementById('aspects-score').innerText = aspectsState.score;
-        btn.style.borderColor = '#22c55e'; btn.style.color = '#22c55e';
+        btn.style.borderColor = '#22c55e'; btn.style.color = '#22c55e'; card.style.transform = 'scale(1.05)';
     } else {
         aspectsState.score = Math.max(0, aspectsState.score - 1); document.getElementById('aspects-score').innerText = aspectsState.score;
-        btn.style.borderColor = '#ef4444'; btn.style.color = '#ef4444';
+        btn.style.borderColor = '#ef4444'; btn.style.color = '#ef4444'; card.style.transform = 'translateX(-10px)';
         aspectsState.pool.unshift(aspectsState.current); shuffleArray(aspectsState.pool);
     }
-    setTimeout(() => { loadNextAspect(); }, 500);
+    
+    const allBtns = document.getElementById('aspects-buttons').children;
+    for (let b of allBtns) { b.onclick = null; }
+    
+    setTimeout(() => { 
+        card.style.transform = 'none';
+        if (aspectsState.matchedCount >= aspectsScenarios.length) endAspectsGame(true);
+        else loadNextAspect();
+    }, 500);
 }
 function endAspectsGame(isWin = false) {
     clearInterval(aspectsState.timerInterval); aspectsState.timerActive = false;
@@ -1147,7 +1200,6 @@ function startHousesTimer() {
     }, 1000);
 }
 function loadNextHouse() {
-    if (housesState.pool.length === 0) housesState.pool = shuffleArray([...housesData]);
     housesState.current = housesState.pool.pop();
     document.getElementById('houses-title').innerText = housesState.current.house;
     
@@ -1164,16 +1216,25 @@ function loadNextHouse() {
 function handleHouseGuess(guess, btn) {
     if (!housesState.timerActive) return;
     if (!housesState.hasStarted) { housesState.hasStarted = true; startHousesTimer(); }
+    const card = document.getElementById('houses-current-card');
+    
     if (guess === housesState.current.domain) {
         housesState.score++; housesState.matchedCount++; document.getElementById('houses-score').innerText = housesState.score;
-        btn.style.borderColor = '#22c55e'; btn.style.color = '#22c55e';
-        if (housesState.matchedCount >= 12) { endHousesGame(true); return; }
+        btn.style.borderColor = '#22c55e'; btn.style.color = '#22c55e'; card.style.transform = 'scale(1.05)';
     } else {
         housesState.score = Math.max(0, housesState.score - 1); document.getElementById('houses-score').innerText = housesState.score;
-        btn.style.borderColor = '#ef4444'; btn.style.color = '#ef4444';
+        btn.style.borderColor = '#ef4444'; btn.style.color = '#ef4444'; card.style.transform = 'translateX(-10px)';
         housesState.pool.unshift(housesState.current); shuffleArray(housesState.pool);
     }
-    setTimeout(() => { loadNextHouse(); }, 500);
+    
+    const allBtns = document.getElementById('houses-buttons').children;
+    for (let b of allBtns) { b.onclick = null; }
+    
+    setTimeout(() => { 
+        card.style.transform = 'none';
+        if (housesState.matchedCount >= housesData.length) endHousesGame(true); 
+        else loadNextHouse();
+    }, 500);
 }
 function endHousesGame(isWin = false) {
     clearInterval(housesState.timerInterval); housesState.timerActive = false;
@@ -1186,12 +1247,22 @@ function endHousesGame(isWin = false) {
 // GAME 13: ECLIPSE ALCHEMIST
 // ==========================================
 const eclipseData = [
-    { text: "New beginnings, outward push, resetting identity and bold leaps.", ans: "Solar" },
-    { text: "Emotional release, endings, shadow work, and deep subconscious clearing.", ans: "Lunar" },
-    { text: "Aligns with the New Moon phase.", ans: "Solar" },
-    { text: "Aligns with the Full Moon phase.", ans: "Lunar" },
+    { text: "Starting a new career path.", ans: "Solar" },
+    { text: "Planting seeds for a 6-month goal.", ans: "Solar" },
+    { text: "A sudden external opportunity arriving.", ans: "Solar" },
+    { text: "Initiating a new relationship phase.", ans: "Solar" },
+    { text: "Cutting ties with a toxic friend.", ans: "Lunar" },
+    { text: "A secret being revealed to you.", ans: "Lunar" },
+    { text: "Quitting a bad habit permanently.", ans: "Lunar" },
+    { text: "Emotional culmination of a long project.", ans: "Lunar" },
+    { text: "A sudden urge to change your physical appearance.", ans: "Solar" },
+    { text: "Realizing you outgrew your current living situation.", ans: "Lunar" },
+    { text: "New beginnings, outward push, resetting identity.", ans: "Solar" },
+    { text: "Emotional release, endings, and shadow work.", ans: "Lunar" },
     { text: "Directly affects vitality and external life paths.", ans: "Solar" },
-    { text: "Directly impacts inner world, dreams, and relationships.", ans: "Lunar" }
+    { text: "Directly impacts inner world, dreams, and relationships.", ans: "Lunar" },
+    { text: "Aligns with the New Moon phase.", ans: "Solar" },
+    { text: "Aligns with the Full Moon phase.", ans: "Lunar" }
 ];
 let eclipseState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
 
@@ -1213,7 +1284,6 @@ function startEclipseTimer() {
     }, 1000);
 }
 function loadNextEclipse() {
-    if (eclipseState.pool.length === 0) eclipseState.pool = shuffleArray([...eclipseData]);
     eclipseState.current = eclipseState.pool.pop();
     document.getElementById('eclipse-scenario').innerText = `"${eclipseState.current.text}"`;
 }
@@ -1221,15 +1291,24 @@ function handleEclipseGuess(guess) {
     if (!eclipseState.timerActive) return;
     if (!eclipseState.hasStarted) { eclipseState.hasStarted = true; startEclipseTimer(); }
     const card = document.getElementById('eclipse-current-card');
+    const btns = document.getElementById('eclipseView').querySelectorAll('button');
+    
     if (guess === eclipseState.current.ans) {
         eclipseState.score++; eclipseState.matchedCount++; document.getElementById('eclipse-score').innerText = eclipseState.score;
-        card.style.borderColor = '#22c55e';
+        card.style.borderColor = '#22c55e'; card.style.transform = 'scale(1.05)';
     } else {
         eclipseState.score = Math.max(0, eclipseState.score - 1); document.getElementById('eclipse-score').innerText = eclipseState.score;
-        card.style.borderColor = '#ef4444';
+        card.style.borderColor = '#ef4444'; card.style.transform = 'translateX(-10px)';
         eclipseState.pool.unshift(eclipseState.current); shuffleArray(eclipseState.pool);
     }
-    setTimeout(() => { card.style.borderColor = '#8b5cf6'; loadNextEclipse(); }, 400);
+    
+    btns.forEach(b => { if(!b.innerText.includes('Hub') && !b.innerText.includes('Restart')) b.disabled = true; });
+    setTimeout(() => { 
+        card.style.borderColor = '#8b5cf6'; card.style.transform = 'none';
+        btns.forEach(b => b.disabled = false);
+        if (eclipseState.matchedCount >= eclipseData.length) endEclipseGame(true);
+        else loadNextEclipse(); 
+    }, 400);
 }
 function endEclipseGame(isWin = false) {
     clearInterval(eclipseState.timerInterval); eclipseState.timerActive = false;
@@ -1247,16 +1326,30 @@ const balanceData = [
     { text: "Debating philosophy over coffee for 4 hours.", ans: "Air" },
     { text: "Crying while listening to an emotional indie playlist.", ans: "Water" },
     { text: "Starting a high-intensity gym workout at 5 AM.", ans: "Fire" },
-    { text: "Organizing your entire bank account and budgeting spreadsheet.", ans: "Earth" }
+    { text: "Organizing your entire bank account and budgeting spreadsheet.", ans: "Earth" },
+    { text: "Impulsively joining a dance competition.", ans: "Fire" },
+    { text: "Defending your friend aggressively.", ans: "Fire" },
+    { text: "Building a wooden shelf from scratch.", ans: "Earth" },
+    { text: "Scheduling your meals for the week.", ans: "Earth" },
+    { text: "Reading three books at the same time.", ans: "Air" },
+    { text: "Gossiping at a networking event.", ans: "Air" },
+    { text: "Trusting your gut feeling about a stranger.", ans: "Water" },
+    { text: "Adopting a stray kitten because you felt bad.", ans: "Water" },
+    { text: "Starting a bonfire just to watch the flames.", ans: "Fire" },
+    { text: "Saving 20% of your paycheck every month.", ans: "Earth" },
+    { text: "Debating politics with a stranger online.", ans: "Air" },
+    { text: "Writing a poem about a dream you had.", ans: "Water" },
+    { text: "Taking the lead in a group project naturally.", ans: "Fire" },
+    { text: "Refusing to change your mind despite new evidence.", ans: "Earth" }
 ];
-let balanceState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+let balanceState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initBalanceGame() {
     if (balanceState.timerInterval) clearInterval(balanceState.timerInterval);
-    balanceState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...balanceData]), matchedCount: 0 };
+    balanceState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...balanceData]), matchedCount: 0 };
     document.getElementById('balance-highscore').innerText = localStorage.getItem('astroBalanceHighScore') || 0;
     document.getElementById('balance-score').innerText = '0';
-    document.getElementById('balance-timer').innerText = '01:00';
+    document.getElementById('balance-timer').innerText = '01:30';
     loadNextBalance();
 }
 function startBalanceTimer() {
@@ -1269,7 +1362,6 @@ function startBalanceTimer() {
     }, 1000);
 }
 function loadNextBalance() {
-    if (balanceState.pool.length === 0) balanceState.pool = shuffleArray([...balanceData]);
     balanceState.current = balanceState.pool.pop();
     document.getElementById('balance-scenario').innerText = `"${balanceState.current.text}"`;
 }
@@ -1277,15 +1369,24 @@ function handleBalanceGuess(guess) {
     if (!balanceState.timerActive) return;
     if (!balanceState.hasStarted) { balanceState.hasStarted = true; startBalanceTimer(); }
     const card = document.getElementById('balance-current-card');
+    const btns = document.getElementById('balanceView').querySelectorAll('button');
+    
     if (guess === balanceState.current.ans) {
         balanceState.score++; balanceState.matchedCount++; document.getElementById('balance-score').innerText = balanceState.score;
-        card.style.borderColor = '#22c55e';
+        card.style.borderColor = '#22c55e'; card.style.transform = 'scale(1.05)';
     } else {
         balanceState.score = Math.max(0, balanceState.score - 1); document.getElementById('balance-score').innerText = balanceState.score;
-        card.style.borderColor = '#ef4444';
+        card.style.borderColor = '#ef4444'; card.style.transform = 'translateX(-10px)';
         balanceState.pool.unshift(balanceState.current); shuffleArray(balanceState.pool);
     }
-    setTimeout(() => { card.style.borderColor = '#10b981'; loadNextBalance(); }, 400);
+    
+    btns.forEach(b => { if(!b.innerText.includes('Hub') && !b.innerText.includes('Restart')) b.disabled = true; });
+    setTimeout(() => { 
+        card.style.borderColor = '#10b981'; card.style.transform = 'none';
+        btns.forEach(b => b.disabled = false);
+        if (balanceState.matchedCount >= balanceData.length) endBalanceGame(true);
+        else loadNextBalance(); 
+    }, 400);
 }
 function endBalanceGame(isWin = false) {
     clearInterval(balanceState.timerInterval); balanceState.timerActive = false;
@@ -1302,16 +1403,26 @@ const travelerData = [
     { text: "Astrology and Astronomy were treated as completely separate fields in ancient Babylon.", ans: false },
     { text: "Uranus was discovered by astronomer William Herschel in 1781.", ans: true },
     { text: "There are officially 13 recognized constellations in the zodiac belt, including Ophiuchus.", ans: true },
-    { text: "Halley's Comet passes close to Earth every 15 years.", ans: false }
+    { text: "Halley's Comet passes close to Earth every 15 years.", ans: false },
+    { text: "The shift into the Age of Aquarius happened precisely in the year 2000.", ans: false },
+    { text: "Neptune was found by mathematical prediction rather than empirical observation.", ans: true },
+    { text: "The concept of the 12-sign zodiac originated in ancient Babylon.", ans: true },
+    { text: "Carl Jung used astrology in his psychological profiling.", ans: true },
+    { text: "A complete cycle of Uranus around the Sun takes exactly 100 years.", ans: false },
+    { text: "The Moon rules the sign of Cancer.", ans: true },
+    { text: "Venus rules both Taurus and Libra.", ans: true },
+    { text: "Mercury is the ruling planet of Scorpio.", ans: false },
+    { text: "The planet Mars was named after the Roman god of war.", ans: true },
+    { text: "The zodiac sign Leo is ruled by the Moon.", ans: false }
 ];
-let travelerState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+let travelerState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initTravelerGame() {
     if (travelerState.timerInterval) clearInterval(travelerState.timerInterval);
-    travelerState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...travelerData]), matchedCount: 0 };
+    travelerState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...travelerData]), matchedCount: 0 };
     document.getElementById('traveler-highscore').innerText = localStorage.getItem('astroTravelerHighScore') || 0;
     document.getElementById('traveler-score').innerText = '0';
-    document.getElementById('traveler-timer').innerText = '01:00';
+    document.getElementById('traveler-timer').innerText = '01:30';
     loadNextTraveler();
 }
 function startTravelerTimer() {
@@ -1324,7 +1435,6 @@ function startTravelerTimer() {
     }, 1000);
 }
 function loadNextTraveler() {
-    if (travelerState.pool.length === 0) travelerState.pool = shuffleArray([...travelerData]);
     travelerState.current = travelerState.pool.pop();
     document.getElementById('traveler-scenario').innerText = `"${travelerState.current.text}"`;
 }
@@ -1332,15 +1442,24 @@ function handleTravelerGuess(guess) {
     if (!travelerState.timerActive) return;
     if (!travelerState.hasStarted) { travelerState.hasStarted = true; startTravelerTimer(); }
     const card = document.getElementById('traveler-current-card');
+    const btns = document.getElementById('travelerView').querySelectorAll('button');
+    
     if (guess === travelerState.current.ans) {
         travelerState.score++; travelerState.matchedCount++; document.getElementById('traveler-score').innerText = travelerState.score;
-        card.style.borderColor = '#22c55e';
+        card.style.borderColor = '#22c55e'; card.style.transform = 'scale(1.05)';
     } else {
         travelerState.score = Math.max(0, travelerState.score - 1); document.getElementById('traveler-score').innerText = travelerState.score;
-        card.style.borderColor = '#ef4444';
+        card.style.borderColor = '#ef4444'; card.style.transform = 'translateX(-10px)';
         travelerState.pool.unshift(travelerState.current); shuffleArray(travelerState.pool);
     }
-    setTimeout(() => { card.style.borderColor = '#f97316'; loadNextTraveler(); }, 400);
+    
+    btns.forEach(b => { if(!b.innerText.includes('Hub') && !b.innerText.includes('Restart')) b.disabled = true; });
+    setTimeout(() => { 
+        card.style.borderColor = '#f97316'; card.style.transform = 'none';
+        btns.forEach(b => b.disabled = false);
+        if (travelerState.matchedCount >= travelerData.length) endTravelerGame(true);
+        else loadNextTraveler(); 
+    }, 400);
 }
 function endTravelerGame(isWin = false) {
     clearInterval(travelerState.timerInterval); travelerState.timerActive = false;
