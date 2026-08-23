@@ -1193,71 +1193,58 @@ async function fetchTarotReading(spread) {
 }
 
 // ==========================================
-// DYNAMIC SITE LOGO & DOUBLE FLIP PRELOADER
+// DYNAMIC SITE LOGO & ELEGANT PRELOADER
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     const preloader = document.getElementById("astro-preloader");
-    
     const introLogo = document.getElementById("intro-logo-container");
-    const introTitle = document.getElementById("intro-title");
-    
     const siteLogo = document.getElementById("site-logo-container");
-    const siteTitle = document.getElementById("site-title-container");
+    const siteTitle = document.getElementById("site-title-container"); 
 
     const introPlayed = sessionStorage.getItem('introPlayed');
 
     fetch('logo.svg')
         .then(response => {
-            if (!response.ok) throw new Error('Помилка завантаження logo.svg');
+            if (!response.ok) throw new Error('Error loading logo.svg');
             return response.text();
         })
         .then(svgData => {
             if (siteLogo) siteLogo.innerHTML = svgData;
 
-            if (!introPlayed && preloader && introLogo && siteLogo && introTitle && siteTitle) {
+            if (!introPlayed && preloader && introLogo && siteLogo) {
                 
                 document.body.classList.add('no-scroll');
                 introLogo.innerHTML = svgData;
                 
                 siteLogo.style.opacity = '0';
-                siteTitle.style.opacity = '0'; 
+                if (siteTitle) siteTitle.style.opacity = '0'; 
 
+                // Várunk, amíg a bevezető animáció kibontakozik
                 setTimeout(() => {
-                const introLogoRect = introLogo.getBoundingClientRect();
-                const targetLogoRect = siteLogo.getBoundingClientRect();
-                const logoDeltaX = targetLogoRect.left - introLogoRect.left;
-                const logoDeltaY = targetLogoRect.top - introLogoRect.top;
-                const logoScale = targetLogoRect.width / introLogoRect.width;
-
-                const introTitleRect = introTitle.getBoundingClientRect();
-                const targetTitleRect = siteTitle.getBoundingClientRect();
-                const titleDeltaX = targetTitleRect.left - introTitleRect.left;
-                const titleDeltaY = targetTitleRect.top - introTitleRect.top;
-                const titleScale = targetTitleRect.width / introTitleRect.width;
-
-                preloader.style.background = 'transparent';
-                preloader.style.pointerEvents = 'none';
-
-                introLogo.style.transform = `translate(${logoDeltaX}px, ${logoDeltaY}px) scale(${logoScale})`;
-                introTitle.style.transform = `translate(${titleDeltaX}px, ${titleDeltaY}px) scale(${titleScale})`;
-
-                setTimeout(() => {
-                    siteLogo.style.opacity = '1'; 
-                    siteTitle.style.opacity = '1'; 
+                    // 1. A középső preloader elegánsan elhalványul
+                    preloader.style.opacity = '0';
+                    preloader.style.pointerEvents = 'none';
                     
-                    preloader.style.opacity = '0'; 
+                    // 2. A navigációs sáv logója és szövege ezzel egyidőben megjelenik
+                    siteLogo.style.transition = 'opacity 1.2s ease';
+                    siteLogo.style.opacity = '1'; 
+                    
+                    if (siteTitle) {
+                        siteTitle.style.transition = 'opacity 1.2s ease';
+                        siteTitle.style.opacity = '1';
+                    }
 
+                    // 3. A preloader teljes eltávolítása a háttérből
                     setTimeout(() => {
                         preloader.remove(); 
                         document.body.classList.remove('no-scroll'); 
                         sessionStorage.setItem('introPlayed', 'true'); 
-                    }, 400);
+                    }, 1200);
 
-                }, 1200);
-
-            }, 1800);
+                }, 1800);
 
             } else {
+                // Ha már látta a felhasználó, azonnal megjelenítjük az oldalt
                 if (siteLogo) siteLogo.style.opacity = '1';
                 if (siteTitle) siteTitle.style.opacity = '1';
                 if (preloader) preloader.remove();
@@ -1265,7 +1252,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         })
         .catch(error => {
-            console.error('Помилка завантаження логотипу:', error);
+            console.error('Logo loading error:', error);
             if (siteLogo) siteLogo.style.opacity = '1';
             if (siteTitle) siteTitle.style.opacity = '1';
             if (preloader) preloader.remove();
