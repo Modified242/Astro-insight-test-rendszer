@@ -1352,3 +1352,149 @@ document.addEventListener('DOMContentLoaded', () => {
         el.addEventListener('mouseleave', () => customCursor.classList.remove('hovering'));
     });
 })();
+// ==========================================
+// INSIGHTS HUB: ARTICLE FILTERING
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const filterBtns = document.querySelectorAll(".selector-group .glow-btn");
+    const articles = document.querySelectorAll(".insight-card");
+
+    if(filterBtns.length > 0 && articles.length > 0) {
+        filterBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                // Remove active class from all buttons
+                filterBtns.forEach(b => b.classList.remove("active-filter", "active"));
+                
+                // Add active class to clicked button
+                btn.classList.add("active-filter");
+
+                const filterValue = btn.getAttribute("data-filter");
+
+                articles.forEach(article => {
+                    // Check category
+                    if (filterValue === "all" || article.getAttribute("data-category") === filterValue) {
+                        article.style.display = "flex";
+                        // Small animation delay for smooth appearance
+                        setTimeout(() => {
+                            article.style.opacity = "1";
+                            article.style.transform = "scale(1)";
+                        }, 50);
+                    } else {
+                        article.style.opacity = "0";
+                        article.style.transform = "scale(0.95)";
+                        // Hide element after animation finishes
+                        setTimeout(() => {
+                            article.style.display = "none";
+                        }, 300);
+                    }
+                });
+            });
+        });
+    }
+});
+// ==========================================
+// AUTOMATIC ZODIAC SVG & AURA INJECTOR
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const zodiacCards = document.querySelectorAll('.insight-card[data-zodiac]');
+
+    zodiacCards.forEach(card => {
+        const signKey = card.getAttribute('data-zodiac');
+        const imgBox = card.querySelector('.svg-box');
+
+        if (zodiacData && zodiacData[signKey] && imgBox) {
+            const data = zodiacData[signKey];
+
+            // 1. Вставляємо SVG-іконку перед баджем
+            const badge = imgBox.querySelector('.insight-badge');
+            const svgWrapper = document.createElement('div');
+            svgWrapper.className = 'zodiac-svg-wrapper';
+            svgWrapper.innerHTML = data.svgIcon;
+
+            imgBox.insertBefore(svgWrapper, badge);
+
+            // 2. Встановлюємо індивідуальне світіння знака при наведенні
+            card.style.setProperty('--zodiac-aura', data.aura);
+        }
+    });
+});
+// ==========================================
+// DYNAMIC RELATED ARTICLES GENERATOR
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const relatedContainer = document.getElementById("relatedArticlesGrid");
+    if (!relatedContainer) return;
+
+    // Реєстр усіх статей з прямими шляхами до webp у корені
+    const allArticles = [
+        { slug: "intro-astrology-guide.html", title: "Astrology for Beginners", badge: "Main Guide", type: "img", src: "sun.webp", desc: "Foundations of natal charts & cosmic paths." },
+        { slug: "aries.html", title: "Aries: Courage & Fire", badge: "Zodiac", type: "zodiac", sign: "Aries", desc: "Traits, passion, and spiritual drive of the Ram." },
+        { slug: "taurus.html", title: "Taurus: Stability & Senses", badge: "Zodiac", type: "zodiac", sign: "Taurus", desc: "Sensual appreciation, loyalty, and grounded power." },
+        { slug: "gemini.html", title: "Gemini: Curiosity & Mind", badge: "Zodiac", type: "zodiac", sign: "Gemini", desc: "Intellectual agility and dual perception." },
+        { slug: "cancer.html", title: "Cancer: Emotional Tides", badge: "Zodiac", type: "zodiac", sign: "Cancer", desc: "Intuitive depth and ancestral protection." },
+        { slug: "leo.html", title: "Leo: Radiant Sovereignty", badge: "Zodiac", type: "zodiac", sign: "Leo", desc: "Creative passion, royal heart energy, and confidence." },
+        { slug: "virgo.html", title: "Virgo: Precision & Service", badge: "Zodiac", type: "zodiac", sign: "Virgo", desc: "Sacred order, analytical mind, and bodily wisdom." },
+        { slug: "libra.html", title: "Libra: Balance & Charm", badge: "Zodiac", type: "zodiac", sign: "Libra", desc: "Aesthetic mastery and relational alchemy." },
+        { slug: "scorpio.html", title: "Scorpio: Deep Transformation", badge: "Zodiac", type: "zodiac", sign: "Scorpio", desc: "Emotional power, rebirth, and hidden truths." },
+        { slug: "sagittarius.html", title: "Sagittarius: Truth & Freedom", badge: "Zodiac", type: "zodiac", sign: "Sagittarius", desc: "Philosophical expansion and wild optimism." },
+        { slug: "capricorn.html", title: "Capricorn: Mastery of Time", badge: "Zodiac", type: "zodiac", sign: "Capricorn", desc: "Disciplined ambition and structural mastery." },
+        { slug: "aquarius.html", title: "Aquarius: Cosmic Innovation", badge: "Zodiac", type: "zodiac", sign: "Aquarius", desc: "Visionary rebellion and collective mind." },
+        { slug: "pisces.html", title: "Pisces: Universal Dreams", badge: "Zodiac", type: "zodiac", sign: "Pisces", desc: "Mystic compassion and artistic transcendence." },
+        { slug: "sun.html", title: "Sun: Core Purpose & Identity", badge: "Planet", type: "img", src: "sun.webp", desc: "The central star of vitality and soul purpose." },
+        { slug: "moon.html", title: "Moon: Subconscious & Instinct", badge: "Planet", type: "img", src: "moon.webp", desc: "Inner emotional realm and ancestral memory." },
+        { slug: "mercury.html", title: "Mercury: Mind & Intellect", badge: "Planet", type: "img", src: "mercury.webp", desc: "Communication styles and mental processing." },
+        { slug: "venus.html", title: "Venus: Love & Harmony", badge: "Planet", type: "img", src: "venus.webp", desc: "Attraction, aesthetic appreciation, and relationships." },
+        { slug: "mars.html", title: "Mars: Willpower & Drive", badge: "Planet", type: "img", src: "mars.webp", desc: "Navigating ambition, conflict, and physical drive." },
+        { slug: "jupiter.html", title: "Jupiter: Expansion & Fortune", badge: "Planet", type: "img", src: "jupiter.webp", desc: "Unlocking opportunities, wisdom, and growth." },
+        { slug: "saturn.html", title: "Saturn: Discipline & Time", badge: "Planet", type: "img", src: "saturn.webp", desc: "Karmic lessons, boundaries, and long-term endurance." },
+        { slug: "uranus.html", title: "Uranus: Awakening & Change", badge: "Planet", type: "img", src: "uranus.webp", desc: "Breakthroughs, individuality, and sudden shifts." },
+        { slug: "neptune.html", title: "Neptune: Dreams & Illusion", badge: "Planet", type: "img", src: "neptune.webp", desc: "Spiritual connection, intuition, and mysticism." },
+        { slug: "pluto.html", title: "Pluto: Rebirth & Power", badge: "Planet", type: "img", src: "pluto.webp", desc: "Generational shifts, shadow work, and evolution." }
+    ];
+
+    const currentPath = window.location.pathname.split("/").pop() || "index.html";
+    const availableArticles = allArticles.filter(item => item.slug !== currentPath);
+    const shuffled = availableArticles.sort(() => 0.5 - Math.random());
+    const selectedArticles = shuffled.slice(0, 3);
+
+    selectedArticles.forEach(item => {
+        const card = document.createElement("article");
+        card.className = "insight-card";
+
+        let mediaBoxHtml = "";
+
+        if (item.type === "zodiac" && typeof zodiacData !== "undefined" && zodiacData[item.sign]) {
+            card.setAttribute("data-zodiac", item.sign);
+            card.style.setProperty("--zodiac-aura", zodiacData[item.sign].aura);
+            mediaBoxHtml = `
+                <div class="insight-img-box svg-box">
+                    <div class="zodiac-svg-wrapper">${zodiacData[item.sign].svgIcon}</div>
+                    <span class="insight-badge">${item.badge}</span>
+                </div>
+            `;
+        } else {
+            mediaBoxHtml = `
+                <div class="insight-img-box">
+                    <img src="${item.src}" alt="${item.title}" loading="lazy">
+                    <span class="insight-badge">${item.badge}</span>
+                </div>
+            `;
+        }
+
+        card.innerHTML = `
+            <a href="${item.slug}">
+                ${mediaBoxHtml}
+                <div class="insight-body">
+                    <h3>${item.title}</h3>
+                    <p>${item.desc}</p>
+                    <div class="insight-footer">
+                        <span>Read Guide</span>
+                        <span class="read-more">&rarr;</span>
+                    </div>
+                </div>
+            </a>
+        `;
+
+        relatedContainer.appendChild(card);
+    });
+});
