@@ -17,22 +17,25 @@
                 <span class="nav-title">Astro Insight</span>
             </div>
         </a>
-        
+
         <div class="nav-links" id="desktopNav">
-            <div class="nav-dropdown">
-                <a href="articles.html" class="dropbtn" style="color: var(--glow-color);">Articles ▾</a>
-                <div class="dropdown-content">
-                    <a href="zodiacs.html">Signs</a>
-                    <a href="planet.html">Planets</a>
-                </div>
-            </div>
             <a href="index.html">Home</a>
-        </div>
+            <a href="quiz.html">Astro Quizzes</a>
+            <a href="articles.html">Articles</a>
+        </div> 
 
         <div class="hamburger" onclick="toggleMobileMenu()">
             <span></span><span></span><span></span>
         </div>
     </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        
+        <a href="index.html" onclick="toggleMobileMenu()">Home</a>
+        <a href="quiz.html" onclick="toggleMobileMenu()">Astro Quizzes</a>
+        <a href="articles.html" onclick="toggleMobileMenu()">Articles</a>
+    </div>
 
     <div class="faq-container">
         <header class="faq-header">

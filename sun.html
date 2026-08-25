@@ -39,22 +39,32 @@
     
     <canvas id="starlight-canvas"></canvas>
 
-    <nav class="navbar">
-        <a href="index.html" class="nav-logo-link">
-            <div id="site-logo-container">
-                <svg viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="45" stroke="var(--glow-color)" stroke-width="2" fill="none" class="cls-1"/>
-                </svg>
+   <nav class="navbar">
+        <a href="index.html" class="nav-logo-link" style="text-decoration: none; color: inherit; display: inline-flex;">
+            <div class="nav-logo">
+                <div class="logo-svg-container" id="site-logo-container"></div>
+                <span class="nav-title">Astro Insight</span>
             </div>
-            <span class="nav-title">Astro Insight</span>
         </a>
-        <div id="desktopNav" class="nav-links">
+
+        <div class="nav-links" id="desktopNav">
             <a href="index.html">Home</a>
-            <a href="articles.html" style="color: var(--glow-color); text-shadow: 0 0 8px var(--glow-color);">Articles</a>
-            <a href="celestialreadings.html">Celestial Readings</a>
-            <a href="helpcenter.html">Help Center</a>
+            <a href="quiz.html">Astro Quizzes</a>
+            <a href="articles.html">Articles</a>
+        </div> 
+
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
         </div>
     </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        
+        <a href="index.html" onclick="toggleMobileMenu()">Home</a>
+        <a href="quiz.html" onclick="toggleMobileMenu()">Astro Quizzes</a>
+        <a href="articles.html" onclick="toggleMobileMenu()">Articles</a>
+    </div>
 
     <div class="privacy-container" style="max-width: 850px;">
         <div class="privacy-header">

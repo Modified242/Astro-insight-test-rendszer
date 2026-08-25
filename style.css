@@ -273,13 +273,13 @@ details li { margin-bottom: 8px; }
 /* ==========================================
    PRIVACY POLICY & TERMS
    ========================================== */
+.privacy-section p, .privacy-section li, .terms-section p, .terms-section li { font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 12px; font-family: sans-serif; text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
 .privacy-container, .terms-container { max-width: 800px; margin: 120px auto 60px; padding: 40px; background: var(--bg-panel); border-radius: 8px; border: 1px solid var(--glow-color-dim); box-shadow: 0 8px 32px rgba(0,0,0,0.5); text-align: left; }
 .privacy-header, .terms-header { border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 30px; text-align: center; }
 .privacy-header h1, .terms-header h1 { font-size: 2.5rem; color: var(--glow-color); margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 2px;}
 .privacy-intro-summary { background: rgba(255, 255, 255, 0.03); border-left: 3px solid var(--glow-color); padding: 20px; margin-bottom: 40px; border-radius: 0 4px 4px 0; }
 .privacy-section, .terms-section { margin-bottom: 35px; }
 .privacy-section h2, .terms-section h2 { font-size: 1.4rem; color: var(--text-main); margin-bottom: 15px; font-weight: 400; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
-.privacy-section p, .privacy-section li, .terms-section p, .terms-section li { font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 12px; font-family: sans-serif; }
 .privacy-section ul, .terms-section ul { padding-left: 20px; margin-bottom: 15px; }
 .privacy-section strong, .terms-section strong { color: var(--glow-color); font-weight: normal; }
 .hr-divider { border: 0; height: 1px; background: linear-gradient(to right, transparent, var(--glow-color-dim), transparent); margin: 30px 0; }
@@ -1753,4 +1753,12 @@ h2, h3, h4, .omen-box {
     .insights-grid {
         grid-template-columns: 1fr !important;
     }
+}
+.privacy-container p {
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    font-family: 'Playfair Display', serif;
+    line-height: 1.7;
+    color: #e2e8f0; 
 }

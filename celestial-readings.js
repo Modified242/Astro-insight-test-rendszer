@@ -86,8 +86,8 @@ async function openModal(sign) {
     const signTitleEl = document.getElementById('signTitle');
     if (signTitleEl) {
         signTitleEl.innerHTML = `
-            <a href="zodiacs.html?name=${sign}" class="modal-title-link" title="Read full article about ${sign}">
-                ${sign} <span class="link-icon">↗</span>
+            <a href="${sign.toLowerCase()}.html" class="modal-title-link" title="Read full article about ${sign}" style="text-decoration: none; color: ${zData.aura}; text-shadow: 0 0 12px ${zData.aura};">
+                ${sign.toUpperCase()} <span class="link-icon" style="font-size: 0.8em; margin-left: 5px;">↗</span>
             </a>
         `;
     }
@@ -101,7 +101,9 @@ async function openModal(sign) {
     
     document.getElementById('fortuneModal').style.display = "block";
     
-    document.getElementById('modalPlanet').innerHTML = `<a href="planet.html?name=${zData.planet}" style="color: var(--glow-color); text-decoration: underline; cursor: pointer;">${zData.planet}</a>`;
+
+    document.getElementById('modalPlanet').innerHTML = `<a href="${zData.planet.toLowerCase()}.html" style="color: var(--glow-color); text-decoration: underline; cursor: pointer;">${zData.planet}</a>`;
+    
     document.getElementById('modalElement').innerText = zData.element;
     document.getElementById('modalEnergy').innerText = `"${zData.energy}"`;
     document.getElementById('luckyColorBox').style.backgroundColor = zData.aura;

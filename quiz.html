@@ -17,19 +17,11 @@
                 <span class="nav-title" id="site-title-container">Astro Insight</span>
             </div>
         </a>
-        
+
         <div class="nav-links" id="desktopNav">
-            <a href="index.html#core">Readings</a>
-            <a href="index.html#sync">Compatibility</a>
-            <a href="index.html#tarot">Arcana</a>
-            <a href="quiz.html">Astro Quizzes</a>
-            <div class="nav-dropdown">
-                <a href="articles.html" class="dropbtn">Articles ▾</a>
-                <div class="dropdown-content">
-                    <a href="zodiacs.html">Signs</a>
-                    <a href="planet.html">Planets</a>
-                </div>
-            </div>
+            <a href="index.html">Home</a>
+            <a href="quiz.html" style="color: var(--glow-color); text-shadow: 0 0 8px var(--glow-color);">Astro Quizzes</a>
+            <a href="articles.html">Articles</a>
         </div> 
 
         <div class="hamburger" onclick="toggleMobileMenu()">
@@ -39,17 +31,13 @@
 
     <div class="mobile-menu" id="mobileMenu">
         <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
-        <a href="index.html#core" onclick="toggleMobileMenu()">Readings</a>
-        <a href="index.html#sync" onclick="toggleMobileMenu()">Compatibility</a>
-        <a href="index.html#tarot" onclick="toggleMobileMenu()">Arcana</a>
-        <a href="quiz.html" onclick="toggleMobileMenu()">Astro Quizzes</a>
-        <a href="articles.html" onclick="toggleMobileMenu()" style="font-size: 1.1rem; margin-top: 15px; letter-spacing: 1px; display: inline-block;">Articles</a>
-        <div class="mobile-submenu">
-            <a href="zodiacs.html" onclick="toggleMobileMenu()">• Zodiac Signs</a>
-            <a href="planet.html" onclick="toggleMobileMenu()">• Planets Guide</a>
-        </div>
+        
+        <a href="index.html" onclick="toggleMobileMenu()">Home</a>
+        <a href="quiz.html" onclick="toggleMobileMenu()" style="color: var(--glow-color);">Astro Quizzes</a>
+        <a href="articles.html" onclick="toggleMobileMenu()">Articles</a>
+
         <button class="reset-btn" onclick="resetAura(); toggleMobileMenu()" style="margin-top: 15px; font-size: 1.2rem; padding: 10px 20px;">
-            Clear Aura ⟲
+            Clear Aura ✦
         </button>
     </div>
 
