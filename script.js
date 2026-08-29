@@ -196,10 +196,6 @@ const zodiacData = {
                       <g id="Aquarius">
                         <path d="M143.85,100.11,123.25,148s-2.72,4.42-4.62,0c-1-2.23-19.24-46.1-19.24-46.1L81.62,145.56s-2.8,5.45-5.15,0c-.79-1.84-14.91-37-14.91-37l-15.1,36.08s-2.58,2.55-3.68,0S27,102.48,27,102.48L12.21,136.77s-3.45,2.67-5.82-2.84a22.8,22.8,0,0,1,0-17.09c.69-1.6,17.5-42.13,17.5-42.13s3-8.42,6.64,0C31.47,76.91,45,113.4,45,113.4L59.27,78.51s2.83-4.45,4.74,0c.54,1.25,14.91,38.33,14.91,38.33l17.81-43s3.35-5.4,5.67,0c1.15,2.67,18.48,45.21,18.48,45.21L136.5,84s3.49-5.52,6.22.83C143.46,86.52,146.32,94.35,143.85,100.11Zm-22.56,42,20.06-45.44s.76-10.21-3.3-7.66L122,126.45s-1.12,2.49-2.2,0c-.74-1.72-19.44-47-19.44-47H98.42l-18,44.14s-1.63,2.61-2.76,0C76.8,121.64,62,84,62,84H60.85L46,120.64s-1.05,2.9-2.3,0C42.81,118.68,27.88,79,27.88,79H25.83L8.07,122.65s-.94,3.74,0,5.94c.28.65,1.74,4.62,3.22,1.18L25.63,95.36s1.58-2.25,2.55,0,15.93,43.19,15.93,43.19h1.17l15-36.9s1.17-2.49,2.24,0c.79,1.84,15.72,38.68,15.72,38.68h1.59L97.91,95.72s2.22-2.79,3.42,0c1.1,2.55,18.63,46.39,18.63,46.39Z"/>
                         <path d="M145.48,29.14,124.88,77s-2.71,4.42-4.62,0c-1-2.22-19.24-46.1-19.24-46.1L83.26,74.59s-2.81,5.46-5.16,0c-.79-1.84-14.9-37-14.9-37L48.09,73.64s-2.58,2.55-3.68,0S28.59,31.51,28.59,31.51L13.84,65.81S10.39,68.48,8,63A22.85,22.85,0,0,1,8,45.87c.69-1.6,17.51-42.13,17.51-42.13s3-8.42,6.63,0c1,2.2,14.45,38.69,14.45,38.69L60.9,7.54s2.83-4.45,4.75,0c.53,1.25,14.9,38.33,14.9,38.33l17.82-43s3.34-5.4,5.66,0c1.15,2.67,18.48,45.22,18.48,45.22L138.13,13s3.5-5.52,6.23.83C145.1,15.55,148,23.38,145.48,29.14Zm-22.56,42L143,25.7s.77-10.21-3.29-7.66L123.58,55.48s-1.12,2.49-2.19,0c-.74-1.72-19.45-47-19.45-47h-1.89L82,52.63s-1.63,2.62-2.75,0C78.43,50.68,63.66,13,63.66,13H62.48L47.58,49.67s-1,2.91-2.3,0C44.44,47.71,29.51,8,29.51,8h-2L9.7,51.69s-.94,3.73,0,5.93c.28.65,1.74,4.63,3.22,1.19.41-1,14.34-34.42,14.34-34.42s1.59-2.25,2.56,0,15.92,43.2,15.92,43.2h1.17l15-36.91s1.17-2.49,2.25,0c.79,1.84,15.72,38.69,15.72,38.69h1.58L99.54,24.75s2.22-2.79,3.42,0c1.1,2.55,18.63,46.4,18.63,46.4Z"/>
-                        <ellipse cx="2.35" cy="142.11" rx="2.35" ry="5.47"/>
-                        <ellipse cx="146.88" cy="78.15" rx="2.35" ry="5.47"/>
-                        <ellipse cx="147.6" cy="8.02" rx="2.35" ry="5.47"/>
-                        <ellipse cx="5.3" cy="67.71" rx="2.35" ry="5.47"/>
                       </g>
                     </g>
                   </svg>`,
@@ -1419,15 +1415,14 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 // ==========================================
-// DYNAMIC RELATED ARTICLES GENERATOR
+// SEAMLESS INFINITE CAROUSEL GENERATOR
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     const relatedContainer = document.getElementById("relatedArticlesGrid");
     if (!relatedContainer) return;
 
-    // Реєстр усіх статей з прямими шляхами до webp у корені
     const allArticles = [
-        { slug: "intro-astrology-guide.html", title: "Astrology for Beginners", badge: "Main Guide", type: "img", src: "sun.webp", desc: "Foundations of natal charts & cosmic paths." },
+        { slug: "intro-astrology-guide.html", title: "Astrology for Beginners", badge: "Main Guide", type: "img", src: "cica.webp", desc: "Foundations of natal charts & cosmic paths." },
         { slug: "aries.html", title: "Aries: Courage & Fire", badge: "Zodiac", type: "zodiac", sign: "Aries", desc: "Traits, passion, and spiritual drive of the Ram." },
         { slug: "taurus.html", title: "Taurus: Stability & Senses", badge: "Zodiac", type: "zodiac", sign: "Taurus", desc: "Sensual appreciation, loyalty, and grounded power." },
         { slug: "gemini.html", title: "Gemini: Curiosity & Mind", badge: "Zodiac", type: "zodiac", sign: "Gemini", desc: "Intellectual agility and dual perception." },
@@ -1454,12 +1449,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const currentPath = window.location.pathname.split("/").pop() || "index.html";
     const availableArticles = allArticles.filter(item => item.slug !== currentPath);
-    const shuffled = availableArticles.sort(() => 0.5 - Math.random());
-    const selectedArticles = shuffled.slice(0, 3);
+    const shuffled = [...availableArticles].sort(() => 0.5 - Math.random());
+    const selectedArticles = shuffled.slice(0, 9);
 
-    selectedArticles.forEach(item => {
+    function createCardElement(item) {
         const card = document.createElement("article");
-        card.className = "insight-card";
+        card.className = "insight-card article-card";
 
         let mediaBoxHtml = "";
 
@@ -1475,7 +1470,7 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             mediaBoxHtml = `
                 <div class="insight-img-box">
-                    <img src="${item.src}" alt="${item.title}" loading="lazy">
+                    <img src="image/${item.src}" alt="${item.title}" loading="lazy">
                     <span class="insight-badge">${item.badge}</span>
                 </div>
             `;
@@ -1494,7 +1489,88 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </a>
         `;
+        return card;
+    }
 
-        relatedContainer.appendChild(card);
+    // Створюємо зациклений потрійний масив (9 + 9 + 9 = 27 карток)
+    const infiniteSequence = [...selectedArticles, ...selectedArticles, ...selectedArticles];
+    
+    relatedContainer.innerHTML = "";
+    infiniteSequence.forEach(item => {
+        relatedContainer.appendChild(createCardElement(item));
     });
+
+    // Динамічні змінні розмірів
+    let oneSetWidth = 0;
+    let singleCardWidth = 0;
+
+    // Розрахунок точних розмірів прямо з DOM
+    function updateMetrics() {
+        const cards = relatedContainer.querySelectorAll('.article-card');
+        if (cards.length < 27) return;
+
+        // Точний крок однієї картки (ширина + реальний CSS gap)
+        singleCardWidth = cards[1].offsetLeft - cards[0].offsetLeft;
+        
+        // Точна ширина 1 повноцінного набору з 9 карток
+        oneSetWidth = cards[selectedArticles.length].offsetLeft - cards[0].offsetLeft;
+    }
+
+    // Допоміжна функція миттєвого перескоку
+    function jumpTo(x) {
+        const prevBehavior = relatedContainer.style.scrollBehavior;
+        relatedContainer.style.scrollBehavior = "auto";
+        relatedContainer.scrollLeft = x;
+        void relatedContainer.offsetHeight; // форсуємо reflow
+        relatedContainer.style.scrollBehavior = prevBehavior || "";
+    }
+
+    // Початковий розрахунок і стартова позиція у 2-му блоці
+    requestAnimationFrame(() => {
+        updateMetrics();
+        if (oneSetWidth > 0) {
+            jumpTo(oneSetWidth);
+        }
+    });
+
+    // Оновлюємо розрахунки при зміні розміру екрана або орієнтації
+    window.addEventListener("resize", updateMetrics);
+
+    // Безшовна корекція позиції під час скролу
+    let ticking = false;
+    relatedContainer.addEventListener("scroll", () => {
+        if (ticking || oneSetWidth === 0) return;
+        ticking = true;
+        
+        requestAnimationFrame(() => {
+            const sl = relatedContainer.scrollLeft;
+
+            // Перескок з 3-го на 2-й блок
+            if (sl >= oneSetWidth * 2) {
+                jumpTo(sl - oneSetWidth);
+            }
+            // Перескок з 1-го на 2-й блок
+            else if (sl <= oneSetWidth * 0.5) {
+                jumpTo(sl + oneSetWidth);
+            }
+
+            ticking = false;
+        });
+    }, { passive: true });
+
+    // Кнопки-стрілочки з динамічним кроком
+    const leftBtn = document.getElementById("scrollLeftBtn");
+    const rightBtn = document.getElementById("scrollRightBtn");
+
+    if (leftBtn && rightBtn) {
+        leftBtn.addEventListener("click", () => {
+            const step = singleCardWidth || 330;
+            relatedContainer.scrollBy({ left: -step, behavior: "smooth" });
+        });
+
+        rightBtn.addEventListener("click", () => {
+            const step = singleCardWidth || 330;
+            relatedContainer.scrollBy({ left: step, behavior: "smooth" });
+        });
+    }
 });
