@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://astroinsight.space/sitemap.xml
