@@ -1,0 +1,108 @@
+/* ==========================================
+   ASTRO INSIGHT: NEWSLETTER SECTION
+   ========================================== */
+
+.newsletter-section {
+    background: var(--bg-panel);
+    backdrop-filter: blur(5px);
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border: 1px solid var(--glow-color-dim);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.8s ease, box-shadow 0.8s ease;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.newsletter-section:hover {
+    border-color: var(--glow-color);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+.newsletter-section h3 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--text-main);
+    font-weight: 400;
+}
+
+.newsletter-form {
+    max-width: 650px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.sub-input-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.sub-input-row input[type="email"] {
+    flex: 1;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: 1px solid var(--text-muted);
+    border-radius: 4px;
+    outline: none;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.sub-input-row input[type="email"]:focus {
+    border-color: var(--glow-color);
+}
+
+.sub-terms-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.sub-terms-row input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--glow-color);
+    cursor: pointer;
+    margin: 0;
+}
+
+.sub-terms-row label {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-style: italic;
+    cursor: pointer;
+}
+
+.sub-terms-row a {
+    color: var(--glow-color);
+    text-decoration: underline;
+}
+
+.sub-terms-row a:hover {
+    color: var(--text-main);
+}
+
+@media (max-width: 768px) {
+    .sub-input-row {
+        flex-direction: column;
+        width: 100%;
+    }
+    .sub-input-row input[type="email"],
+    .sub-input-row .glow-btn {
+        width: 100%;
+    }
+}
