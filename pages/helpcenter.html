@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center & FAQ | Astro Insight</title>
+    <meta name="description" content="Find quick answers to common questions about Astro Insight horoscopes, celestial readings, personalized PDF reports, and billing options.">
+    <link rel="canonical" href="https://astroinsight.space/pages/helpcenter.html">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Help Center & FAQ | Astro Insight">
+    <meta property="og:description" content="Find quick answers to common questions about Astro Insight horoscopes, celestial readings, personalized PDF reports, and billing options.">
+    <meta property="og:url" content="https://astroinsight.space/pages/helpcenter.html">
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css?v=20260901">
+<!-- === ASTRO INSIGHT FAVICON & APP SET === -->
+<link rel="icon" type="image/x-icon" href="../icon/logo.ico">
+<link rel="icon" type="image/png" sizes="192x192" href="../icon/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../icon/apple-touch-icon.png">
+<meta name="theme-color" content="#0f172a"> </head>
+<body>
+    <canvas id="starlight-canvas"></canvas>
+
+    <nav class="navbar">
+        <a href="../index.html" class="nav-logo-link" style="text-decoration: none; color: inherit; display: inline-flex;">
+            <div class="nav-logo">
+                <div class="logo-svg-container" id="site-logo-container"></div>
+                <span class="nav-title">Astro Insight</span>
+            </div>
+        </a>
+
+        <div class="nav-links" id="desktopNav">
+            <a href="../index.html">Home</a>
+            <a href="../pages/quiz.html">Astro Quizzes</a>
+            <a href="../pages/articles.html">Articles</a>
+        </div> 
+
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        
+        <a href="../index.html" onclick="toggleMobileMenu()">Home</a>
+        <a href="../pages/quiz.html" onclick="toggleMobileMenu()">Astro Quizzes</a>
+        <a href="../pages/articles.html" onclick="toggleMobileMenu()">Articles</a>
+    </div>
+
+    <div class="faq-container">
+        <header class="faq-header">
+            <h1>Help Center &amp; FAQ</h1>
+            <p>Find answers to common questions about your astrological forecasts and our digital services.</p>
+        </header>
+
+        <h2 class="faq-category-title">Astrology &amp; Forecasts</h2>
+        <div class="faq-accordion">
+            <details>
+                <summary>How often are the horoscopes updated?</summary>
+                <p>Our cosmic database updates dynamically to reflect real-time alignments. General transits and Insight metrics refresh precisely at midnight based on your system's current time zone.</p>
+            </details>
+            <details>
+                <summary>Can I save a specific reading for later review?</summary>
+                <p>Yes. By clicking the "Inscribe to Grimoire" button inside any active modal reading, the data snapshot is preserved forever in your local browser history log beneath the Main Oracle dashboard.</p>
+            </details>
+        </div>
+
+        <h2 class="faq-category-title">Premium PDF Projections</h2>
+        <div class="faq-accordion">
+            <details>
+                <summary>What do I receive when I order a personalized report?</summary>
+                <p>You will receive a beautifully formatted, comprehensive digital manuscript containing deep birth chart assessments, current multi-month progressive transits, and targeted life-path analyses mapped to your exact birth minutes.</p>
+            </details>
+            <details>
+                <summary>How long does it take for my PDF document to arrive?</summary>
+                <p>Our generation engine builds your document automatically following successful confirmation. Most documents materialize directly in your email inbox within <strong>5 to 15 minutes</strong>.</p>
+            </details>
+        </div>
+
+        <h2 class="faq-category-title">Billing &amp; Access</h2>
+        <div class="faq-accordion">
+            <details>
+                <summary>Are my online financial transactions safe?</summary>
+                <p>Absolutely. All payment handling is sandboxed securely through enterprise partners Stripe and PayPal. Astro Insight never views or records your raw payment keys or account numbers.</p>
+            </details>
+            <details>
+                <summary>How do I cancel my subscription?</summary>
+                <p>You have total autonomy over your membership. You can cancel your subscription with a single click at any time through the Billing tab in your account profile. You will maintain full access to your premium features until the exact end of your current billing cycle.</p>
+            </details>
+        </div>
+
+        <h2 class="faq-category-title">Troubleshooting</h2>
+        <div class="faq-accordion">
+            <details>
+                <summary>Why am I not receiving my Insight horoscope email?</summary>
+                <p>If our emails aren't reaching your inbox, please try the following steps:</p>
+                <ul>
+                    <li>Check your Spam, Promotions, or Updates folder.</li>
+                    <li>Add <strong>astroinsightsupport@gmail.com</strong> to your safe senders list or email address book.</li>
+                    <li>Verify that your email address is spelled correctly under your account configurations.</li>
+                </ul>
+            </details>
+        </div>
+
+        <footer class="faq-footer">
+            <h3>Still looking for answers?</h3>
+            <p>Our human support crew is ready to help guide you. Shoot us an email at <a href="support.html">Contact Support</a>.</p>
+        </footer>
+    </div>
+
+    <footer class="site-footer">
+    <p>&copy; 2026 Astro Insight. All rights reserved.</p>
+    <div class="footer-links">
+        <a href="about.html">About</a>
+        <span class="divider">|</span>
+        <a href="privacy.html">Privacy Policy</a>
+        <span class="divider">|</span>
+        <a href="terms.html">Terms & Conditions</a>
+        <span class="divider">|</span>
+        <a href="helpcenter.html">Help Center</a>
+        <span class="divider">|</span>
+        <a href="support.html">Contact Support</a>
+    </div>
+    
+     <div class="social-links">
+         <a href="https://www.instagram.com/_astroinsight_/" target="_blank" rel="noopener">Instagram</a>
+         <a href="https://www.facebook.com/profile.php?id=61589576716944" target="_blank" rel="noopener">Facebook</a>
+         <a href="https://x.com/_Astro_Insight_" target="_blank" rel="noopener">X</a>
+     </div>
+</footer> <script src="../js/script.js?v=20260901"></script>
+</body>
+</html>
