@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://astroinsight.space/</loc><priority>1.0</priority></url>
+  <url><loc>https://astroinsight.space/pages/articles.html</loc><priority>0.9</priority></url>
+  <url><loc>https://astroinsight.space/pages/quiz.html</loc><priority>0.9</priority></url>
+  <url><loc>https://astroinsight.space/pages/about.html</loc><priority>0.8</priority></url>
+  <url><loc>https://astroinsight.space/pages/support.html</loc><priority>0.8</priority></url>
+  <url><loc>https://astroinsight.space/pages/helpcenter.html</loc><priority>0.8</priority></url>
+  <url><loc>https://astroinsight.space/pages/privacy.html</loc><priority>0.5</priority></url>
+  <url><loc>https://astroinsight.space/pages/terms.html</loc><priority>0.5</priority></url>
+  <url><loc>https://astroinsight.space/pages/intro-astrology-guide.html</loc><priority>0.8</priority></url>
+  <!-- Zodiac Signs -->
+  <url><loc>https://astroinsight.space/articles/zodiac/aries.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/taurus.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/gemini.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/cancer.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/leo.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/virgo.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/libra.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/scorpio.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/sagittarius.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/capricorn.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/aquarius.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/zodiac/pisces.html</loc><priority>0.7</priority></url>
+  <!-- Planets -->
+  <url><loc>https://astroinsight.space/articles/planets/sun.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/planets/moon.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/planets/mercury.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/planets/venus.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/planets/mars.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/planets/jupiter.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/planets/saturn.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/planets/uranus.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/planets/neptune.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/planets/pluto.html</loc><priority>0.7</priority></url>
+</urlset>

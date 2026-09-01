@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Alapok: Kulcsszavas cím, leírás & Canonical URL -->
+    <title>Astro Insight | Free Horoscopes, Zodiac Compatibility & Tarot</title>
+    <meta name="description" content="Explore daily horoscopes, accurate multi-planetary synastry compatibility, tarot spreads, and deep zodiac insights at Astro Insight.">
+    <link rel="canonical" href="https://astroinsight.space/">
+
+    <!-- Open Graph / Közösségi Média Megosztás (Facebook, X, stb.) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Astro Insight | Free Horoscopes, Zodiac Compatibility & Tarot">
+    <meta property="og:description" content="Discover daily horoscopes, synastry compatibility, and tarot readings. Align with the cosmos today.">
+    <meta property="og:url" content="https://astroinsight.space/">
+    <meta property="og:image" content="https://astroinsight.space/image/cica.webp">
+    <!-- Twitter Card Data -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Astro Insight | Free Horoscopes, Zodiac Compatibility & Tarot">
+    <meta name="twitter:description" content="Discover daily horoscopes, synastry compatibility, and tarot readings. Align with the cosmos today.">
+    <meta name="twitter:image" content="https://astroinsight.space/image/cica.webp">
+
+    <!-- Strukturált adat (JSON-LD) a Google Keresőhöz -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Astro Insight",
+      "url": "https://astroinsight.space/",
+      "description": "Your digital oracle for astrology, daily horoscopes, natal chart synastry, and tarot card readings.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://astroinsight.space/pages/articles.html?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Betűtípusok & Stíluslapok -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css?v=20260901">
+    <link rel="stylesheet" href="css/sub.css">
+
+    <!-- === ASTRO INSIGHT FAVICON & APP SET === -->
+    <link rel="icon" type="image/x-icon" href="icon/logo.ico">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon/icon-192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icon/apple-touch-icon.png">
+    <meta name="theme-color" content="#0f172a">
+</head>
+<body>
+
+    <div id="astro-preloader">
+        <div class="preloader-content">
+            <div id="intro-logo-container"></div>
+            <h1 class="intro-title" id="intro-title">Astro Insight</h1>
+        </div>
+    </div>
+    
+    <canvas id="starlight-canvas"></canvas>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo-link" style="text-decoration: none; color: inherit; display: inline-flex;">
+            <div class="nav-logo">
+                <div class="logo-svg-container" id="site-logo-container"></div>
+                <span class="nav-title" id="site-title-container">Astro Insight</span>
+            </div>
+        </a>
+
+        <div class="nav-links" id="desktopNav">
+            <a href="pages/quiz.html">Astro Quizzes</a>
+            <a href="pages/articles.html">Articles</a>
+        </div> 
+
+        <div class="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <span class="close-menu" onclick="toggleMobileMenu()">&times;</span>
+        
+        <a href="pages/quiz.html" onclick="toggleMobileMenu()">Astro Quizzes</a>
+        <a href="pages/articles.html" onclick="toggleMobileMenu()">Articles</a>
+        
+        <button class="reset-btn" onclick="resetAura(); toggleMobileMenu()" style="margin-top: 15px; font-size: 1.2rem; padding: 10px 20px;">
+            Clear Aura ✦
+        </button>
+    </div>
+    
+    <div class="container">
+        <header>
+            <h1>Your Traditional Guide to the Stars</h1>
+        </header>
+
+        <section class="omen-box" id="itOmen">
+            <span class="omen-label">Cosmic Insight:</span>
+            <span id="omenText">A daily-changing cosmic message that (sets the mood of the page and) gives you a small insight for the day.</span>
+            <span class="info-tooltip" data-tooltip="A daily-changing cosmic message that (sets the mood of the page and) gives you a small insight for the day.">?</span>
+        </section>
+
+        <section class="core-box" id="core">
+            <h3>Celestial Readings <span class="info-tooltip" data-tooltip="Choose a zodiac sign to open its daily, weekly, and monthly readings. This also changes the page’s aura to match the selected sign.">?</span></h3>
+            <p class="subtitle">Select your sign to align the stars and reveal your destiny.</p>
+            <div class="zodiac-grid" id="zodiacGrid">
+    <a href="articles/zodiac/aries.html" class="sr-only">Aries Daily Horoscope</a>
+    <a href="articles/zodiac/taurus.html" class="sr-only">Taurus Daily Horoscope</a>
+    <a href="articles/zodiac/gemini.html" class="sr-only">Gemini Daily Horoscope</a>
+    <a href="articles/zodiac/cancer.html" class="sr-only">Cancer Daily Horoscope</a>
+    <a href="articles/zodiac/leo.html" class="sr-only">Leo Daily Horoscope</a>
+    <a href="articles/zodiac/virgo.html" class="sr-only">Virgo Daily Horoscope</a>
+    <a href="articles/zodiac/libra.html" class="sr-only">Libra Daily Horoscope</a>
+    <a href="articles/zodiac/scorpio.html" class="sr-only">Scorpio Daily Horoscope</a>
+    <a href="articles/zodiac/sagittarius.html" class="sr-only">Sagittarius Daily Horoscope</a>
+    <a href="articles/zodiac/capricorn.html" class="sr-only">Capricorn Daily Horoscope</a>
+    <a href="articles/zodiac/aquarius.html" class="sr-only">Aquarius Daily Horoscope</a>
+    <a href="articles/zodiac/pisces.html" class="sr-only">Pisces Daily Horoscope</a>
+</div>
+        </section>
+
+        <!-- ================= PHASE 2: ADVANCED ASTRO COMPATIBILITY MODULE ================= -->
+        <section id="sync" class="compatibility-section">
+            <div class="compatibility-container">
+                <h2>Cosmic Resonance Engine <span class="info-tooltip" data-tooltip="A compatibility tool that compares two people using their signs, birth dates, the planetary positions on those birth dates, and today’s planetary movement.">?</span></h2>
+                <p class="compatibility-subtitle">Multi-Planetary Synastry based on Exact Birth Dates</p>
+                
+                <div class="compatibility-form">
+                    <div class="select-group">
+                        <div class="input-wrapper">
+                            <label>Your Sign</label>
+                            <div class="custom-select" id="custom-dropdown-1">
+                                <input type="hidden" id="sign1" value="">
+                                <div class="select-trigger">
+                                    <div class="selected-content">Select sign...</div>
+                                    <span class="arrow">▼</span>
+                                </div>
+                                <ul class="custom-options"></ul>
+                            </div>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <label for="date1">Exact Birth Date</label>
+                            <input type="date" id="date1" class="gold-select" value="1995-05-14" min="1900-01-01" max="2026-12-31">
+                        </div>
+                    </div>
+
+                    <div class="cosmic-connector">
+                        <span>⚡</span>
+                    </div>
+
+                    <div class="select-group">
+                        <div class="input-wrapper">
+                            <label>Partner's Sign</label>
+                            <div class="custom-select" id="custom-dropdown-2">
+                                <input type="hidden" id="sign2" value="">
+                                <div class="select-trigger">
+                                    <div class="selected-content">Select sign...</div>
+                                    <span class="arrow">▼</span>
+                                </div>
+                                <ul class="custom-options"></ul>
+                            </div>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <label for="date2">Exact Birth Date</label>
+                            <input type="date" id="date2" class="gold-select" value="1997-08-20" min="1900-01-01" max="2026-12-31">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="compat-btn" onclick="calculateCompatibility()">
+                    <span>Calculate Natal Synastry ⟡</span>
+                </button>
+
+                <div id="compatibilityResult" class="compat-result-box hidden">
+                    <div class="compat-score-circle">
+                        <span id="syncScore">0</span><span style="font-size: 1.5rem; margin-left: 2px;">%</span>
+                    </div>
+                    
+                    <h3 id="syncTitle" style="color: var(--glow-color); margin-top: 15px;">Affinity Level</h3>
+                    <p id="syncVerdict" class="sync-verdict" style="margin-bottom: 20px; font-style: italic;"></p>
+                    
+                    <div class="compat-analytics">
+                        <div class="insight-box strength-box" style="width: 100%; margin-bottom: 15px;">
+                            <h4 style="color: #00BCD4;">✨ Planetary Analysis <span class="info-tooltip" data-tooltip="A deeper part of the compatibility result that looks at Moon, Venus, and Mars to explain emotional connection, attraction, and chemistry.">?</span></h4>
+                            <div id="syncBreakdown" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; text-align: left;"></div>
+                        </div>
+
+                        <div class="insight-box growth-box" style="width: 100%; border-left: 4px solid #4CAF50;">
+                            <h4 style="color: #4CAF50;">⚡ Real-Time Astro-Weather <span class="info-tooltip" data-tooltip="A relationship-energy forecast for today, based on both birth dates and today’s planetary movement.">?</span></h4>
+                            <div style="display: flex; align-items: center; gap: 15px; margin-top: 10px;">
+                                <div style="font-size: 2rem; font-weight: bold; color: #4CAF50;" id="weatherScore">--%</div>
+                                <div style="text-align: left;">
+                                    <strong id="weatherVerdict" style="color: #e2e8f0; display: block; margin-bottom: 5px;">Awaiting Forecast...</strong>
+                                    <span id="weatherDetails" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.4; display: block;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="tarot-box" id="tarot">
+            <h3>The Arcana Spread <span class="info-tooltip" data-tooltip="Draw three tarot cards for Past, Present, and Future, then receive an interpretation of the spread.">?</span></h3>
+            <p class="subtitle">Draw three cards to unveil the path of Past, Present, and Future.</p>
+            <button class="glow-btn" onclick="drawTarot()">Consult the Deck</button>
+            <div id="tarotResult" class="tarot-grid"></div>
+        </section>
+
+        <div class="two-col-grid">
+            <section class="analyzer-box" id="analyzer">
+                <h3>Name Numerology <span class="info-tooltip" data-tooltip="Enter any name to receive a symbolic reading based on its sound, characters, and energy.">?</span></h3>
+                <div class="ask-input-group">
+                    <input type="text" id="usernameInput" placeholder="e.g., Alexander">
+                    <button class="glow-btn" onclick="analyzeUsername()">Analyze</button>
+                </div>
+                <p id="analyzerResult" class="result-text"></p>
+            </section>
+
+            <section class="ask-box" id="askOracle">
+                <h3>The Seer's Sphere <span class="info-tooltip" data-tooltip="Ask a question and receive a mystical reflection from the sphere. Treat it as guidance for thought, not a guaranteed prediction.">?</span></h3>
+                <div class="ask-input-group">
+                    <input type="text" id="questionInput" placeholder="Ask your question...">
+                    <button class="glow-btn" onclick="getMagicAnswer()">Ask</button>
+                </div>
+                <p id="magicAnswer" class="result-text"></p>
+            </section>
+        </div>
+
+        <section class="archive-box">
+            <h3>Personal Grimoire <span class="info-tooltip" data-tooltip="Your saved reading archive. Readings are saved only in this browser, so they may disappear if browser data is cleared or if you use another device.">?</span></h3>
+            <div id="archiveContainer"><p class="subtitle">Your saved readings will be preserved here...</p></div>
+        </section>
+
+        <!-- ================= NEWSLETTER SUBSCRIPTION SECTION ================= -->
+        <!-- section class="newsletter-section" id="newsletter">
+            <h3>Join now and get your daily horoscope</h3>
+            <p class="subtitle">Enter your email to receive exclusive insights directly to your inbox.</p>
+            
+            <form id="newsletterForm" class="newsletter-form">
+                <div class="sub-input-row">
+                    <input type="email" id="subscriberEmail" required placeholder="Enter your email...">
+                    <button type="submit" id="subBtn" class="glow-btn">Subscribe</button>
+                </div>
+                
+                <div class="sub-terms-row">
+                    <input type="checkbox" id="termsCheck" required>
+                    <label for="termsCheck">
+                        By subscribing, you agree to our <a href="./terms.html" target="_blank">Terms</a> & <a href="./privacy.html" target="_blank">Privacy</a>. *
+                    </label>
+                </div>
+            </form>
+            <p id="subResponse" class="result-text"></p>
+        </section >-->
+
+    </div>
+
+    <div id="fortuneModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-btn" onclick="document.getElementById('fortuneModal').style.display='none'">&times;</span>
+            </div>
+            
+            <div class="modal-body">
+                <h2 id="signTitle" class="glow-text"></h2>
+                
+                <div class="modal-tabs">
+                    <button class="tab-btn active" onclick="switchTab(event, 'Insight')">Insight Transit</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'weekly')">Weekly Aspects</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'monthly')">Lunar Cycle</button>
+                </div>
+
+                <div class="lucky-attributes" id="luckyAttributes">
+                    <div class="attribute-box"><span class="attr-label">Planet:</span> <span class="attr-value" id="modalPlanet"></span></div>
+                    <div class="attribute-box"><span class="attr-label">Element:</span> <span class="attr-value" id="modalElement"></span></div>
+                    <div class="attribute-box"><span class="attr-label">Aura:</span> <div class="color-preview" id="luckyColorBox"></div> <span class="attr-value" id="luckyColorName"></span></div>
+                    <div class="attribute-box"><span class="attr-label">Numbers:</span> <span class="attr-value" id="luckyNumbers"></span></div>
+                    <div class="attribute-box energy-box" style="flex: 1 1 100%; justify-content: center; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 10px;">
+                        <span class="attr-label">Energy:</span> <span class="attr-value" id="modalEnergy" style="color: var(--glow-color); font-style: italic;"></span>
+                    </div>
+                </div>
+
+                <div id="tab-Insight" class="tab-content active-content"><p id="fortuneTextInsight">Reading the stars...</p></div>
+                <div id="tab-weekly" class="tab-content"><p id="fortuneTextWeekly">Loading...</p></div>
+                <div id="tab-monthly" class="tab-content"><p id="fortuneTextMonthly">Loading...</p></div>
+
+                <div class="modal-actions">
+                    <div class="btn-with-tooltip">
+                        <button id="saveBtn" class="glow-btn" onclick="saveToArchive()">Inscribe to Grimoire</button>
+                        <span class="info-tooltip" data-tooltip="Preserves this complete reading and planetary aspects inside your browser's Personal Grimoire.">?</span>
+                    </div>
+                    
+                    <div class="btn-with-tooltip">
+                        <button id="shareBtn" class="glow-btn outline" onclick="shareDestiny()">Share Fate</button>
+                        <span class="info-tooltip" data-tooltip="Copies your current horoscope reading and custom cosmic aura link directly to your clipboard.">?</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Astro Insight. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="pages/about.html">About</a>
+            <span class="divider">|</span>
+            <a href="pages/privacy.html">Privacy Policy</a>
+            <span class="divider">|</span>
+            <a href="pages/terms.html">Terms & Conditions</a>
+            <span class="divider">|</span>
+            <a href="pages/helpcenter.html">Help Center</a>
+            <span class="divider">|</span>
+            <a href="pages/support.html">Contact Support</a>
+        </div>
+        
+        <div class="social-links">
+             <a href="https://www.instagram.com/_astroinsight_/" target="_blank" rel="noopener">Instagram</a>
+             <a href="https://www.facebook.com/profile.php?id=61589576716944" target="_blank" rel="noopener">Facebook</a>
+             <a href="https://x.com/_Astro_Insight_" target="_blank" rel="noopener">X</a>
+        </div>
+    </footer>
+            
+   <script src="js/script.js?v=20260901"></script>
+<script src="js/celestial-readings.js?v=1"></script>
+<script src="js/sub.js"></script>
+</body>
+</html>
