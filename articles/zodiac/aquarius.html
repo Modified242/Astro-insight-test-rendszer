@@ -3,6 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        window.gtag = gtag;
+
+        (function () {
+            var COOKIE_KEY = 'astro_cookie_consent';
+            var isGPCActivated = !!(navigator.globalPrivacyControl || window.globalPrivacyControl);
+            var savedConsent = localStorage.getItem(COOKIE_KEY);
+
+            function getConsentPayload(state) {
+                var isGranted = state === 'granted';
+                var isNecessary = state === 'necessary';
+                return {
+                    'analytics_storage': isGranted ? 'granted' : 'denied',
+                    'ad_storage': isGranted ? 'granted' : 'denied',
+                    'ad_user_data': isGranted ? 'granted' : 'denied',
+                    'ad_personalization': isGranted ? 'granted' : 'denied',
+                    'functionality_storage': (isGranted || isNecessary) ? 'granted' : 'denied',
+                    'personalization_storage': (isGranted || isNecessary) ? 'granted' : 'denied',
+                    'security_storage': 'granted',
+                    'restricted_data_processing': !isGranted
+                };
+            }
+
+            var initialState;
+            if (isGPCActivated) {
+                localStorage.setItem(COOKIE_KEY, 'denied');
+                initialState = 'denied';
+            } else if (savedConsent === 'granted' || savedConsent === 'denied' || savedConsent === 'necessary') {
+                initialState = savedConsent;
+            } else {
+                initialState = 'denied';
+            }
+            gtag('consent', 'default', getConsentPayload(initialState));
+
+            window.__astroConsent = {
+                COOKIE_KEY: COOKIE_KEY,
+                isGPCActivated: isGPCActivated,
+                savedConsent: savedConsent,
+                getConsentPayload: getConsentPayload
+            };
+        })();
+    </script>
     <title>The Zodiac Signs: Aquarius – Originality, Freedom, & Cosmic Mind | Astro Insight</title>
     <meta name="description" content="A comprehensive guide to Aquarius: personality traits, strengths, weaknesses, love style, and compatibility by .">
     <link rel="canonical" href="https://astroinsight.space/articles/zodiac/aquarius.html">
@@ -21,8 +65,8 @@
       "headline": "The Zodiac Signs – Aquarius",
       "image": "https://astroinsight.space/uranus.webp",
       "author": {
-        "@type": "Person",
-        "name": ""
+        "@type": "Organization",
+        "name": "Astro Insight"
       },
       "publisher": {
         "@type": "Organization",
@@ -31,6 +75,34 @@
       "datePublished": "2026-08-23"
     }
     </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://astroinsight.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Zodiac",
+          "item": "https://astroinsight.space/pages/articles.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Aquarius",
+          "item": "https://astroinsight.space/articles/zodiac/aquarius.html"
+        }
+      ]
+    }
+    </script>
+
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../css/style.css">
@@ -191,6 +263,8 @@
             <a href="../../pages/helpcenter.html">Help Center</a>
             <span class="divider">|</span>
             <a href="../../pages/support.html">Contact Support</a>
+        <span class="divider">|</span>
+        <a href="#" onclick="localStorage.removeItem('astro_cookie_consent'); location.reload(); return false;">Cookie Settings</a>
         </div>
         
         <div class="social-links">
@@ -201,5 +275,6 @@
     </footer>
 
     <script src="../../js/script.js"></script>
+<script src="../../js/cookie-consent.js"></script>
 </body>
 </html>
