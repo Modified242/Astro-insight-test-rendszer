@@ -3,6 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        window.gtag = gtag;
+
+        (function () {
+            var COOKIE_KEY = 'astro_cookie_consent';
+            var isGPCActivated = !!(navigator.globalPrivacyControl || window.globalPrivacyControl);
+            var savedConsent = localStorage.getItem(COOKIE_KEY);
+
+            function getConsentPayload(state) {
+                var isGranted = state === 'granted';
+                var isNecessary = state === 'necessary';
+                return {
+                    'analytics_storage': isGranted ? 'granted' : 'denied',
+                    'ad_storage': isGranted ? 'granted' : 'denied',
+                    'ad_user_data': isGranted ? 'granted' : 'denied',
+                    'ad_personalization': isGranted ? 'granted' : 'denied',
+                    'functionality_storage': (isGranted || isNecessary) ? 'granted' : 'denied',
+                    'personalization_storage': (isGranted || isNecessary) ? 'granted' : 'denied',
+                    'security_storage': 'granted',
+                    'restricted_data_processing': !isGranted
+                };
+            }
+
+            var initialState;
+            if (isGPCActivated) {
+                localStorage.setItem(COOKIE_KEY, 'denied');
+                initialState = 'denied';
+            } else if (savedConsent === 'granted' || savedConsent === 'denied' || savedConsent === 'necessary') {
+                initialState = savedConsent;
+            } else {
+                initialState = 'denied';
+            }
+            gtag('consent', 'default', getConsentPayload(initialState));
+
+            window.__astroConsent = {
+                COOKIE_KEY: COOKIE_KEY,
+                isGPCActivated: isGPCActivated,
+                savedConsent: savedConsent,
+                getConsentPayload: getConsentPayload
+            };
+        })();
+    </script>
     <title>Contact Support | Astro Insight</title>
     <meta name="description" content="Need help with a personalized astrological order or technical issue? Contact the Astro Insight support team for assistance within 24 hours.">
     <link rel="canonical" href="https://astroinsight.space/pages/support.html">
@@ -114,9 +158,12 @@
         <a href="helpcenter.html">Help Center</a>
         <span class="divider">|</span>
         <a href="support.html">Contact Support</a>
+        <span class="divider">|</span>
+        <a href="#" onclick="localStorage.removeItem('astro_cookie_consent'); location.reload(); return false;">Cookie Settings</a>
     </div>
     </footer>
 
     <script src="../js/script.js?v=20260901"></script>
+    <script src="../js/cookie-consent.js"></script>
 </body>
 </html>

@@ -3,12 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        window.gtag = gtag;
+
+        (function () {
+            var COOKIE_KEY = 'astro_cookie_consent';
+            var isGPCActivated = !!(navigator.globalPrivacyControl || window.globalPrivacyControl);
+            var savedConsent = localStorage.getItem(COOKIE_KEY);
+
+            function getConsentPayload(state) {
+                var isGranted = state === 'granted';
+                var isNecessary = state === 'necessary';
+                return {
+                    'analytics_storage': isGranted ? 'granted' : 'denied',
+                    'ad_storage': isGranted ? 'granted' : 'denied',
+                    'ad_user_data': isGranted ? 'granted' : 'denied',
+                    'ad_personalization': isGranted ? 'granted' : 'denied',
+                    'functionality_storage': (isGranted || isNecessary) ? 'granted' : 'denied',
+                    'personalization_storage': (isGranted || isNecessary) ? 'granted' : 'denied',
+                    'security_storage': 'granted',
+                    'restricted_data_processing': !isGranted
+                };
+            }
+
+            var initialState;
+            if (isGPCActivated) {
+                localStorage.setItem(COOKIE_KEY, 'denied');
+                initialState = 'denied';
+            } else if (savedConsent === 'granted' || savedConsent === 'denied' || savedConsent === 'necessary') {
+                initialState = savedConsent;
+            } else {
+                initialState = 'denied';
+            }
+            gtag('consent', 'default', getConsentPayload(initialState));
+
+            window.__astroConsent = {
+                COOKIE_KEY: COOKIE_KEY,
+                isGPCActivated: isGPCActivated,
+                savedConsent: savedConsent,
+                getConsentPayload: getConsentPayload
+            };
+        })();
+    </script>
     <title>Help Center & FAQ | Astro Insight</title>
-    <meta name="description" content="Find quick answers to common questions about Astro Insight horoscopes, celestial readings, personalized PDF reports, and billing options.">
+    <meta name="description" content="Find quick answers to common questions about Astro Insight horoscopes and celestial readings.">
     <link rel="canonical" href="https://astroinsight.space/pages/helpcenter.html">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Help Center & FAQ | Astro Insight">
-    <meta property="og:description" content="Find quick answers to common questions about Astro Insight horoscopes, celestial readings, personalized PDF reports, and billing options.">
+    <meta property="og:description" content="Find quick answers to common questions about Astro Insight horoscopes and celestial readings.">
     <meta property="og:url" content="https://astroinsight.space/pages/helpcenter.html">
 
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -66,29 +110,6 @@
             </details>
         </div>
 
-        <h2 class="faq-category-title">Premium PDF Projections</h2>
-        <div class="faq-accordion">
-            <details>
-                <summary>What do I receive when I order a personalized report?</summary>
-                <p>You will receive a beautifully formatted, comprehensive digital manuscript containing deep birth chart assessments, current multi-month progressive transits, and targeted life-path analyses mapped to your exact birth minutes.</p>
-            </details>
-            <details>
-                <summary>How long does it take for my PDF document to arrive?</summary>
-                <p>Our generation engine builds your document automatically following successful confirmation. Most documents materialize directly in your email inbox within <strong>5 to 15 minutes</strong>.</p>
-            </details>
-        </div>
-
-        <h2 class="faq-category-title">Billing &amp; Access</h2>
-        <div class="faq-accordion">
-            <details>
-                <summary>Are my online financial transactions safe?</summary>
-                <p>Absolutely. All payment handling is sandboxed securely through enterprise partners Stripe and PayPal. Astro Insight never views or records your raw payment keys or account numbers.</p>
-            </details>
-            <details>
-                <summary>How do I cancel my subscription?</summary>
-                <p>You have total autonomy over your membership. You can cancel your subscription with a single click at any time through the Billing tab in your account profile. You will maintain full access to your premium features until the exact end of your current billing cycle.</p>
-            </details>
-        </div>
 
         <h2 class="faq-category-title">Troubleshooting</h2>
         <div class="faq-accordion">
@@ -105,7 +126,9 @@
 
         <footer class="faq-footer">
             <h3>Still looking for answers?</h3>
-            <p>Our human support crew is ready to help guide you. Shoot us an email at <a href="support.html">Contact Support</a>.</p>
+            <p>Our human support crew is ready to help guide you. Shoot us an email at <a href="support.html">Contact Support</a>
+        <span class="divider">|</span>
+        <a href="#" onclick="localStorage.removeItem('astro_cookie_consent'); location.reload(); return false;">Cookie Settings</a>.</p>
         </footer>
     </div>
 
@@ -121,6 +144,8 @@
         <a href="helpcenter.html">Help Center</a>
         <span class="divider">|</span>
         <a href="support.html">Contact Support</a>
+        <span class="divider">|</span>
+        <a href="#" onclick="localStorage.removeItem('astro_cookie_consent'); location.reload(); return false;">Cookie Settings</a>
     </div>
     
      <div class="social-links">
@@ -129,5 +154,6 @@
          <a href="https://x.com/_Astro_Insight_" target="_blank" rel="noopener">X</a>
      </div>
 </footer> <script src="../js/script.js?v=20260901"></script>
+<script src="../js/cookie-consent.js"></script>
 </body>
 </html>
