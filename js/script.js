@@ -5,16 +5,6 @@ function getRootPrefix() {
     if (currentPath.includes('/pages/')) return "../";
     return "";
 }
-// ==========================================
-// AUDIO SYSTEM 
-// ==========================================
-const sfxCyber = new Audio('https://actions.google.com/sounds/v1/science_fiction/sci_fi_computer_bleep.ogg');
-const sfxMystic = new Audio('https://actions.google.com/sounds/v1/cartoon/magic_chime.ogg');
-const sfxSuccess = new Audio('https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg');
-
-function playSound(type) {
-    // Звуки вимкнено за рішенням команди
-}
 
 // ==========================================
 // MASTER DATABASE (UI, Coordinates, & Astro Data)
@@ -378,13 +368,22 @@ function drawLines() {
     ctx.globalAlpha = 1;
 }
 
+let animationId;
 function animate() {
     ctx.clearRect(0, 0, width, height);
     updateZodiacGroups();
     stars.forEach(s => s.update());
     drawLines();
-    requestAnimationFrame(animate);
+    animationId = requestAnimationFrame(animate);
 }
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        cancelAnimationFrame(animationId);
+    } else {
+        animate();
+    }
+});
 
 window.addEventListener('resize', initCanvas);
 window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
@@ -432,18 +431,41 @@ function setAura(hexColor) {
 
 function resetAura() {
     setAura('#d4af37'); 
-    playSound('mystic');
 }
 
 function toggleMobileMenu() {
     document.getElementById('mobileMenu').classList.toggle('open');
 }
-
 // ==========================================
 // WIDGETS
 // ==========================================
 
 const NUMEROLOGY_WORKER_URL = "https://numerology.astroinsight.workers.dev";
+
+// --- RATE LIMITING UTILITY ---
+function checkRateLimit(key, limit = 5, hours = 24) {
+    let usageData = JSON.parse(localStorage.getItem(key)) || [];
+    const now = Date.now();
+    const timeWindow = hours * 60 * 60 * 1000;
+    
+    usageData = usageData.filter(timestamp => now - timestamp < timeWindow);
+    
+    if (usageData.length >= limit) {
+        const oldest = usageData[0];
+        const timeLeftMs = timeWindow - (now - oldest);
+        const hoursLeft = Math.floor(timeLeftMs / (1000 * 60 * 60));
+        const minutesLeft = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
+        
+        return { allowed: false, message: `Limit reached. Please try again in ${hoursLeft}h ${minutesLeft}m.` };
+    }
+    
+    return { allowed: true, usageData: usageData };
+}
+
+function recordUsage(key, usageData) {
+    usageData.push(Date.now());
+    localStorage.setItem(key, JSON.stringify(usageData));
+}
 
 async function analyzeUsername() {
     const inputField = document.getElementById("usernameInput");
@@ -455,6 +477,12 @@ async function analyzeUsername() {
 
     if (!name) {
         answerField.innerText = "The numbers are silent. Please provide a name...";
+        return;
+    }
+
+    const rateLimit = checkRateLimit('usage_numerology');
+    if (!rateLimit.allowed) {
+        answerField.innerText = `🔮 The cosmic energies are resting. ${rateLimit.message}`;
         return;
     }
 
@@ -476,6 +504,7 @@ async function analyzeUsername() {
 
         const data = await response.json();
         answerField.innerText = data.response;
+        recordUsage('usage_numerology', rateLimit.usageData);
 
     } catch (error) {
         console.error("Numerology hiba:", error);
@@ -512,6 +541,12 @@ async function getMagicAnswer() {
         return;
     }
 
+    const rateLimit = checkRateLimit('usage_sphere');
+    if (!rateLimit.allowed) {
+        answerField.innerText = `✨ The seer's vision is clouded. ${rateLimit.message}`;
+        return;
+    }
+
     answerField.innerText = "Gazing into the cosmos...";
     inputField.disabled = true;
 
@@ -530,6 +565,7 @@ async function getMagicAnswer() {
 
         const data = await response.json();
         answerField.innerText = data.response;
+        recordUsage('usage_sphere', rateLimit.usageData);
 
     } catch (error) {
         console.error("Hiba:", error);
@@ -1162,6 +1198,14 @@ async function fetchTarotReading(spread) {
         container.parentNode.insertBefore(readingBox, container.nextSibling);
     }
 
+    const rateLimit = checkRateLimit('usage_tarot');
+    if (!rateLimit.allowed) {
+        readingBox.style.display = 'block';
+        readingBox.innerHTML = `<div class="reading-error">The cards are resting. ${rateLimit.message}</div>`;
+        readingBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+    }
+
     readingBox.style.display = 'block';
     readingBox.innerHTML = `
         <div class="oracle-loader">
@@ -1184,6 +1228,7 @@ async function fetchTarotReading(spread) {
 
         readingBox.innerHTML = `<div class="reading-content">${data.reading}</div>`;
         readingBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        recordUsage('usage_tarot', rateLimit.usageData);
 
     } catch (error) {
         console.error("Fetch error:", error);

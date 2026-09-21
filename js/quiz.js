@@ -201,7 +201,6 @@ function checkBlitzMatch() {
         blitzState.correct++;
         blitzState.selectedText.classList.add('matched');
         blitzState.selectedIcon.classList.add('matched');
-        if (typeof playSound === "function") playSound('success'); 
     } else {
         blitzState.wrong++;
         blitzState.selectedText.style.borderColor = '#ef4444';
@@ -301,7 +300,6 @@ function handleAlchemistGuess(guessedElement) {
     if (guessedElement === alchemistState.currentSign.element) {
         alchemistState.score++; alchemistState.matchedCount++;
         document.getElementById('alchemist-score').innerText = alchemistState.score;
-        if (typeof playSound === 'function') playSound('success');
         card.style.transform = 'scale(1.1)'; 
     } else {
         alchemistState.score = Math.max(0, alchemistState.score - 1); 
@@ -427,7 +425,6 @@ function handleArchetypeGuess(guessedSign, btnElement) {
     if (guessedSign === archetypeState.currentScenario.sign) {
         archetypeState.score++; archetypeState.matchedCount++;
         document.getElementById('archetype-score').innerText = archetypeState.score;
-        if (typeof playSound === 'function') playSound('success');
         btnElement.style.borderColor = '#22c55e'; btnElement.style.color = '#22c55e';
     } else {
         btnElement.style.borderColor = '#ef4444'; btnElement.style.color = '#ef4444';
@@ -520,7 +517,6 @@ function handleRulerGuess(guessedPlanet, btnElement) {
     const card = document.getElementById('ruler-current-card');
     if (guessedPlanet === rulerState.currentSign.planet) {
         rulerState.score++; rulerState.matchedCount++; document.getElementById('ruler-score').innerText = rulerState.score;
-        if (typeof playSound === 'function') playSound('success');
         btnElement.style.borderColor = '#22c55e'; btnElement.style.color = '#22c55e'; card.style.transform = 'scale(1.1)'; 
     } else {
         rulerState.score = Math.max(0, rulerState.score - 1); document.getElementById('ruler-score').innerText = rulerState.score;
@@ -615,7 +611,6 @@ function handleTruthGuess(guessedAnswer) {
     const card = document.getElementById('truth-current-card');
     if (guessedAnswer === truthState.currentAnswer) {
         truthState.score++; truthState.matchedCount++; document.getElementById('truth-score').innerText = truthState.score;
-        if (typeof playSound === 'function') playSound('success');
         card.style.borderColor = '#22c55e'; card.style.transform = 'scale(1.05)';
     } else {
         truthState.score = Math.max(0, truthState.score - 1); document.getElementById('truth-score').innerText = truthState.score;
@@ -711,7 +706,6 @@ function handleTracerGuess(guessedSign, btnElement) {
     
     if (guessedSign === tracerState.currentSignName) {
         tracerState.score++; tracerState.matchedCount++; document.getElementById('tracer-score').innerText = tracerState.score;
-        if (typeof playSound === 'function') playSound('success');
         btnElement.style.borderColor = '#22c55e'; btnElement.style.color = '#22c55e'; card.style.transform = 'scale(1.05)';
     } else {
         tracerState.score = Math.max(0, tracerState.score - 1); document.getElementById('tracer-score').innerText = tracerState.score;
@@ -804,7 +798,6 @@ function handleTarotFlip(card) {
     if (tarotState.firstCard.dataset.id === tarotState.secondCard.dataset.id) {
         tarotState.matchedCount++;
         document.getElementById('tarot-score').innerText = tarotState.matchedCount;
-        if (typeof playSound === 'function') playSound('success');
         tarotState.firstCard.classList.add('matched'); tarotState.secondCard.classList.add('matched');
         tarotState.firstCard = null; tarotState.secondCard = null; tarotState.lockBoard = false;
         if (tarotState.matchedCount === 8) endTarotGame(true);
@@ -882,7 +875,6 @@ function handleChemGuess(guess) {
     
     if (guess === chemState.currentPair.ans) {
         chemState.score++; chemState.matchedCount++; document.getElementById('chem-score').innerText = chemState.score;
-        if (typeof playSound === 'function') playSound('success');
         card.style.borderColor = '#22c55e'; card.style.transform = 'scale(1.05)';
     } else {
         chemState.score = Math.max(0, chemState.score - 1); document.getElementById('chem-score').innerText = chemState.score;
@@ -961,7 +953,6 @@ function handleRetroGuess(guess) {
     
     if (guess === retroState.currentScenario.ans) {
         retroState.score++; retroState.matchedCount++; document.getElementById('retro-score').innerText = retroState.score;
-        if (typeof playSound === 'function') playSound('success');
         card.style.borderColor = '#22c55e'; card.style.transform = 'scale(1.05)';
     } else {
         retroState.score = Math.max(0, retroState.score - 1); document.getElementById('retro-score').innerText = retroState.score;
@@ -1053,7 +1044,6 @@ function handleMoonGuess(guessedPhase, btnElement) {
     
     if (guessedPhase === moonState.currentPhase.phase) {
         moonState.score++; moonState.matchedCount++; document.getElementById('moon-score').innerText = moonState.score;
-        if (typeof playSound === 'function') playSound('success');
         btnElement.style.borderColor = '#22c55e'; btnElement.style.color = '#22c55e'; card.style.transform = 'scale(1.1)'; 
     } else {
         moonState.score = Math.max(0, moonState.score - 1); document.getElementById('moon-score').innerText = moonState.score;

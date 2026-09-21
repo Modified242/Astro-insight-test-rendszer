@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             coreCard.onclick = () => { 
                 setAura(s.aura); 
-                playSound('mystic'); 
                 openModal(s.name); 
             };
             coreGrid.appendChild(coreCard);
@@ -58,14 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- ÚJ FÜGGVÉNY: Időalapú Cache Buster generálása ---
 function getCacheBuster(type) {
     const d = new Date();
-    if (type === 'monthly') return `${d.getFullYear()}-${d.getMonth() + 1}`;
+    if (type === 'monthly') return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}`;
     if (type === 'weekly') {
-        const start = new Date(d.getFullYear(), 0, 1);
+        const start = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
         const days = Math.floor((d - start) / (24 * 60 * 60 * 1000));
-        return `${d.getFullYear()}-W${Math.ceil(days / 7)}`;
+        return `${d.getUTCFullYear()}-W${Math.ceil(days / 7)}`;
     }
     // Napi buster
-    return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
 }
 
 // 3. Backend hívás (AI Cloudflare Worker)
@@ -155,7 +154,6 @@ async function openModal(sign) {
 
 // 6. Fülek váltása
 function switchTab(event, tabName) {
-    playSound('mystic');
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     
     const targetBtn = event ? event.target : document.querySelector(`.tab-btn[onclick*="${tabName}"]`);
@@ -198,7 +196,6 @@ async function saveToArchive() {
 
     btn.innerText = "Inscribed ✓"; 
     btn.style.pointerEvents = 'auto';
-    playSound('success');
     
     let archive = JSON.parse(localStorage.getItem('astroArchive')) || [];
     let pureSign = document.getElementById('signTitle').innerText.replace(" (Archived)", "").trim();
@@ -253,7 +250,6 @@ function openSavedModal(index) {
     let item = archive[index];
     if (!item) return;
 
-    playSound('mystic');
     
     let pureSign = item.sign.replace(" (Archived)", "").trim();
     let fallbackData = typeof zodiacData !== 'undefined' ? (zodiacData[pureSign] || {}) : {};
@@ -287,7 +283,6 @@ function deleteArchiveItem(index, event) {
     archive.splice(index, 1);
     localStorage.setItem('astroArchive', JSON.stringify(archive));
     renderArchive();
-    playSound('cyber');
 }
 document.querySelectorAll('.zodiac-card').forEach(card => {
     card.addEventListener('click', function(e) {
