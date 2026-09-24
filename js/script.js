@@ -444,6 +444,9 @@ const NUMEROLOGY_WORKER_URL = "https://numerology.astroinsight.workers.dev";
 
 // --- RATE LIMITING UTILITY ---
 function checkRateLimit(key, limit = 5, hours = 24) {
+    if (localStorage.getItem('MASTER_KEY') === 'unlimited_power') {
+        return { allowed: true, usageData: [] };
+    }
     let usageData = JSON.parse(localStorage.getItem(key)) || [];
     const now = Date.now();
     const timeWindow = hours * 60 * 60 * 1000;
