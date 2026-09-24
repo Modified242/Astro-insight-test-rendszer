@@ -601,7 +601,14 @@ async function fetchTarotReading(spread, existingRateLimit = null) {
             body: JSON.stringify(spread)
         });
 
-        if (!response.ok) throw new Error("Network disruption");
+        if (!response.ok) {
+            let errorText = "Network disruption";
+            try {
+                const errorData = await response.json();
+                if (errorData.error) errorText = errorData.error;
+            } catch (e) {}
+            throw new Error(errorText);
+        }
 
         const data = await response.json();
         
