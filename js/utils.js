@@ -232,17 +232,24 @@ const NUMEROLOGY_WORKER_URL = "https://numerology.astroinsight.workers.dev";
 function checkRateLimit(key, limit = 5) {
     let usageData = JSON.parse(localStorage.getItem(key)) || [];
     const now = new Date();
-    const midnight = new Date(now);
-    midnight.setHours(0, 0, 0, 0); // Midnight of today
     
-    // Keep only usages from today (after midnight)
-    usageData = usageData.filter(timestamp => timestamp >= midnight.getTime());
+    // Calculate midnight in US Eastern Time (New York)
+    const nyTimeStr = now.toLocaleString("en-US", { timeZone: "America/New_York" });
+    const nyNow = new Date(nyTimeStr);
+    const nyMidnight = new Date(nyNow);
+    nyMidnight.setHours(0, 0, 0, 0);
+    const timeDiff = nyNow.getTime() - now.getTime();
+    const actualMidnightMs = nyMidnight.getTime() - timeDiff;
+    
+    // Keep only usages from today (after NY midnight)
+    usageData = usageData.filter(timestamp => timestamp >= actualMidnightMs);
     
     if (usageData.length >= limit) {
-        const nextMidnight = new Date(midnight);
-        nextMidnight.setDate(nextMidnight.getDate() + 1);
+        const nextNyMidnight = new Date(nyMidnight);
+        nextNyMidnight.setDate(nextNyMidnight.getDate() + 1);
+        const nextMidnightMs = nextNyMidnight.getTime() - timeDiff;
         
-        const timeLeftMs = nextMidnight.getTime() - now.getTime();
+        const timeLeftMs = nextMidnightMs - now.getTime();
         const hoursLeft = Math.floor(timeLeftMs / (1000 * 60 * 60));
         const minutesLeft = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
         
