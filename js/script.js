@@ -1234,7 +1234,8 @@ async function fetchTarotReading(spread) {
         console.error("Fetch error:", error);
         readingBox.innerHTML = `
             <div class="reading-error">
-                The connection to the stars was lost. <br><small>Reason: ${error.message || "Unknown error"}</small>
+                The connection to the stars was lost. <br><small>Reason: ${error.message || "Unknown error"}</small><br><br>
+                <span style="color: #fbbf24; font-size: 0.9em;">Don't worry, your daily attempt was not used up. You can try again.</span>
             </div>
         `;
     }

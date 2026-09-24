@@ -624,7 +624,8 @@ async function fetchTarotReading(spread, existingRateLimit = null) {
         console.error("Fetch error:", error);
         readingBox.innerHTML = `
             <div class="reading-error">
-                The connection to the stars was lost. <br><small>Reason: ${error.message || "Unknown error"}</small>
+                The connection to the stars was lost. <br><small>Reason: ${error.message || "Unknown error"}</small><br><br>
+                <span style="color: #fbbf24; font-size: 0.9em;">Don't worry, your daily attempt was not used up. You can try again.</span>
             </div>
         `;
     }
@@ -635,30 +636,38 @@ function initDailyTarotState() {
     if (!container) return;
 
     const rateLimit = checkRateLimit('usage_tarot', 1);
-    if (!rateLimit.allowed) {
-        const savedSpread = localStorage.getItem('saved_tarot_spread');
-        const savedReading = localStorage.getItem('saved_tarot_reading');
+    const savedSpread = localStorage.getItem('saved_tarot_spread');
+    const savedReading = localStorage.getItem('saved_tarot_reading');
 
-        if (savedSpread && savedReading) {
-            try {
-                const spreadData = JSON.parse(savedSpread);
-                container.innerHTML = renderTarotCards(spreadData, true);
+    if (savedSpread && savedReading) {
+        try {
+            const spreadData = JSON.parse(savedSpread);
+            container.innerHTML = renderTarotCards(spreadData, true);
 
-                let readingBox = document.getElementById('tarot-interpretation');
-                if (!readingBox) {
-                    readingBox = document.createElement('div');
-                    readingBox.id = 'tarot-interpretation';
-                    readingBox.className = 'oracle-reading';
-                    container.parentNode.insertBefore(readingBox, container.nextSibling);
-                }
-                readingBox.style.display = 'block';
+            let readingBox = document.getElementById('tarot-interpretation');
+            if (!readingBox) {
+                readingBox = document.createElement('div');
+                readingBox.id = 'tarot-interpretation';
+                readingBox.className = 'oracle-reading';
+                container.parentNode.insertBefore(readingBox, container.nextSibling);
+            }
+            readingBox.style.display = 'block';
+            
+            if (!rateLimit.allowed) {
                 readingBox.innerHTML = `
                     <div class="reading-error" style="margin-bottom: 20px;">The cards are resting. ${rateLimit.message}</div>
                     <div class="reading-content">${savedReading}</div>
                 `;
-            } catch (e) {
-                console.error("Error loading daily tarot state:", e);
+            } else {
+                readingBox.innerHTML = `
+                    <div class="reading-content">
+                        <div style="margin-bottom: 15px; font-style: italic; color: #fbbf24; text-align: center;">This is your previous reading. You can draw new cards for today!</div>
+                        ${savedReading}
+                    </div>
+                `;
             }
+        } catch (e) {
+            console.error("Error loading daily tarot state:", e);
         }
     }
 }
