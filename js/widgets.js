@@ -624,7 +624,7 @@ async function fetchTarotReading(spread, existingRateLimit = null) {
         console.error("Fetch error:", error);
         readingBox.innerHTML = `
             <div class="reading-error">
-                The connection to the stars was lost. Please draw the cards again.
+                The connection to the stars was lost. <br><small>Reason: ${error.message || "Unknown error"}</small>
             </div>
         `;
     }
