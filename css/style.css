@@ -107,11 +107,12 @@ header h1 { font-size: 3.5rem; color: var(--glow-color); margin-bottom: 5px; tex
 .subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 20px; font-style: italic;}
 
 section {
-    background: var(--bg-panel); backdrop-filter: blur(5px);
+    background: var(--bg-panel); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
     padding: 30px; border-radius: 8px; margin-bottom: 30px;
     border: 1px solid var(--glow-color-dim);
     box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     transition: border-color 0.8s ease, box-shadow 0.8s ease;
+    transform: translateZ(0); /* Fix scrolling artifacts */
 }
 section:hover { border-color: var(--glow-color); box-shadow: 0 0 20px rgba(0,0,0,0.6);}
 section h3 { font-size: 2rem; margin-top: 0; color: var(--text-main); font-weight: 400;}
@@ -145,6 +146,7 @@ select:focus, input:focus { border-color: var(--glow-color); }
 .card {
     background: rgba(0,0,0,0.4); padding: 25px 10px; border-radius: 8px; cursor: pointer;
     border: 1px solid rgba(255,255,255,0.05); transition: 0.5s;
+    -webkit-backface-visibility: hidden; backface-visibility: hidden; transform: translateZ(0); /* Anti-flicker / scroll glitch fix */
 }
 .card:hover { transform: translateY(-5px); border-color: var(--glow-color); background: rgba(0,0,0,0.7);}
 .card .icon { font-size: 3rem; margin-bottom: 10px; transition: color 0.8s; }
