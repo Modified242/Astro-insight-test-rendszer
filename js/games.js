@@ -571,37 +571,41 @@ function startTruthTimer() {
 }
 
 function loadNextTruthCard() {
-    const signName = truthState.signPool.pop();
-    truthState.currentSignName = signName;
-    const sign = zodiacData[signName];
-    const isPlanetQuestion = Math.random() > 0.5;
-    const isTrueStatement = Math.random() > 0.5;
-    let statementText = "";
-    
-    if (isPlanetQuestion) {
-        let planet = sign.planet;
-        if (!isTrueStatement) {
-            const allPlanetsList = [...new Set(Object.values(zodiacData).map(s => s.planet))];
-            const wrongPlanets = allPlanetsList.filter(p => p !== planet);
-            planet = wrongPlanets[Math.floor(Math.random() * wrongPlanets.length)];
+    try {
+        const signName = truthState.signPool.pop();
+        truthState.currentSignName = signName;
+        const sign = zodiacData[signName];
+        const isPlanetQuestion = Math.random() > 0.5;
+        const isTrueStatement = Math.random() > 0.5;
+        let statementText = "";
+        
+        if (isPlanetQuestion) {
+            let planet = sign.planet;
+            if (!isTrueStatement) {
+                const allPlanetsList = [...new Set(Object.values(zodiacData).map(s => s.planet))];
+                const wrongPlanets = allPlanetsList.filter(p => p !== planet);
+                planet = wrongPlanets[Math.floor(Math.random() * wrongPlanets.length)];
+            }
+            statementText = `${planet} is the ruling planet of ${signName}.`;
+        } else {
+            let element = sign.element;
+            if (!isTrueStatement) {
+                const elementsList = ["Fire", "Earth", "Air", "Water"].filter(e => e !== element);
+                element = elementsList[Math.floor(Math.random() * elementsList.length)];
+            }
+            statementText = `${signName} is a ${element} sign.`;
         }
-        statementText = `${planet} is the ruling planet of ${signName}.`;
-    } else {
-        let element = sign.element;
-        if (!isTrueStatement) {
-            const elementsList = ["Fire", "Earth", "Air", "Water"].filter(e => e !== element);
-            element = elementsList[Math.floor(Math.random() * elementsList.length)];
-        }
-        statementText = `${signName} is an ${element} sign.`;
+        
+        truthState.currentAnswer = isTrueStatement;
+        const card = document.getElementById('truth-current-card');
+        const cardIcon = document.getElementById('truth-card-icon');
+        card.style.borderColor = sign.aura; card.style.boxShadow = `0 0 10px ${sign.aura}33`;
+        cardIcon.style.color = sign.aura; cardIcon.innerHTML = sign.svgIcon;
+        const svgEl = cardIcon.querySelector('svg'); if(svgEl) { svgEl.style.width = '100%'; svgEl.style.height = '100%'; }
+        document.getElementById('truth-scenario-text').innerText = statementText;
+    } catch (e) {
+        document.getElementById('truth-scenario-text').innerText = "ERROR: " + e.message;
     }
-    
-    truthState.currentAnswer = isTrueStatement;
-    const card = document.getElementById('truth-current-card');
-    const cardIcon = document.getElementById('truth-card-icon');
-    card.style.borderColor = sign.aura; card.style.boxShadow = `0 0 10px ${sign.aura}33`;
-    cardIcon.style.color = sign.aura; cardIcon.innerHTML = sign.svgIcon;
-    const svgEl = cardIcon.querySelector('svg'); if(svgEl) { svgEl.style.width = '100%'; svgEl.style.height = '100%'; }
-    document.getElementById('truth-scenario-text').innerText = statementText;
 }
 
 function handleTruthGuess(guessedAnswer) {
