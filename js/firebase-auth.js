@@ -9,26 +9,22 @@ import {
     signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-// TODO: Replace this with your actual Firebase config object.
-// You will get this from the Firebase Console when you create a web app.
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyBB_P3JLwdCojVnzmjw11Z9qCOrbuWjt1w",
+  authDomain: "astroinsight-724b6.firebaseapp.com",
+  projectId: "astroinsight-724b6",
+  storageBucket: "astroinsight-724b6.firebasestorage.app",
+  messagingSenderId: "678515845937",
+  appId: "1:678515845937:web:63fc45fa99d1fd45b6de10",
+  measurementId: "G-D7JMZJX8KF"
 };
 
-// Initialize Firebase only if the user has replaced the API key
-let app, auth, provider;
-if (firebaseConfig.apiKey !== "YOUR_API_KEY") {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    provider = new GoogleAuthProvider();
-} else {
-    console.warn("Firebase is not initialized. Please replace 'firebaseConfig' in js/firebase-auth.js with your actual keys.");
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // UI Elements
