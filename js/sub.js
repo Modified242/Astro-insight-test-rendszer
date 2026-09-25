@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             if (response.ok) {
                 msg.style.color = "var(--glow-color)";
-                msg.textContent = "Your path is aligned. Check your inbox for your 15% discount.";
+                msg.textContent = data.success || "Your path is aligned. You are now tuned to the cosmic frequencies.";
                 form.reset();
             } else {
                 msg.style.color = "#ef4444";
