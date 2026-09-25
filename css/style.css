@@ -368,8 +368,8 @@ details li { margin-bottom: 8px; }
 
 /* 1. Гнучкий розмір (для карток та модалок Celestial Readings) */
 .zodiac-svg-icon { 
-    width: 50%; 
-    height: 50%; 
+    width: 1.5em; 
+    height: 1.5em; 
     display: inline-block; 
     vertical-align: middle; 
 }
@@ -454,7 +454,8 @@ details li { margin-bottom: 8px; }
         width: 30%; 
         min-width: 90px; 
         max-width: 120px; 
-        height: 170px; /* Restored tall card shape */
+        height: auto; 
+        aspect-ratio: 2 / 3.2;
     } 
     
     /* Forms & Inputs */
@@ -522,16 +523,17 @@ details li { margin-bottom: 8px; }
     .glow-text { font-size: 1.5rem !important; }
 
     /* Zodiac Grid */
-    .zodiac-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .card { padding: 12px 5px; }
-    .card .icon { font-size: 2rem; }
-    .card h3 { font-size: 1rem; }
+    .zodiac-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .card { padding: 15px 10px; }
+    .card .icon { font-size: 2rem; margin-bottom: 5px; }
+    .card h3 { font-size: 1.1rem; }
 
     /* Tarot Card scaling for very small screens (iPhone SE) */
     .tarot-card { 
         width: 45%; 
         max-width: 130px; 
-        height: 160px; 
+        height: auto; 
+        aspect-ratio: 2 / 3.2;
     }
 
     /* Fortune Modal */
