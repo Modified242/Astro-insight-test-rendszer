@@ -6,7 +6,8 @@ import {
     onAuthStateChanged,
     signOut,
     GoogleAuthProvider,
-    signInWithPopup
+    signInWithPopup,
+    sendPasswordResetEmail
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
 // Your web app's Firebase configuration
@@ -40,6 +41,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const formSignIn = document.getElementById('form-signin');
     const formSignUp = document.getElementById('form-signup');
     const errorMsg = document.getElementById('auth-error-msg');
+    
+    // Some pages may have multiple instances (desktop/mobile nav) or we just fetch the first one
+    const forgotPasswordLinks = document.querySelectorAll('#auth-forgot-password');
 
     // Toggle Modal
     if (loginNavBtn) {
@@ -118,7 +122,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 signInWithPopup(auth, provider).catch(error => {
                     errorMsg.textContent = error.message;
                     errorMsg.style.display = 'block';
+                    errorMsg.style.color = '#ef4444';
                 });
+            });
+        });
+
+        forgotPasswordLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                // Get the email from the sign in form
+                const emailInput = formSignIn.querySelector('input[type="email"]');
+                const email = emailInput.value;
+                
+                if (!email) {
+                    errorMsg.textContent = "Please enter your email address in the field above to reset your password.";
+                    errorMsg.style.display = 'block';
+                    errorMsg.style.color = '#ef4444';
+                    return;
+                }
+
+                sendPasswordResetEmail(auth, email)
+                    .then(() => {
+                        errorMsg.textContent = "Password reset email sent! Please check your inbox.";
+                        errorMsg.style.display = 'block';
+                        errorMsg.style.color = '#10b981'; // green
+                    })
+                    .catch((error) => {
+                        errorMsg.textContent = error.message;
+                        errorMsg.style.display = 'block';
+                        errorMsg.style.color = '#ef4444';
+                    });
             });
         });
 
