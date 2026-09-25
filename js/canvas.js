@@ -194,6 +194,24 @@ document.addEventListener('DOMContentLoaded', initAstroTicker);
 
 const omenTextEl = document.getElementById('omenText');
 if (omenTextEl) {
-    omenTextEl.innerText = "The position of Venus suggests harmony in upcoming endeavors.";
+    const omens = [
+        "The position of Venus suggests harmony in upcoming endeavors.",
+        "Solar winds are calm; excellent energy for analytical focus and structured coding.",
+        "High planetary resonance today. Intuitive decision-making is heavily favored.",
+        "Mercury aligns with Jupiter: expansive communication and clarity in negotiations.",
+        "Lunar energy shifts toward Earth signs—ground your ideas into practical projects today.",
+        "A rare celestial alignment enhances your creative potential this evening.",
+        "The current phase of the moon brings clarity to unresolved emotional matters.",
+        "Mars enters a dynamic phase—bold actions will be rewarded today.",
+        "Saturn's influence promotes discipline; a great time to organize your thoughts.",
+        "Neptune casts a dreamy aura, heightening intuition and spiritual awareness."
+    ];
+    const now = new Date();
+    const nyTimeStr = now.toLocaleString("en-US", { timeZone: "America/New_York" });
+    const nyNow = new Date(nyTimeStr);
+    const startOfYear = new Date(nyNow.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((nyNow - startOfYear) / (1000 * 60 * 60 * 24));
+    
+    omenTextEl.innerText = omens[dayOfYear % omens.length];
 }
 
