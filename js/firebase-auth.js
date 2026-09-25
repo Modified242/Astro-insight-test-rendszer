@@ -130,12 +130,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.querySelectorAll('.auth-google-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                signInWithPopup(auth, provider).catch(error => {
-                    errorMsg.textContent = error.message;
-                    errorMsg.style.display = 'block';
-                    errorMsg.style.color = '#ef4444';
-                });
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                console.log("Google login button clicked...");
+                signInWithPopup(auth, provider)
+                    .then((result) => {
+                        console.log("Google sign-in successful for:", result.user.email);
+                    })
+                    .catch(error => {
+                        console.error("Google sign-in error:", error);
+                        errorMsg.textContent = error.message;
+                        errorMsg.style.display = 'block';
+                        errorMsg.style.color = '#ef4444';
+                    });
             });
         });
 
