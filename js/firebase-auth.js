@@ -3,11 +3,11 @@ import {
     getAuth, 
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
-    onAuthStateChanged,
     signOut,
     GoogleAuthProvider,
     signInWithPopup,
-    sendPasswordResetEmail
+    sendPasswordResetEmail,
+    updateProfile
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
 // Your web app's Firebase configuration
@@ -83,7 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // User is logged in
                 loginNavBtn.style.display = 'none';
                 userProfileNav.style.display = 'flex';
-                userEmailDisplay.textContent = user.email || 'User';
+                // Show display name (username), fallback to first part of email if not set
+                userEmailDisplay.textContent = user.displayName || user.email.split('@')[0] || 'User';
                 authOverlay.classList.remove('active');
             } else {
                 // User is logged out
@@ -107,13 +108,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         formSignUp?.addEventListener('submit', (e) => {
             e.preventDefault();
+            const username = e.target.username.value;
             const email = e.target.email.value;
             const password = e.target.password.value;
             
             createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Save the username to the Firebase user profile
+                    return updateProfile(userCredential.user, {
+                        displayName: username
+                    }).then(() => {
+                        // Force UI update to show new username
+                        userEmailDisplay.textContent = username;
+                    });
+                })
                 .catch((error) => {
                     errorMsg.textContent = error.message;
                     errorMsg.style.display = 'block';
+                    errorMsg.style.color = '#ef4444';
                 });
         });
 
