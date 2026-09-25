@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
         msg.style.display = "none";
 
         try {
-            const WORKER_URL = 'https://late-fog-5ad6astro-newsletter-api.astroinsight.workers.dev/';
+            const WORKER_URL = 'https://astro-newsletter.astroinsight.workers.dev/subscribe';
 
             const response = await fetch(WORKER_URL, {
                 method: 'POST',
