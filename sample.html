@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astro Insight - Celestial Soulmate Quiz</title>
+    <!-- Google Fonts matching Astro Insight -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Link to Astro Insight Base CSS -->
+    <link rel="stylesheet" href="css/style.css?v=20260901">
+    
+    <!-- html2canvas для генерації зображень -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        /* Custom Quiz UI Extensions based on style.css variables */
+        .quiz-card-container {
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glow-color-dim);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 750px;
+            margin: 40px auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .quiz-card-container:hover {
+            border-color: var(--glow-color-mid);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.15);
+        }
+
+        .quiz-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0 30px;
+        }
+
+        .quiz-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37 0%, #f8fafc 100%);
+            box-shadow: 0 0 10px var(--glow-color);
+            transition: width 0.4s ease;
+        }
+
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-btn:hover {
+            border-color: var(--glow-color);
+            background: rgba(212, 175, 55, 0.08);
+            transform: translateX(4px);
+        }
+
+        .option-btn .sparkle {
+            opacity: 0;
+            color: var(--glow-color);
+            transition: opacity 0.3s ease;
+        }
+
+        .option-btn:hover .sparkle {
+            opacity: 1;
+        }
+
+        .user-setup-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        @media (max-width: 768px) {
+            .user-setup-grid {
+                grid-template-columns: 1fr;
+            }
+            .quiz-card-container {
+                padding: 25px 15px;
+            }
+        }
+
+        /* Експортна картка 1080x1920 із вашим готовим дизайном */
+        #exportCardContainer {
+            position: absolute;
+            top: 0;
+            left: -9999px; /* Виносимо далеко за межі видимого екрану */
+            width: 1080px;
+            height: 1920px;
+            background: radial-gradient(circle at center, #0f172a 0%, #05070a 100%);
+            color: #f8fafc;
+            opacity: 1 !important; /* Обов'язково 1, щоб html2canvas бачив вміст */
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 120px;
+            box-sizing: border-box;
+            border: 15px solid #d4af37;
+            border-radius: 60px;
+        }
+
+        .export-glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            border-radius: 40px;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 80px 60px;
+            box-sizing: border-box;
+            box-shadow: inset 0 0 50px rgba(212, 175, 55, 0.1);
+        }
+
+        .export-header {
+            text-align: center;
+        }
+
+        .export-badge {
+            background: rgba(212, 175, 55, 0.15);
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            display: inline-block;
+        }
+
+        .export-score {
+            font-family: 'Cinzel', serif;
+            font-size: 180px;
+            color: #d4af37;
+            text-shadow: 0 0 60px rgba(212, 175, 55, 0.6);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .export-title {
+            font-family: 'Cinzel', serif;
+            font-size: 70px;
+            text-transform: uppercase;
+            margin-bottom: 60px;
+            text-align: center;
+        }
+
+        .export-verdict {
+            font-family: 'Playfair Display', serif;
+            font-size: 45px;
+            font-style: italic;
+            color: #d4af37;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.4;
+        }
+
+        .export-footer {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 35px;
+            color: rgba(255, 255, 255, 0.6);
+            letter-spacing: 3px;
+        }
+
+            .share-icon-btn {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(212, 175, 55, 0.4);
+        color: var(--text-main);
+        padding: 8px 14px;
+        border-radius: 6px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .share-icon-btn:hover {
+        border-color: var(--glow-color);
+        background: rgba(212, 175, 55, 0.15);
+        color: var(--glow-color);
+    }
+    </style>
+</head>
+<body class="static-page">
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <h1>Astro Insight</h1>
+            <p class="subtitle">Interactive Celestial Synastry Engine & Soulmate Finder</p>
+        </header>
+
+        <!-- MAIN QUIZ CONTAINER -->
+        <section className="quiz-card-container" id="quizContainer">
+            
+            <!-- STEP 0: USER ASTRO DATA INPUT -->
+            <div id="stepSetup">
+                <h3 style="font-family: 'Playfair Display', serif; color: var(--glow-color); margin-bottom: 10px;">
+                    Enter Your Natal Alignment
+                </h3>
+                <p style="font-family: sans-serif; color: var(--text-muted); font-size: 0.95rem; margin-bottom: 30px;">
+                    To calculate exact synastry resonance via our Cloudflare Natal Engine, provide your Sun Sign and Birth Date.
+                </p>
+
+                <div class="user-setup-grid">
+                    <div class="select-group">
+                        <label for="userSign" class="pseudo-label">Your Sun Sign</label>
+                        <select id="userSign" class="gold-select" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.6); color: white; border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 8px;">
+                            <option value="" disabled selected>Select your sign...</option>
+                            <option value="aries">♈ Aries</option>
+                            <option value="taurus">♉ Taurus</option>
+                            <option value="gemini">♊ Gemini</option>
+                            <option value="cancer">♋ Cancer</option>
+                            <option value="leo">♌ Leo</option>
+                            <option value="virgo">♍ Virgo</option>
+                            <option value="libra">♎ Libra</option>
+                            <option value="scorpio">♏ Scorpio</option>
+                            <option value="sagittarius">♐ Sagittarius</option>
+                            <option value="capricorn">♑ Capricorn</option>
+                            <option value="aquarius">♒ Aquarius</option>
+                            <option value="pisces">♓ Pisces</option>
+                        </select>
+                    </div>
+
+                    <div class="select-group">
+                        <label for="userDate" class="pseudo-label">Your Birth Date</label>
+                        <input type="date" id="userDate" class="gold-select" />
+                    </div>
+                </div>
+
+                <button class="compat-btn" id="startQuizBtn" style="width: 100%; margin-top: 10px;">
+                    Begin Celestial Alignment →
+                </button>
+            </div>
+
+            <!-- STEP 1: QUIZ QUESTIONS (8 DETAILED QUESTIONS) -->
+            <div id="stepQuestions" style="display: none;">
+                <div style="display: flex; justify-content: space-between; font-family: sans-serif; font-size: 0.85rem; color: var(--text-muted);">
+                    <span id="questionProgressText">Question 1 of 8</span>
+                    <span id="questionCategoryText">Love Language & Emotion</span>
+                </div>
+                
+                <div class="quiz-progress-bar">
+                    <div class="quiz-progress-fill" id="progressFill" style="width: 12.5%;"></div>
+                </div>
+
+                <h3 id="questionTitle" style="font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--text-main); text-align: left; margin-bottom: 25px;">
+                    <!-- Question Title Injected by JS -->
+                </h3>
+
+                <div id="optionsContainer">
+                    <!-- Options Injected by JS -->
+                </div>
+            </div>
+
+            <!-- STEP 2: LOADING & WORKER API CALCULATION -->
+            <div id="stepLoading" style="display: none; text-align: center; padding: 40px 0;">
+                <div class="compat-score-circle" style="animation: pulseGlow 1.5s infinite ease-in-out;">
+                    ✦
+                </div>
+                <h3 class="glow-text" style="font-size: 1.5rem !important;">Aligning Celestial Spheres...</h3>
+                <p style="font-family: sans-serif; color: var(--text-muted); margin-top: 10px;" id="loadingStatusText">
+                    Connecting to Natal Synastry Engine...
+                </p>
+            </div>
+
+            <!-- STEP 3: RESULT DISPLAY -->
+            <div id="stepResult" style="display: none; text-align: left;">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div class="compat-score-circle" id="resultScore">
+                        --
+                    </div>
+                    <div style="font-family: sans-serif; text-transform: uppercase; letter-spacing: 2px; color: var(--glow-color); font-size: 0.85rem; margin-bottom: 5px;">
+                        True Celestial Soulmate Match
+                    </div>
+                    <h2 id="resultTitle" style="font-family: 'Cinzel', serif; font-size: 2.2rem; color: var(--text-main); margin: 0;">
+                        --
+                    </h2>
+                </div>
+
+                <!-- Insight Breakdown Box -->
+                <div class="insight-box" style="margin-bottom: 25px;">
+                    <h4 style="color: var(--glow-color);">✦ Synastry Breakdown & Verdict</h4>
+                    <p id="resultVerdict" style="color: var(--text-main); font-style: italic; margin-bottom: 15px; font-family: 'Playfair Display', serif; font-size: 1.1rem;">
+                        --
+                    </p>
+                    <div id="resultDetails" style="font-family: sans-serif; font-size: 0.95rem; color: var(--text-muted); line-height: 1.6;">
+                        --
+                    </div>
+                </div>
+
+                <!-- SOCIAL SHARE SECTION -->
+                <div class="share-container" style="margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glow-color-dim); border-radius: 12px; text-align: center;">
+                    <h4 style="font-family: 'Cinzel', serif; color: var(--glow-color); margin-bottom: 12px; font-size: 1.1rem;">
+                        ✦ Share Your Celestial Result ✦
+                    </h4>
+                    <p style="font-family: sans-serif; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 18px;">
+                        Spread your synastry match with friends or post it to your Stories!
+                    </p>
+
+                    <!-- Головна кнопка системного шерингу (Instagram Stories / TikTok / System Share) -->
+                    <button class="compat-btn" onclick="shareResultNative()" style="width: 100%; margin-bottom: 12px; background: linear-gradient(135deg, #d4af37 0%, #ec4899 100%); border: none;">
+                        📲 Share Result / Stories
+                    </button>
+
+                    <!-- Швидкі кнопки для месенджерів -->
+                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <button class="share-icon-btn" onclick="shareToTelegram()">✈️ Telegram</button>
+                        <button class="share-icon-btn" onclick="shareToWhatsApp()">💬 WhatsApp</button>
+                        <button class="share-icon-btn" onclick="shareToTwitter()">🐦 X (Twitter)</button>
+                        <button class="share-icon-btn" onclick="copyResultLink()">🔗 Copy Link</button>
+                    </div>
+                </div>
+
+                <!-- CTAs -->
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 30px;">
+                    <!-- Змінено onClick на виклик функції downloadResultCard() -->
+                    <button class="compat-btn" onclick="downloadResultCard()" style="width: 100%;">
+                        📲 Save & Download Social Result Card
+                    </button>
+                    <button class="glow-btn outline" onclick="location.reload()" style="width: 100%;">
+                        ↻ Retake Celestial Quiz
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="site-footer">
+            <p>© Astro Insight • Cosmic Resonance Engine</p>
+        </footer>
+    </div>
+
+            <!-- HIDDEN RESULT CARD FOR HTML2CANVAS RENDER -->
+        <div id="exportCardContainer">
+            <!-- Верхній бейдж / Шильд (наприклад, TWIN FLAME) -->
+            <div class="export-badge" id="exportBadge">CELESTIAL SOULMATE</div>
+            
+            <!-- Центральні динамічні дані, які накладаються поверх вашого дизайну -->
+            <div style="text-align: center; margin-top: auto; margin-bottom: auto;">
+                <div class="export-score" id="exportScore">98%</div>
+                <div class="export-title" id="exportTitle">SCORPIO SOULMATE</div>
+                <div class="export-verdict" id="exportVerdict">High Cosmic Resonance</div>
+            </div>
+
+            <!-- Нижній брендинг -->
+            <div class="export-footer">
+                ✦ astroinside.space ✦
+            </div>
+        </div>
+    </div>
+
+    <!-- QUIZ ENGINE & WORKER JS SCRIPT -->
+    <script>
+    const COMPATIBILITY_WORKER_URL = "https://natal-engine.astroinsight.workers.dev/";
+
+    // 1. КОНФІГУРАЦІЯ ШАРІВ ТА КООРДИНАТ ДЛЯ CANVAS (1080x1920)
+    const CANVAS_CONFIG = {
+        width: 1080,
+        height: 1920,
+        zodiacY: 650,    // Y-координата центру знаку зодіаку
+        zodiacSize: 380, // Розмір іконки знаку
+        scoreY: 1100,    // Y-координата відсотка сумісності
+        titleY: 1220,    // Y-координата заголовка
+        verdictY: 1320   // Y-координата вердикту
+    };
+
+    // 8 EXPANDED ASTROLOGICAL QUESTIONS
+    const QUIZ_QUESTIONS = [
+        {
+            category: "Love Language & Emotion",
+            question: "In a deep romantic bond, what makes you feel unconditionally cherished?",
+            options: [
+                { text: "Unflinching emotional loyalty and magnetic, deep vulnerability.", element: "water", targetSign: "scorpio" },
+                { text: "Spontaneous adventures, passionate praise, and high energy.", element: "fire", targetSign: "leo" },
+                { text: "Stimulating conversations, mental connection, and humor.", element: "air", targetSign: "gemini" },
+                { text: "Consistent physical presence, safety, and grounded reliability.", element: "earth", targetSign: "taurus" }
+            ]
+        },
+        {
+            category: "Conflict & Temperament",
+            question: "When a sudden emotional disagreement arises between you and your partner, you preferred:",
+            options: [
+                { text: "Addressing it head-on with raw passion until the truth comes out.", element: "fire", targetSign: "aries" },
+                { text: "Taking space to analyze the logic calmly before talking it through.", element: "air", targetSign: "libra" },
+                { text: "Setting firm, quiet boundaries and waiting for things to stabilize.", element: "earth", targetSign: "capricorn" },
+                { text: "Seeking gentle intuitive understanding and emotional empathy.", element: "water", targetSign: "pisces" }
+            ]
+        },
+        {
+            category: "Ideal Date & Energy",
+            question: "Select your ideal weekend getaway with your soulmate:",
+            options: [
+                { text: "A cozy, luxurious cabin with fine wine, gourmet food, and quiet comfort.", element: "earth", targetSign: "taurus" },
+                { text: "An exclusive late-night speakeasy or a mysterious candlelit evening.", element: "water", targetSign: "scorpio" },
+                { text: "A spontaneous road trip or exploring a vibrant art festival in the city.", element: "air", targetSign: "aquarius" },
+                { text: "High-adrenaline outdoor hiking, sports, or a lively social gathering.", element: "fire", targetSign: "sagittarius" }
+            ]
+        },
+        {
+            category: "Communication Style",
+            question: "What type of intellectual connection binds you to someone long-term?",
+            options: [
+                { text: "Philosophical debates about the universe, future visions, and freedom.", element: "air", targetSign: "aquarius" },
+                { text: "Pragmatic planning, building wealth systems, and concrete goals.", element: "earth", targetSign: "virgo" },
+                { text: "Inspiring dreams, artistic expression, and unspoken intuitive sync.", element: "water", targetSign: "cancer" },
+                { text: "Bold motivational talks, quick banter, and ambitious ideas.", element: "fire", targetSign: "leo" }
+            ]
+        },
+        {
+            category: "Trust & Boundaries",
+            question: "How do you view personal freedom vs. partnership closeness?",
+            options: [
+                { text: "Total emotional merging — two souls becoming one undivided unit.", element: "water", targetSign: "cancer" },
+                { text: "Mutual independence — two strong individuals growing parallel.", element: "air", targetSign: "gemini" },
+                { text: "Loyal allegiance — absolute devotion and unwavering protection.", element: "earth", targetSign: "capricorn" },
+                { text: "Passionate support — inspiring each other to shine in the spotlight.", element: "fire", targetSign: "aries" }
+            ]
+        },
+        {
+            category: "Ambition & Life Goals",
+            question: "What is your primary joint vision for the future with your soulmate?",
+            options: [
+                { text: "Creating an empire of financial security and a serene physical home.", element: "earth", targetSign: "taurus" },
+                { text: "Traveling the world, gaining knowledge, and chasing continuous growth.", element: "fire", targetSign: "sagittarius" },
+                { text: "Building an intellectual network, creating media, or social impact.", element: "air", targetSign: "libra" },
+                { text: "Creating a sacred emotional sanctuary away from the noisy world.", element: "water", targetSign: "pisces" }
+            ]
+        },
+        {
+            category: "Spontaneity vs Structure",
+            question: "How do you handle sudden unexpected changes in life plans?",
+            options: [
+                { text: "Embrace the chaos with excitement and pivot instantly.", element: "fire", targetSign: "sagittarius" },
+                { text: "Adapt fluidly, following my intuition and emotional compass.", element: "water", targetSign: "pisces" },
+                { text: "Re-evaluate options logically and brainstorm a new strategic path.", element: "air", targetSign: "gemini" },
+                { text: "Methodically re-structure the plan step-by-step to preserve stability.", element: "earth", targetSign: "virgo" }
+            ]
+        },
+        {
+            category: "Intimacy & Passion Chemistry",
+            question: "What sparks the most potent magnetic chemistry between you and another?",
+            options: [
+                { text: "An irresistible, deep, transformative emotional current.", element: "water", targetSign: "scorpio" },
+                { text: "Fiery, playful confidence and electric physical attraction.", element: "fire", targetSign: "leo" },
+                { text: "Witty banter, eye contact, and playful mental seduction.", element: "air", targetSign: "libra" },
+                { text: "Sensual, slow, and deeply grounded physical resonance.", element: "earth", targetSign: "taurus" }
+            ]
+        }
+    ];
+
+    // QUIZ STATE
+    let currentQuestionIndex = 0;
+    let elementScores = { fire: 0, earth: 0, air: 0, water: 0 };
+    let signVotes = {};
+    let userData = { sign: "", date: "" };
+
+    // DOM ELEMENTS
+    const startQuizBtn = document.getElementById('startQuizBtn');
+    const stepSetup = document.getElementById('stepSetup');
+    const stepQuestions = document.getElementById('stepQuestions');
+    const stepLoading = document.getElementById('stepLoading');
+    const stepResult = document.getElementById('stepResult');
+
+    if (startQuizBtn) {
+        startQuizBtn.addEventListener('click', () => {
+            const userSign = document.getElementById('userSign').value;
+            const userDate = document.getElementById('userDate').value;
+
+            if (!userSign || !userDate) {
+                alert("Please select your Sun sign and birth date to proceed.");
+                return;
+            }
+
+            userData.sign = userSign;
+            userData.date = userDate;
+
+            stepSetup.style.display = "none";
+            stepQuestions.style.display = "block";
+            renderQuestion();
+        });
+    }
+
+    function renderQuestion() {
+        const q = QUIZ_QUESTIONS[currentQuestionIndex];
+        document.getElementById('questionProgressText').innerText = `Question ${currentQuestionIndex + 1} of ${QUIZ_QUESTIONS.length}`;
+        document.getElementById('questionCategoryText').innerText = q.category;
+        document.getElementById('questionTitle').innerText = q.question;
+        
+        const fillPercent = ((currentQuestionIndex + 1) / QUIZ_QUESTIONS.length) * 100;
+        document.getElementById('progressFill').style.width = `${fillPercent}%`;
+
+        const container = document.getElementById('optionsContainer');
+        container.innerHTML = "";
+
+        q.options.forEach((opt) => {
+            const btn = document.createElement('button');
+            btn.className = "option-btn";
+            btn.innerHTML = `<span>${opt.text}</span> <span class="sparkle">✦</span>`;
+            btn.onclick = () => handleAnswer(opt);
+            container.appendChild(btn);
+        });
+    }
+
+    function handleAnswer(option) {
+        elementScores[option.element]++;
+        signVotes[option.targetSign] = (signVotes[option.targetSign] || 0) + 1;
+
+        if (currentQuestionIndex + 1 < QUIZ_QUESTIONS.length) {
+            currentQuestionIndex++;
+            renderQuestion();
+        } else {
+            finishQuizAndFetchSynastry();
+        }
+    }
+
+    // 2. ДОПОМІЖНА ФУНКЦІЯ ЗАВАНТАЖЕННЯ ЗОБРАЖЕНЬ ДЛЯ CANVAS
+    function loadImage(src) {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error(`Failed to load image layer: ${src}`));
+            img.src = src;
+        });
+    }
+
+    // 3. БАГАТОШАРОВИЙ CANVAS-ДВИГУН (Збірка картки за вашою структурою файлів)
+    async function buildCompositedCardBlob() {
+        const scoreText = document.getElementById('resultScore').innerText || "98%";
+        const titleText = document.getElementById('resultTitle').innerText || "SCORPIO SOULMATE";
+        const verdictText = document.getElementById('resultVerdict').innerText || "High Cosmic Resonance";
+        
+        const scoreNum = parseInt(scoreText, 10) || 0;
+        
+        // Визначення рідкісності (common, rare, epic, legendary)
+        let rarity = "common";
+        if (scoreNum >= 97) rarity = "legendary";
+        else if (scoreNum >= 89) rarity = "epic";
+        else if (scoreNum >= 75) rarity = "rare";
+
+        // Отримуємо ключ знаку (наприклад, "scorpio" з "SCORPIO SOULMATE")
+        const signKey = titleText.split(' ')[0].toLowerCase() || "scorpio";
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = CANVAS_CONFIG.width;
+        canvas.height = CANVAS_CONFIG.height;
+
+        try {
+            // Шар 1: Космічний фон за рідкісністю (наприклад: image/layers/bg_common.png)
+            const bgImg = await loadImage(`image/layers/bg_${rarity}.png`);
+            ctx.drawImage(bgImg, 0, 0, CANVAS_CONFIG.width, CANVAS_CONFIG.height);
+
+            // Шар 2: Іконка знаку зодіаку (наприклад: image/zodiacs/scorpio.png або image/zodiacs/zoidac_common.png якщо загальна)
+            // Використовуємо конкретний знак зодіаку для кастомного збору:
+            const zodiacImg = await loadImage(`image/zodiacs/${signKey}.png`);
+            const xPos = (CANVAS_CONFIG.width - CANVAS_CONFIG.zodiacSize) / 2;
+            const yPos = CANVAS_CONFIG.zodiacY - (CANVAS_CONFIG.zodiacSize / 2);
+            ctx.drawImage(zodiacImg, xPos, yPos, CANVAS_CONFIG.zodiacSize, CANVAS_CONFIG.zodiacSize);
+
+            // Шар 3: Рамка рідкісності (наприклад: image/layers/frame_common.png)
+            const frameImg = await loadImage(`image/layers/frame_${rarity}.png`);
+            ctx.drawImage(frameImg, 0, 0, CANVAS_CONFIG.width, CANVAS_CONFIG.height);
+
+            // Шар 4: Динамічна типографіка поверх шарів
+            ctx.textAlign = 'center';
+
+            // Відсоток сумісності
+            ctx.fillStyle = '#FFD700';
+            ctx.font = 'bold 130px "Cinzel", serif';
+            ctx.shadowColor = 'rgba(212, 175, 55, 0.7)';
+            ctx.shadowBlur = 25;
+            ctx.fillText(scoreText, 540, CANVAS_CONFIG.scoreY);
+
+            // Заголовок знаку
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 55px "Cinzel", serif';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+            ctx.shadowBlur = 10;
+            ctx.fillText(titleText, 540, CANVAS_CONFIG.titleY);
+
+            // Вердикт
+            ctx.fillStyle = '#D4AF37';
+            ctx.font = 'italic 36px "Playfair Display", serif';
+            ctx.shadowBlur = 0;
+            ctx.fillText(verdictText, 540, CANVAS_CONFIG.verdictY);
+
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => resolve(blob), 'image/png');
+            });
+
+        } catch (error) {
+            console.error("Canvas Layer Composition Error:", error);
+            return null;
+        }
+    }
+
+    // 4. ОНОВЛЕНА ФУНКЦІЯ ПОПУЛЯЦІЇ ТА ДИНАМІЧНОЇ ПОЯВИ БЛОКУ ШЕРИНГУ
+    function populateResults(score, title, verdict, details) {
+        // Оновлення полів на екрані
+        document.getElementById('resultScore').innerText = score;
+        document.getElementById('resultTitle').innerText = title;
+        document.getElementById('resultVerdict').innerText = verdict;
+        document.getElementById('resultDetails').innerHTML = details;
+
+        // Оновлення експортного блоку (якщо існує)
+        const exportScoreEl = document.getElementById('exportScore');
+        const exportTitleEl = document.getElementById('exportTitle');
+        const exportVerdictEl = document.getElementById('exportVerdict');
+        
+        if (exportScoreEl) exportScoreEl.innerText = score;
+        if (exportTitleEl) exportTitleEl.innerText = title;
+        if (exportVerdictEl) exportVerdictEl.innerText = verdict;
+
+        const scoreNum = parseInt(score, 10) || 0;
+        const exportCard = document.getElementById('exportCardContainer');
+        let badgeText = "COMMON SYNASTRY";
+
+        if (scoreNum >= 97) {
+            badgeText = "★ TWIN FLAME ★";
+            if (exportCard) exportCard.style.backgroundImage = "url('image/layers/bg_legendary.png')";
+        } else if (scoreNum >= 89) {
+            badgeText = "EPIC ALIGNMENT";
+            if (exportCard) exportCard.style.backgroundImage = "url('image/layers/bg_epic.png')";
+        } else if (scoreNum >= 75) {
+            badgeText = "RARE RESONANCE";
+            if (exportCard) exportCard.style.backgroundImage = "url('image/layers/bg_rare.png')";
+        } else {
+            if (exportCard) exportCard.style.backgroundImage = "url('image/layers/bg_common.png')";
+        }
+
+        const exportBadgeEl = document.getElementById('exportBadge');
+        if (exportBadgeEl) exportBadgeEl.innerText = badgeText;
+
+        // Збереження результату для Web Share
+        window.currentQuizResult = { score, title, verdict };
+
+        // 🎯 ГЕНЕРАЦІЯ ТА ПОЯВА БЛОКУ ШЕРИНГУ СТРОГО ПІСЛЯ КВІЗУ
+        const shareBlock = document.getElementById('shareResultBlock');
+        if (shareBlock) {
+            shareBlock.innerHTML = `
+                <div style="padding: 20px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glow-color-dim); border-radius: 12px; text-align: center;">
+                    <p style="font-family: sans-serif; font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">
+                        ✦ Share Your Celestial Match ✦
+                    </p>
+                    <button class="compat-btn" onclick="shareResultNative()" style="width: 100%; margin-bottom: 12px; background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%); border: none;">
+                        📲 SHARE RESULT / STORIES
+                    </button>
+                    <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                        <button class="share-icon-btn" onclick="shareToTelegram()">✈️ Telegram</button>
+                        <button class="share-icon-btn" onclick="shareToWhatsApp()">💬 WhatsApp</button>
+                        <button class="share-icon-btn" onclick="shareToTwitter()">🐦 X (Twitter)</button>
+                        <button class="share-icon-btn" onclick="copyResultLink()">🔗 Copy Link</button>
+                    </div>
+                </div>
+            `;
+            shareBlock.style.display = "block";
+        }
+
+        // Плавний скролл до результату
+        const stepResultEl = document.getElementById('stepResult');
+        if (stepResultEl) {
+            stepResultEl.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // 5. ОНОВЛЕНА ФУНКЦІЯ СКАЧУВАННЯ
+    async function downloadResultCard() {
+        const btn = document.querySelector('.compat-btn');
+        const originalText = btn ? btn.innerText : '';
+        if (btn) btn.innerText = "⏳ Rendering Composite Card...";
+
+        try {
+            const blob = await buildCompositedCardBlob();
+            
+            // Якщо шари не завантажилися — резервне завантаження статики
+            if (!blob) {
+                const response = await fetch('image/CommonCard1.png');
+                if (!response.ok) throw new Error("Fallback file not found");
+                const fallbackBlob = await response.blob();
+                triggerDownload(fallbackBlob, "AstroInsight_Soulmate_Card.png");
+                return;
+            }
+
+            const titleText = document.getElementById('resultTitle').innerText || "SOULMATE";
+            const cleanTitle = titleText.replace(/[^a-zA-Z0-9]/g, '_');
+            triggerDownload(blob, `AstroInsight_${cleanTitle}.png`);
+
+        } catch (error) {
+            console.error("Download Error:", error);
+            alert("Unable to generate card. Please verify layer image paths in /image/");
+        } finally {
+            if (btn) btn.innerText = originalText;
+        }
+    }
+
+    function triggerDownload(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 400);
+    }
+
+    async function finishQuizAndFetchSynastry() {
+        stepQuestions.style.display = "none";
+        stepLoading.style.display = "block";
+
+        let topSign = Object.keys(signVotes).reduce((a, b) => signVotes[a] > signVotes[b] ? a : b, "scorpio");
+
+        const signDefaultDates = {
+            aries: "1998-04-05", taurus: "1998-05-05", gemini: "1998-06-05", cancer: "1998-07-05",
+            leo: "1998-08-05", virgo: "1998-09-05", libra: "1998-10-05", scorpio: "1998-11-05",
+            sagittarius: "1998-12-05", capricorn: "1998-01-05", aquarius: "1998-02-05", pisces: "1998-03-05"
+        };
+
+        const partnerDate = signDefaultDates[topSign] || "1998-11-05";
+
+        try {
+            const response = await fetch(COMPATIBILITY_WORKER_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    sign1: userData.sign,
+                    date1: userData.date,
+                    sign2: topSign,
+                    date2: partnerDate
+                })
+            });
+
+            if (!response.ok) throw new Error("Synastry Engine Communication Error");
+
+            const data = await response.json();
+            
+            stepLoading.style.display = "none";
+            stepResult.style.display = "block";
+
+            if (data.success && data.synastry) {
+                populateResults(`${data.synastry.score}%`, `${topSign.toUpperCase()} SOULMATE`, data.synastry.verdict || data.synastry.title, data.synastry.details);
+            } else {
+                populateResults("94%", `${topSign.toUpperCase()} SOULMATE`, "High Cosmic Resonance", "Your elemental preferences align seamlessly with this celestial placement.");
+            }
+
+        } catch (err) {
+            console.error("Worker fallback:", err);
+            stepLoading.style.display = "none";
+            stepResult.style.display = "block";
+            populateResults("92%", `${topSign.toUpperCase()} SOULMATE`, "Harmonious Celestial Attraction", "Your quiz responses strongly signal high synastry compatibility with this zodiac element.");
+        }
+    }
+
+    // 6. СОЦІАЛЬНИЙ ШЕРИНГ
+    async function shareResultNative() {
+        const title = window.currentQuizResult?.title || "SOULMATE";
+        const score = window.currentQuizResult?.score || "98%";
+
+        const shareData = {
+            title: 'Astro Insight - Celestial Soulmate Quiz',
+            text: `✨ My True Celestial Soulmate match is ${title} (${score} Resonance)! Calculate your synastry alignment on Astro Insight:`,
+            url: window.location.href
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.log("Share dismissed:", err);
+            }
+        } else {
+            copyResultLink();
+        }
+    }
+
+    function shareToTelegram() {
+        const title = window.currentQuizResult?.title || "SOULMATE";
+        const score = window.currentQuizResult?.score || "98%";
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent(`✨ My Celestial Soulmate is ${title} (${score} Match)! Find your match on Astro Insight:`);
+        window.open(`https://t.me/share/url?url=${url}&text=${text}`, '_blank');
+    }
+
+    function shareToWhatsApp() {
+        const title = window.currentQuizResult?.title || "SOULMATE";
+        const score = window.currentQuizResult?.score || "98%";
+        const text = encodeURIComponent(`✨ My Celestial Soulmate is ${title} (${score} Match)! Calculate yours on Astro Insight: ${window.location.href}`);
+        window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+
+    function shareToTwitter() {
+        const title = window.currentQuizResult?.title || "SOULMATE";
+        const score = window.currentQuizResult?.score || "98%";
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent(`✨ My True Celestial Soulmate is ${title} (${score} Match)! Calculate your synastry on Astro Insight 🔮`);
+        window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+    }
+
+    function copyResultLink() {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert("✨ Result link copied to clipboard!");
+        }).catch(err => {
+            console.error("Copy error:", err);
+        });
+    }
+</script>
+</body>
+</html>
