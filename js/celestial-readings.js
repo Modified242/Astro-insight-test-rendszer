@@ -12,6 +12,21 @@ let currentSignCache = {
     monthly: null
 };
 
+const VALID_PLANETS = new Set(['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto']);
+const VALID_ELEMENTS = new Set(['fire', 'earth', 'air', 'water']);
+
+function setAttributeLink(elementId, rawValue, folder, validSet) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const value = String(rawValue || '').trim();
+    const slug = value.toLowerCase();
+    if (value && validSet.has(slug)) {
+        el.innerHTML = `<a href="articles/${folder}/${slug}.html" style="color: var(--glow-color); text-decoration: underline; cursor: pointer;">${escapeHtml(value)}</a>`;
+    } else {
+        el.innerText = value || 'Unknown';
+    }
+}
+
 // 2. Kártyák generálása a UI-ra
 document.addEventListener('DOMContentLoaded', () => {
     const coreGrid = document.getElementById('zodiacGrid');
@@ -129,9 +144,8 @@ async function openModal(sign) {
     document.getElementById('fortuneModal').style.display = "block";
     
 
-   document.getElementById('modalPlanet').innerHTML = `<a href="articles/planets/${zData.planet.toLowerCase()}.html" style="color: var(--glow-color); text-decoration: underline; cursor: pointer;">${zData.planet}</a>`;
-    
-    document.getElementById('modalElement').innerHTML = `<a href="articles/elements/${zData.element.toLowerCase()}.html" style="color: var(--glow-color); text-decoration: underline; cursor: pointer;">${zData.element}</a>`;
+    setAttributeLink('modalPlanet', zData.planet, 'planets', VALID_PLANETS);
+    setAttributeLink('modalElement', zData.element, 'elements', VALID_ELEMENTS);
     document.getElementById('modalEnergy').innerText = `"${zData.energy}"`;
     document.getElementById('luckyColorBox').style.backgroundColor = zData.aura;
     document.getElementById('luckyColorBox').style.color = zData.aura;
@@ -289,8 +303,8 @@ function openSavedModal(index) {
     if (saveBtn && saveBtn.parentElement) saveBtn.parentElement.style.display = 'none';
     else if (saveBtn) saveBtn.style.display = 'none';
 
-    document.getElementById('modalPlanet').innerText = item.planet || fallbackData.planet || "Unknown";
-    document.getElementById('modalElement').innerText = item.element || fallbackData.element || "Unknown";
+    setAttributeLink('modalPlanet', item.planet || fallbackData.planet, 'planets', VALID_PLANETS);
+    setAttributeLink('modalElement', item.element || fallbackData.element, 'elements', VALID_ELEMENTS);
     document.getElementById('modalEnergy').innerText = item.energy || (fallbackData.energy ? `"${fallbackData.energy}"` : "");
 
     document.getElementById('luckyNumbers').innerText = item.luckyNumbers || fallbackData.luckyNumbers || "";
