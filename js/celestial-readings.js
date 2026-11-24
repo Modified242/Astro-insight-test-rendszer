@@ -40,14 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (closeBtn && fortuneModal) {
         closeBtn.onclick = () => {
             fortuneModal.style.display = "none";
-            history.pushState(null, 'Astro Insight', '/index.html');
         };
-        window.onclick = (e) => { 
-            if (e.target == fortuneModal) {
+        window.addEventListener('click', (e) => {
+            if (e.target === fortuneModal) {
                 fortuneModal.style.display = "none";
-                history.pushState(null, 'Astro Insight', '/index.html');
             }
-        };
+        });
     }
 
     // HÁTTÉRBEN TÖRTÉNŐ ELŐTÖLTÉS INDÍTÁSA (1 mp késleltetéssel)
@@ -61,7 +59,7 @@ function getCacheBuster(type) {
     if (type === 'weekly') {
         const start = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
         const days = Math.floor((d - start) / (24 * 60 * 60 * 1000));
-        return `${d.getUTCFullYear()}-W${Math.ceil(days / 7)}`;
+        return `${d.getUTCFullYear()}-W${Math.floor(days / 7) + 1}`;
     }
     // Napi buster
     return `${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
@@ -71,13 +69,14 @@ function getCacheBuster(type) {
 async function fetchCelestialReading(sign, type) {
     try {
         const cb = getCacheBuster(type);
-        const response = await fetch(`${READINGS_WORKER_URL}?sign=${sign}&type=${type}&cb=${cb}`);
+        const response = await fetch(`${READINGS_WORKER_URL}?sign=${encodeURIComponent(sign)}&type=${encodeURIComponent(type)}&cb=${encodeURIComponent(cb)}`);
         if (!response.ok) throw new Error("Stars are obscured today");
         const data = await response.json();
-        return data.reading;
+        if (!data || typeof data.reading !== 'string') throw new Error("Empty reading");
+        return { ok: true, reading: data.reading };
     } catch (error) {
         console.error("Worker fetch failed for " + type + ":", error);
-        return "The cosmic currents are shifting. The Oracle needs a moment to align with your stars.";
+        return { ok: false, reading: "The cosmic currents are shifting. The Oracle needs a moment to align with your stars." };
     }
 }
 
@@ -88,30 +87,34 @@ async function loadHoroscopeForTab(sign, tabName) {
     const elementMap = { 'daily': 'fortuneTextInsight', 'weekly': 'fortuneTextWeekly', 'monthly': 'fortuneTextMonthly' };
     const targetElementId = elementMap[backendType];
 
-    if (currentSignCache[backendType]) return; // Már megvan, kilépünk
+    if (currentSignCache.sign === sign && currentSignCache[backendType]) return; // Már megvan, kilépünk
 
-    const reading = await fetchCelestialReading(sign, backendType);
-    
-    currentSignCache[backendType] = reading;
+    const result = await fetchCelestialReading(sign, backendType);
+    if (currentSignCache.sign !== sign) return;
+
+    if (result.ok) {
+        currentSignCache[backendType] = result.reading;
+    }
     const targetEl = document.getElementById(targetElementId);
-    if(targetEl) targetEl.innerText = reading;
+    if (targetEl) targetEl.innerText = result.reading;
 }
 
 // 5. Modal megnyitása
 async function openModal(sign) {
     const zData = zodiacData[sign];
+    if (!zData) return;
     const selectedAuraColor = zData.aura; 
     
-    sessionStorage.setItem('selectedAura', selectedAuraColor);
-    sessionStorage.setItem('selectedSign', sign);
+    safeStorageSet(sessionStorage, 'selectedAura', selectedAuraColor);
+    safeStorageSet(sessionStorage, 'selectedSign', sign);
     applyAuraColor(selectedAuraColor);
     initGlobalAuraUI();
 
-   const signTitleEl = document.getElementById('signTitle');
+    const signTitleEl = document.getElementById('signTitle');
     if (signTitleEl) {
         signTitleEl.innerHTML = `
-            <a href="articles/zodiac/${sign.toLowerCase()}.html" class="modal-title-link" title="Read full article about ${sign}" style="text-decoration: none; color: ${zData.aura}; text-shadow: 0 0 12px ${zData.aura};">
-                ${sign.toUpperCase()} <span class="link-icon" style="font-size: 0.8em; margin-left: 5px;">↗</span>
+            <a href="articles/zodiac/${sign.toLowerCase()}.html" class="modal-title-link" title="Read full article about ${escapeHtml(sign)}" style="text-decoration: none; color: ${zData.aura}; text-shadow: 0 0 12px ${zData.aura};">
+                ${escapeHtml(sign.toUpperCase())} <span class="link-icon" style="font-size: 0.8em; margin-left: 5px;">↗</span>
             </a>
         `;
     }
@@ -169,7 +172,24 @@ function switchTab(event, tabName) {
 }
 
 // 7. Grimoire (Archívum) funkciók
+let isSavingArchive = false;
+
+function normalizeSignKey(rawSign) {
+    if (!rawSign) return '';
+    const cleaned = String(rawSign)
+        .replace(/\(Archived\)/gi, '')
+        .replace(/↗/g, '')
+        .trim();
+    if (!cleaned) return '';
+    return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
+}
+
+function isSafeCssColor(color) {
+    return typeof color === 'string' && (/^#[0-9a-fA-F]{3,8}$/.test(color.trim()) || /^rgba?\([\d\s.,%]+\)$/.test(color.trim()));
+}
+
 async function saveToArchive() { 
+    if (isSavingArchive) return;
     const insightText = document.getElementById('fortuneTextInsight').innerText;
     
     // Védelem: Ha még nem töltött be az Oracle
@@ -185,46 +205,52 @@ async function saveToArchive() {
         return;
     }
 
+    isSavingArchive = true;
     const btn = document.getElementById('saveBtn');
     btn.innerText = "Inscribing... ⟡"; 
     btn.style.pointerEvents = 'none';
 
-    // Betöltjük a Heti és Havi horoszkópot a háttérben, ha még nem tette volna meg
-    const sign = currentSignCache.sign || document.getElementById('signTitle').innerText.replace(" (Archived)", "").trim();
-    if (!currentSignCache.weekly) await loadHoroscopeForTab(sign, 'weekly');
-    if (!currentSignCache.monthly) await loadHoroscopeForTab(sign, 'monthly');
+    try {
+        // Betöltjük a Heti és Havi horoszkópot a háttérben, ha még nem tette volna meg
+        const sign = currentSignCache.sign || normalizeSignKey(document.getElementById('signTitle').innerText);
+        if (!currentSignCache.weekly) await loadHoroscopeForTab(sign, 'weekly');
+        if (!currentSignCache.monthly) await loadHoroscopeForTab(sign, 'monthly');
 
-    btn.innerText = "Inscribed ✓"; 
-    btn.style.pointerEvents = 'auto';
-    
-    let archive = JSON.parse(localStorage.getItem('astroArchive')) || [];
-    let pureSign = document.getElementById('signTitle').innerText.replace(" (Archived)", "").trim();
-    
-    let newRecord = {
-        sign: pureSign,
-        date: new Date().toLocaleString(),
-        color: typeof currentAuraColor !== 'undefined' ? currentAuraColor : document.documentElement.style.getPropertyValue('--glow-color'),
-        luckyNumbers: document.getElementById('luckyNumbers').innerText,
-        luckyColorHex: document.getElementById('luckyColorBox').style.backgroundColor,
-        luckyColorName: document.getElementById('luckyColorName').innerText,
-        planet: document.getElementById('modalPlanet').innerText,
-        element: document.getElementById('modalElement').innerText,
-        energy: document.getElementById('modalEnergy').innerText,
-        Insight: document.getElementById('fortuneTextInsight').innerText,
-        weekly: document.getElementById('fortuneTextWeekly').innerText,
-        monthly: document.getElementById('fortuneTextMonthly').innerText
-    };
+        btn.innerText = "Inscribed ✓"; 
+        
+        let archive = safeJsonParse(safeStorageGet(localStorage, 'astroArchive'), []);
+        if (!Array.isArray(archive)) archive = [];
+        
+        let newRecord = {
+            sign: sign,
+            date: new Date().toLocaleString(),
+            color: typeof currentAuraColor !== 'undefined' ? currentAuraColor : document.documentElement.style.getPropertyValue('--glow-color'),
+            luckyNumbers: document.getElementById('luckyNumbers').innerText,
+            luckyColorHex: document.getElementById('luckyColorBox').style.backgroundColor,
+            luckyColorName: document.getElementById('luckyColorName').innerText,
+            planet: document.getElementById('modalPlanet').innerText,
+            element: document.getElementById('modalElement').innerText,
+            energy: document.getElementById('modalEnergy').innerText,
+            Insight: document.getElementById('fortuneTextInsight').innerText,
+            weekly: document.getElementById('fortuneTextWeekly').innerText,
+            monthly: document.getElementById('fortuneTextMonthly').innerText
+        };
 
-    archive.unshift(newRecord);
-    localStorage.setItem('astroArchive', JSON.stringify(archive));
-    renderArchive();
+        archive.unshift(newRecord);
+        safeStorageSet(localStorage, 'astroArchive', JSON.stringify(archive));
+        renderArchive();
+    } finally {
+        btn.style.pointerEvents = 'auto';
+        isSavingArchive = false;
+    }
 }
 
 function renderArchive() {
     const container = document.getElementById('archiveContainer');
     if (!container) return;
 
-    let archive = JSON.parse(localStorage.getItem('astroArchive')) || [];
+    let archive = safeJsonParse(safeStorageGet(localStorage, 'astroArchive'), []);
+    if (!Array.isArray(archive)) archive = [];
     
     if (archive.length === 0) {
         container.innerHTML = '<p class="subtitle">Your saved readings will be preserved here...</p>';
@@ -233,11 +259,13 @@ function renderArchive() {
     
     let html = ''; 
     archive.forEach((item, index) => { 
+        const safeColor = isSafeCssColor(item.color) ? item.color.trim() : '#d4af37';
+        const displaySign = escapeHtml(normalizeSignKey(item.sign) || item.sign || 'Unknown');
         html += `
-        <div class="archive-item" style="border-left-color: ${item.color}" onclick="openSavedModal(${index})">
+        <div class="archive-item" style="border-left-color: ${safeColor}" onclick="openSavedModal(${index})">
             <div class="archive-info">
-                <div class="archive-date">${item.date}</div>
-                <strong>${item.sign} Reading</strong>
+                <div class="archive-date">${escapeHtml(item.date)}</div>
+                <strong>${displaySign} Reading</strong>
             </div>
             <button class="delete-btn" onclick="deleteArchiveItem(${index}, event)" title="Erase from Grimoire">&times;</button>
         </div>`; 
@@ -246,12 +274,12 @@ function renderArchive() {
 }
 
 function openSavedModal(index) {
-    let archive = JSON.parse(localStorage.getItem('astroArchive')) || [];
+    let archive = safeJsonParse(safeStorageGet(localStorage, 'astroArchive'), []);
+    if (!Array.isArray(archive)) return;
     let item = archive[index];
     if (!item) return;
 
-    
-    let pureSign = item.sign.replace(" (Archived)", "").trim();
+    let pureSign = normalizeSignKey(item.sign) || 'Unknown';
     let fallbackData = typeof zodiacData !== 'undefined' ? (zodiacData[pureSign] || {}) : {};
 
     document.getElementById('signTitle').innerText = pureSign + " (Archived)";
@@ -265,37 +293,27 @@ function openSavedModal(index) {
     document.getElementById('modalElement').innerText = item.element || fallbackData.element || "Unknown";
     document.getElementById('modalEnergy').innerText = item.energy || (fallbackData.energy ? `"${fallbackData.energy}"` : "");
 
-    document.getElementById('luckyNumbers').innerText = item.luckyNumbers;
-    document.getElementById('luckyColorBox').style.backgroundColor = item.luckyColorHex;
-    document.getElementById('luckyColorBox').style.color = item.luckyColorHex;
-    document.getElementById('luckyColorName').innerText = item.luckyColorName;
+    document.getElementById('luckyNumbers').innerText = item.luckyNumbers || fallbackData.luckyNumbers || "";
+    const colorHex = item.luckyColorHex || fallbackData.aura || '#d4af37';
+    document.getElementById('luckyColorBox').style.backgroundColor = colorHex;
+    document.getElementById('luckyColorBox').style.color = colorHex;
+    document.getElementById('luckyColorName').innerText = item.luckyColorName || fallbackData.colorName || "";
 
     document.getElementById('fortuneTextInsight').innerText = item.Insight || item.daily || "Reading lost in time...";
-    document.getElementById('fortuneTextWeekly').innerText = item.weekly;
-    document.getElementById('fortuneTextMonthly').innerText = item.monthly;
+    document.getElementById('fortuneTextWeekly').innerText = item.weekly || "";
+    document.getElementById('fortuneTextMonthly').innerText = item.monthly || "";
 
     try { switchTab(null, 'Insight'); } catch(e) {}
 }
 
 function deleteArchiveItem(index, event) {
     event.stopPropagation();
-    let archive = JSON.parse(localStorage.getItem('astroArchive')) || [];
+    let archive = safeJsonParse(safeStorageGet(localStorage, 'astroArchive'), []);
+    if (!Array.isArray(archive)) return;
     archive.splice(index, 1);
-    localStorage.setItem('astroArchive', JSON.stringify(archive));
+    safeStorageSet(localStorage, 'astroArchive', JSON.stringify(archive));
     renderArchive();
 }
-document.querySelectorAll('.zodiac-card').forEach(card => {
-    card.addEventListener('click', function(e) {
-        e.preventDefault(); 
-        const sign = this.dataset.sign;
-
-        // Javítva az openModal hívásra az openFortuneModal helyett
-        openModal(sign); 
-
-        // Update URL for sharing
-        history.pushState({ modal: true, sign: sign }, `${sign} Reading`, `/${sign.toLowerCase()}.html`);
-    });
-});
 
 // 8. HÁTTÉRBEN TÖRTÉNŐ ELŐTÖLTÉS (SILENT PRELOADER)
 async function preloadAllDailyReadings() {

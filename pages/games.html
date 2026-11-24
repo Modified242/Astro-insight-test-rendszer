@@ -11,7 +11,8 @@
         (function () {
             var COOKIE_KEY = 'astro_cookie_consent';
             var isGPCActivated = !!(navigator.globalPrivacyControl || window.globalPrivacyControl);
-            var savedConsent = localStorage.getItem(COOKIE_KEY);
+            var savedConsent = null;
+            try { savedConsent = localStorage.getItem(COOKIE_KEY); } catch (e) {}
 
             function getConsentPayload(state) {
                 var isGranted = state === 'granted';
@@ -30,7 +31,7 @@
 
             var initialState;
             if (isGPCActivated) {
-                localStorage.setItem(COOKIE_KEY, 'denied');
+                try { localStorage.setItem(COOKIE_KEY, 'denied'); } catch (e) {}
                 initialState = 'denied';
             } else if (savedConsent === 'granted' || savedConsent === 'denied' || savedConsent === 'necessary') {
                 initialState = savedConsent;
@@ -91,7 +92,7 @@
         <a href="games.html" onclick="toggleMobileMenu()" style="color: var(--glow-color);">Astro Games</a>
         <a href="articles.html" onclick="toggleMobileMenu()">Articles</a>
 
-        <button class="reset-btn" onclick="resetAura(); toggleMobileMenu()" style="margin-top: 15px; font-size: 1.2rem; padding: 10px 20px;">
+        <button class="reset-btn" onclick="clearAura(); toggleMobileMenu()" style="margin-top: 15px; font-size: 1.2rem; padding: 10px 20px;">
             Clear Aura ✦
         </button>
     </div>
@@ -279,7 +280,7 @@
         <div id="archetypeView" style="display: none;">
             <header style="text-align: center; margin-bottom: 30px;">
                 <h1 style="color: #a855f7; text-transform: uppercase; letter-spacing: 3px;">Archetype Oracle</h1>
-                <p class="subtitle">Who would do this? Guess the correct sign in 90 seconds!</p>
+                <p class="subtitle">Who would do this? Guess the correct sign in 2 minutes!</p>
                 <div style="display: flex; gap: 15px; justify-content: center; margin-top: 15px;">
                     <button class="glow-btn outline" onclick="returnToHub()" style="padding: 8px 20px; font-size: 0.9rem; border-color: #a855f7; color: #a855f7;">← Hub</button>
                     <button class="glow-btn outline" onclick="initArchetypeGame()" style="padding: 8px 20px; font-size: 0.9rem; border-color: #a855f7; color: #a855f7;">Restart ⟲</button>
@@ -288,7 +289,7 @@
             <div class="blitz-stats-header" style="max-width: 600px; justify-content: space-around;">
                 <div class="blitz-stat-box"><span class="blitz-stat-label">High Score</span><span class="blitz-stat-value" id="archetype-highscore" style="color: #a855f7;">0</span></div>
                 <div class="blitz-stat-box"><span class="blitz-stat-label">Score</span><span class="blitz-stat-value" id="archetype-score">0</span></div>
-                <div class="blitz-stat-box"><span class="blitz-stat-label">Timer</span><span class="blitz-stat-value" id="archetype-timer">01:30</span></div>
+                <div class="blitz-stat-box"><span class="blitz-stat-label">Timer</span><span class="blitz-stat-value" id="archetype-timer">02:00</span></div>
             </div>
             <div style="display: flex; flex-direction: column; align-items: center; gap: 30px; max-width: 600px; margin: 0 auto;">
                 <div class="blitz-card" style="width: 100%; min-height: 120px; padding: 30px; text-align: center; font-size: 1.3rem; font-style: italic; border-color: #a855f7; box-shadow: 0 0 15px rgba(168,85,247,0.2);">
@@ -609,7 +610,7 @@
             <span class="divider">|</span>
             <a href="support.html">Contact Support</a>
         <span class="divider">|</span>
-        <a href="#" onclick="localStorage.removeItem('astro_cookie_consent'); location.reload(); return false;">Cookie Settings</a>
+        <a href="#" onclick="if(window.showCookieBanner) window.showCookieBanner(); return false;">Cookie Settings</a>
         </div>
         <div class="social-links">
             <a href="https://www.instagram.com/_astroinsight_/" target="_blank" rel="noopener">Instagram</a>

@@ -16,7 +16,8 @@
         (function () {
             var COOKIE_KEY = 'astro_cookie_consent';
             var isGPCActivated = !!(navigator.globalPrivacyControl || window.globalPrivacyControl);
-            var savedConsent = localStorage.getItem(COOKIE_KEY);
+            var savedConsent = null;
+            try { savedConsent = localStorage.getItem(COOKIE_KEY); } catch (e) {}
 
             function getConsentPayload(state) {
                 var isGranted = state === 'granted';
@@ -38,7 +39,7 @@
             var initialState;
             if (isGPCActivated) {
                 // CCPA/CPRA: Global Privacy Control має пріоритет над будь-яким збереженим вибором
-                localStorage.setItem(COOKIE_KEY, 'denied');
+                try { localStorage.setItem(COOKIE_KEY, 'denied'); } catch (e) {}
                 initialState = 'denied';
             } else if (savedConsent === 'granted' || savedConsent === 'denied' || savedConsent === 'necessary') {
                 initialState = savedConsent;
@@ -127,18 +128,18 @@
             <a href="pages/articles.html">Articles</a>
         </div>
 
-        <div class="hamburger" role="button" aria-label="Toggle mobile menu" aria-expanded="false" tabindex="0" onclick="toggleMobileMenu()" onkeypress="if(event.key==='Enter') toggleMobileMenu()">
+        <div class="hamburger" role="button" aria-label="Toggle mobile menu" aria-expanded="false" tabindex="0" onclick="toggleMobileMenu()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMobileMenu();}">
             <span></span><span></span><span></span>
         </div>
     </nav>
 
     <div class="mobile-menu" id="mobileMenu">
-        <span class="close-menu" role="button" aria-label="Close menu" tabindex="0" onclick="toggleMobileMenu()" onkeypress="if(event.key==='Enter') toggleMobileMenu()">&times;</span>
+        <span class="close-menu" role="button" aria-label="Close menu" tabindex="0" onclick="toggleMobileMenu()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleMobileMenu();}">&times;</span>
 
         <a href="pages/games.html" onclick="toggleMobileMenu()">Astro Games</a>
         <a href="pages/articles.html" onclick="toggleMobileMenu()">Articles</a>
 
-        <button class="reset-btn" onclick="resetAura(); toggleMobileMenu()"
+        <button class="reset-btn" onclick="clearAura(); toggleMobileMenu()"
             style="margin-top: 15px; font-size: 1.2rem; padding: 10px 20px;">
             Clear Aura ✦
         </button>
@@ -202,8 +203,7 @@
 
                         <div class="input-wrapper">
                             <label for="date1">Exact Birth Date</label>
-                            <input type="date" id="date1" class="gold-select" value="1995-05-14" min="1900-01-01"
-                                max="2026-12-31">
+                            <input type="date" id="date1" class="gold-select" value="1995-05-14" min="1900-01-01">
                         </div>
                     </div>
 
@@ -226,8 +226,7 @@
 
                         <div class="input-wrapper">
                             <label for="date2">Exact Birth Date</label>
-                            <input type="date" id="date2" class="gold-select" value="1997-08-20" min="1900-01-01"
-                                max="2026-12-31">
+                            <input type="date" id="date2" class="gold-select" value="1997-08-20" min="1900-01-01">
                         </div>
                     </div>
                 </div>
@@ -238,7 +237,7 @@
 
                 <div id="compatibilityResult" class="compat-result-box hidden">
                     <div class="compat-score-circle">
-                        <span id="syncScore">0</span><span style="font-size: 1.5rem; margin-left: 2px;">%</span>
+                        <span id="syncScore">0</span><span id="syncScoreUnit" style="font-size: 1.5rem; margin-left: 2px;">%</span>
                     </div>
 
                     <h3 id="syncTitle" style="color: var(--glow-color); margin-top: 15px;">Affinity Level</h3>

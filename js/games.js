@@ -12,6 +12,21 @@ function shuffleArray(array) {
     return array;
 }
 
+function safeGetHighScore(key) {
+    try { return localStorage.getItem(key) || 0; } catch (e) { return 0; }
+}
+function safeSetHighScore(key, val) {
+    try { localStorage.setItem(key, val); } catch (e) {}
+}
+function escapeModalHtml(str) {
+    return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 // ==========================================
 // UNIFIED COSMIC MODAL
 // ==========================================
@@ -53,11 +68,11 @@ function showCosmicModal(title, message, onRestart) {
     const overlay = document.createElement('div');
     overlay.id = 'cosmicCustomModal';
     overlay.className = 'cosmic-modal-overlay';
-    const safeMessage = message ? message.replace(/\n/g, '<br>') : '';
+    const safeMessage = message ? escapeModalHtml(message).replace(/\n/g, '<br>') : '';
 
     overlay.innerHTML = `
         <div class="cosmic-modal-box">
-            <h2 class="cosmic-modal-title">${title}</h2>
+            <h2 class="cosmic-modal-title">${escapeModalHtml(title)}</h2>
             <p class="cosmic-modal-text">${safeMessage}</p>
             <div style="display: flex; gap: 15px; justify-content: center;">
                 <button class="glow-btn outline" id="modalHubBtn" style="padding: 10px 20px; font-size: 0.95rem;">← Hub</button>
@@ -103,6 +118,19 @@ function openGame(gameId) {
     else if (gameId === 'traveler') { document.getElementById('travelerView').style.display = 'block'; initTravelerGame(); }
 }
 
+function clearGameTimers(state) {
+    if (typeof state === 'undefined' || !state) return;
+    state.timerActive = false;
+    if (state.timerInterval) {
+        clearInterval(state.timerInterval);
+        state.timerInterval = null;
+    }
+    if (state.pendingTimeout) {
+        clearTimeout(state.pendingTimeout);
+        state.pendingTimeout = null;
+    }
+}
+
 function returnToHub() {
     allGames.forEach(g => {
         const el = document.getElementById(g + 'View');
@@ -110,21 +138,21 @@ function returnToHub() {
     });
     document.getElementById('hubView').style.display = 'block';
     
-    if (typeof blitzState !== 'undefined' && blitzState.timerInterval) clearInterval(blitzState.timerInterval);
-    if (typeof alchemistState !== 'undefined' && alchemistState.timerInterval) clearInterval(alchemistState.timerInterval);
-    if (typeof archetypeState !== 'undefined' && archetypeState.timerInterval) clearInterval(archetypeState.timerInterval);
-    if (typeof rulerState !== 'undefined' && rulerState.timerInterval) clearInterval(rulerState.timerInterval);
-    if (typeof truthState !== 'undefined' && truthState.timerInterval) clearInterval(truthState.timerInterval);
-    if (typeof tracerState !== 'undefined' && tracerState.timerInterval) clearInterval(tracerState.timerInterval);
-    if (typeof tarotState !== 'undefined' && tarotState.timerInterval) clearInterval(tarotState.timerInterval);
-    if (typeof chemState !== 'undefined' && chemState.timerInterval) clearInterval(chemState.timerInterval);
-    if (typeof retroState !== 'undefined' && retroState.timerInterval) clearInterval(retroState.timerInterval);
-    if (typeof moonState !== 'undefined' && moonState.timerInterval) clearInterval(moonState.timerInterval);
-    if (typeof aspectsState !== 'undefined' && aspectsState.timerInterval) clearInterval(aspectsState.timerInterval);
-    if (typeof housesState !== 'undefined' && housesState.timerInterval) clearInterval(housesState.timerInterval);
-    if (typeof eclipseState !== 'undefined' && eclipseState.timerInterval) clearInterval(eclipseState.timerInterval);
-    if (typeof balanceState !== 'undefined' && balanceState.timerInterval) clearInterval(balanceState.timerInterval);
-    if (typeof travelerState !== 'undefined' && travelerState.timerInterval) clearInterval(travelerState.timerInterval);
+    clearGameTimers(typeof blitzState !== 'undefined' ? blitzState : null);
+    clearGameTimers(typeof alchemistState !== 'undefined' ? alchemistState : null);
+    clearGameTimers(typeof archetypeState !== 'undefined' ? archetypeState : null);
+    clearGameTimers(typeof rulerState !== 'undefined' ? rulerState : null);
+    clearGameTimers(typeof truthState !== 'undefined' ? truthState : null);
+    clearGameTimers(typeof tracerState !== 'undefined' ? tracerState : null);
+    clearGameTimers(typeof tarotState !== 'undefined' ? tarotState : null);
+    clearGameTimers(typeof chemState !== 'undefined' ? chemState : null);
+    clearGameTimers(typeof retroState !== 'undefined' ? retroState : null);
+    clearGameTimers(typeof moonState !== 'undefined' ? moonState : null);
+    clearGameTimers(typeof aspectsState !== 'undefined' ? aspectsState : null);
+    clearGameTimers(typeof housesState !== 'undefined' ? housesState : null);
+    clearGameTimers(typeof eclipseState !== 'undefined' ? eclipseState : null);
+    clearGameTimers(typeof balanceState !== 'undefined' ? balanceState : null);
+    clearGameTimers(typeof travelerState !== 'undefined' ? travelerState : null);
 }
 
 // ==========================================
@@ -132,16 +160,16 @@ function returnToHub() {
 // ==========================================
 let blitzState = {
     selectedText: null, selectedIcon: null, correct: 0, wrong: 0,
-    guessesRemaining: 15, timeLeft: 60, timerActive: false, timerInterval: null, hasStarted: false
+    guessesRemaining: 15, timeLeft: 60, timerActive: false, timerInterval: null, pendingTimeout: null, hasStarted: false, lockBoard: false
 };
 
 function resetBlitzGame() {
-    if (blitzState.timerInterval) clearInterval(blitzState.timerInterval);
+    clearGameTimers(blitzState);
     blitzState = {
         selectedText: null, selectedIcon: null, correct: 0, wrong: 0,
-        guessesRemaining: 15, timeLeft: 60, timerActive: true, timerInterval: null, hasStarted: false
+        guessesRemaining: 15, timeLeft: 60, timerActive: true, timerInterval: null, pendingTimeout: null, hasStarted: false, lockBoard: false
     };
-    document.getElementById('blitz-highscore').textContent = localStorage.getItem('astroBlitzHighScore') || 0;
+    document.getElementById('blitz-highscore').textContent = safeGetHighScore('astroBlitzHighScore');
     updateBlitzStats();
     document.getElementById('blitz-timer').textContent = "01:00";
 
@@ -174,7 +202,7 @@ function resetBlitzGame() {
 }
 
 function handleBlitzSelection(element, type) {
-    if (element.classList.contains('matched') || !blitzState.timerActive) return;
+    if (blitzState.lockBoard || element.classList.contains('matched') || !blitzState.timerActive) return;
     if (!blitzState.hasStarted) { blitzState.hasStarted = true; startBlitzTimer(); }
     if (element.classList.contains('selected')) {
         element.classList.remove('selected');
@@ -188,36 +216,49 @@ function handleBlitzSelection(element, type) {
     if (type === 'icon') blitzState.selectedIcon = element;
 
     if (blitzState.selectedText && blitzState.selectedIcon) {
-        setTimeout(checkBlitzMatch, 200); 
+        blitzState.lockBoard = true;
+        blitzState.pendingTimeout = setTimeout(checkBlitzMatch, 200); 
     }
 }
 
 function checkBlitzMatch() {
-    const textVal = blitzState.selectedText.dataset.zodiac;
-    const iconVal = blitzState.selectedIcon.dataset.zodiac;
+    blitzState.pendingTimeout = null;
+    if (!blitzState.timerActive) {
+        blitzState.lockBoard = false;
+        return;
+    }
+    const textEl = blitzState.selectedText;
+    const iconEl = blitzState.selectedIcon;
+    if (!textEl || !iconEl) {
+        blitzState.lockBoard = false;
+        return;
+    }
+    const textVal = textEl.dataset.zodiac;
+    const iconVal = iconEl.dataset.zodiac;
     blitzState.guessesRemaining--;
 
     if (textVal === iconVal) {
         blitzState.correct++;
-        blitzState.selectedText.classList.add('matched');
-        blitzState.selectedIcon.classList.add('matched');
+        textEl.classList.add('matched');
+        iconEl.classList.add('matched');
     } else {
         blitzState.wrong++;
-        blitzState.selectedText.style.borderColor = '#ef4444';
-        blitzState.selectedIcon.style.borderColor = '#ef4444';
+        textEl.style.borderColor = '#ef4444';
+        iconEl.style.borderColor = '#ef4444';
         setTimeout(() => {
-            if(blitzState.selectedText) blitzState.selectedText.style.borderColor = '';
-            if(blitzState.selectedIcon) blitzState.selectedIcon.style.borderColor = '';
+            textEl.style.borderColor = '';
+            iconEl.style.borderColor = '';
         }, 300);
     }
-    blitzState.selectedText.classList.remove('selected');
-    blitzState.selectedIcon.classList.remove('selected');
+    textEl.classList.remove('selected');
+    iconEl.classList.remove('selected');
     blitzState.selectedText = null;
     blitzState.selectedIcon = null;
+    blitzState.lockBoard = false;
 
     updateBlitzStats();
     if (blitzState.correct === 12) endBlitzGame(true);
-    else if (blitzState.guessesRemaining <= 0) endBlitzGame(false);
+    else if (blitzState.guessesRemaining <= 0) endBlitzGame(false, 'guesses');
 }
 
 function updateBlitzStats() {
@@ -230,21 +271,20 @@ function startBlitzTimer() {
         blitzState.timeLeft--;
         const seconds = (blitzState.timeLeft % 60).toString().padStart(2, '0');
         document.getElementById('blitz-timer').textContent = `00:${seconds}`;
-        if (blitzState.timeLeft <= 0) endBlitzGame(false);
+        if (blitzState.timeLeft <= 0) endBlitzGame(false, 'time');
     }, 1000);
 }
 
-function endBlitzGame(isWin = false) {
-    clearInterval(blitzState.timerInterval);
-    blitzState.timerActive = false;
-    let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroBlitzHighScore') || 0);
+function endBlitzGame(isWin = false, reason = 'time') {
+    clearGameTimers(blitzState);
+    let title = isWin ? "Cosmic Mastery! 🏆" : (reason === 'guesses' ? "Out of Guesses!" : "Time's up!");
+    let storedHighScore = parseInt(safeGetHighScore('astroBlitzHighScore'), 10);
     let msg = isWin 
         ? `Incredible! You matched all 12 pairs with ${blitzState.timeLeft} seconds and ${blitzState.guessesRemaining} guesses left.`
         : `You matched ${blitzState.correct} pairs before the stars shifted.`;
     
     if (blitzState.correct > storedHighScore) {
-        localStorage.setItem('astroBlitzHighScore', blitzState.correct);
+        safeSetHighScore('astroBlitzHighScore', blitzState.correct);
         document.getElementById('blitz-highscore').textContent = blitzState.correct;
         title = "New High Score! 🌟";
         msg = (isWin ? `You mastered the zodiac perfectly!\n\n` : `A new record!\n\n`) + msg;
@@ -255,12 +295,12 @@ function endBlitzGame(isWin = false) {
 // ==========================================
 // GAME 2: ELEMENT ALCHEMIST
 // ==========================================
-let alchemistState = { score: 0, timeLeft: 120, timerActive: false, timerInterval: null, currentSign: null, hasStarted: false, signPool: [], matchedCount: 0 };
+let alchemistState = { score: 0, timeLeft: 120, timerActive: false, timerInterval: null, pendingTimeout: null, currentSign: null, hasStarted: false, signPool: [], matchedCount: 0, lockInput: false };
 
 function initAlchemistGame() {
-    if (alchemistState.timerInterval) clearInterval(alchemistState.timerInterval);
-    alchemistState = { score: 0, timeLeft: 120, timerActive: true, timerInterval: null, currentSign: null, hasStarted: false, signPool: shuffleArray(Object.keys(zodiacData)), matchedCount: 0 };
-    document.getElementById('alchemist-highscore').innerText = localStorage.getItem('astroAlchemistHighScore') || 0;
+    clearGameTimers(alchemistState);
+    alchemistState = { score: 0, timeLeft: 120, timerActive: true, timerInterval: null, pendingTimeout: null, currentSign: null, hasStarted: false, signPool: shuffleArray(Object.keys(zodiacData)), matchedCount: 0, lockInput: false };
+    document.getElementById('alchemist-highscore').innerText = safeGetHighScore('astroAlchemistHighScore');
     document.getElementById('alchemist-score').innerText = '0';
     document.getElementById('alchemist-timer').innerText = '02:00';
     loadNextAlchemistCard();
@@ -293,7 +333,8 @@ function loadNextAlchemistCard() {
 }
 
 function handleAlchemistGuess(guessedElement) {
-    if (!alchemistState.timerActive) return;
+    if (!alchemistState.timerActive || alchemistState.lockInput) return;
+    alchemistState.lockInput = true;
     if (!alchemistState.hasStarted) { alchemistState.hasStarted = true; startAlchemistTimer(); }
     const card = document.getElementById('alchemist-current-card');
     
@@ -310,20 +351,23 @@ function handleAlchemistGuess(guessedElement) {
         shuffleArray(alchemistState.signPool);
     }
     
-    setTimeout(() => {
+    alchemistState.pendingTimeout = setTimeout(() => {
+        alchemistState.pendingTimeout = null;
         card.style.transform = 'none';
+        if (!alchemistState.timerActive) return;
+        alchemistState.lockInput = false;
         if (alchemistState.matchedCount >= 12) endAlchemistGame(true);
         else loadNextAlchemistCard();
     }, 200);
 }
 
 function endAlchemistGame(isWin = false) {
-    clearInterval(alchemistState.timerInterval); alchemistState.timerActive = false;
+    clearGameTimers(alchemistState);
     let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroAlchemistHighScore') || 0);
+    let storedHighScore = parseInt(safeGetHighScore('astroAlchemistHighScore'), 10);
     let msg = isWin ? `Amazing! You sorted all 12 elements with ${alchemistState.timeLeft} seconds left.\nFinal Score: ${alchemistState.score}` : `You correctly sorted ${alchemistState.matchedCount} signs.\nFinal Score: ${alchemistState.score}`;
     if (alchemistState.score > storedHighScore) {
-        localStorage.setItem('astroAlchemistHighScore', alchemistState.score);
+        safeSetHighScore('astroAlchemistHighScore', alchemistState.score);
         document.getElementById('alchemist-highscore').innerText = alchemistState.score;
         title = "New High Score! 🌟"; msg = (isWin ? `You are a true Alchemist!\n\n` : `Great effort!\n\n`) + msg;
     }
@@ -372,12 +416,12 @@ const archetypeScenarios = [
     { sign: "Pisces", text: "Felt bad for an inanimate object and apologized to it." }
 ];
 
-let archetypeState = { score: 0, timeLeft: 120, timerActive: false, timerInterval: null, currentScenario: null, hasStarted: false, questionPool: [], matchedCount: 0 };
+let archetypeState = { score: 0, timeLeft: 120, timerActive: false, timerInterval: null, pendingTimeout: null, currentScenario: null, hasStarted: false, questionPool: [], matchedCount: 0 };
 
 function initArchetypeGame() {
-    if (archetypeState.timerInterval) clearInterval(archetypeState.timerInterval);
-    archetypeState = { score: 0, timeLeft: 120, timerActive: true, timerInterval: null, currentScenario: null, hasStarted: false, questionPool: shuffleArray([...archetypeScenarios]), matchedCount: 0 };
-    document.getElementById('archetype-highscore').innerText = localStorage.getItem('astroArchetypeHighScore') || 0;
+    clearGameTimers(archetypeState);
+    archetypeState = { score: 0, timeLeft: 120, timerActive: true, timerInterval: null, pendingTimeout: null, currentScenario: null, hasStarted: false, questionPool: shuffleArray([...archetypeScenarios]), matchedCount: 0 };
+    document.getElementById('archetype-highscore').innerText = safeGetHighScore('astroArchetypeHighScore');
     document.getElementById('archetype-score').innerText = '0';
     document.getElementById('archetype-timer').innerText = '02:00';
     loadNextArchetype();
@@ -437,19 +481,21 @@ function handleArchetypeGuess(guessedSign, btnElement) {
     const allBtns = document.getElementById('archetype-buttons').children;
     for (let b of allBtns) { b.onclick = null; }
     
-    setTimeout(() => {
+    archetypeState.pendingTimeout = setTimeout(() => {
+        archetypeState.pendingTimeout = null;
+        if (!archetypeState.timerActive) return;
         if (archetypeState.matchedCount >= archetypeScenarios.length) endArchetypeGame(true);
         else loadNextArchetype();
     }, 800); 
 }
 
 function endArchetypeGame(isWin = false) {
-    clearInterval(archetypeState.timerInterval); archetypeState.timerActive = false;
+    clearGameTimers(archetypeState);
     let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroArchetypeHighScore') || 0);
+    let storedHighScore = parseInt(safeGetHighScore('astroArchetypeHighScore'), 10);
     let msg = isWin ? `Flawless! You deciphered all ${archetypeScenarios.length} scenarios with ${archetypeState.timeLeft} seconds left.\nFinal Score: ${archetypeState.score}` : `You correctly guessed ${archetypeState.matchedCount} archetypes.\nFinal Score: ${archetypeState.score}`;
     if (archetypeState.score > storedHighScore) {
-        localStorage.setItem('astroArchetypeHighScore', archetypeState.score);
+        safeSetHighScore('astroArchetypeHighScore', archetypeState.score);
         document.getElementById('archetype-highscore').innerText = archetypeState.score;
         title = "New High Score! 🌟"; msg = (isWin ? `You read their minds perfectly!\n\n` : `Great intuition!\n\n`) + msg;
     }
@@ -459,13 +505,13 @@ function endArchetypeGame(isWin = false) {
 // ==========================================
 // GAME 4: CELESTIAL RULERS
 // ==========================================
-let rulerState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, currentSign: null, currentSignKey: null, hasStarted: false, signPool: [], matchedCount: 0 };
+let rulerState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, pendingTimeout: null, currentSign: null, currentSignKey: null, hasStarted: false, signPool: [], matchedCount: 0 };
 const allPlanets = [...new Set(Object.values(zodiacData).map(s => s.planet))];
 
 function initRulerGame() {
-    if (rulerState.timerInterval) clearInterval(rulerState.timerInterval);
-    rulerState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, currentSign: null, currentSignKey: null, hasStarted: false, signPool: shuffleArray(Object.keys(zodiacData)), matchedCount: 0 };
-    document.getElementById('ruler-highscore').innerText = localStorage.getItem('astroRulerHighScore') || 0;
+    clearGameTimers(rulerState);
+    rulerState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, pendingTimeout: null, currentSign: null, currentSignKey: null, hasStarted: false, signPool: shuffleArray(Object.keys(zodiacData)), matchedCount: 0 };
+    document.getElementById('ruler-highscore').innerText = safeGetHighScore('astroRulerHighScore');
     document.getElementById('ruler-score').innerText = '0';
     document.getElementById('ruler-timer').innerText = '01:00';
     loadNextRulerCard();
@@ -527,20 +573,22 @@ function handleRulerGuess(guessedPlanet, btnElement) {
     }
     const allBtns = document.getElementById('ruler-buttons').children;
     for (let b of allBtns) { b.onclick = null; }
-    setTimeout(() => {
+    rulerState.pendingTimeout = setTimeout(() => {
+        rulerState.pendingTimeout = null;
         card.style.transform = 'none';
+        if (!rulerState.timerActive) return;
         if (rulerState.matchedCount >= 12) endRulerGame(true);
         else loadNextRulerCard();
     }, 600);
 }
 
 function endRulerGame(isWin = false) {
-    clearInterval(rulerState.timerInterval); rulerState.timerActive = false;
+    clearGameTimers(rulerState);
     let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroRulerHighScore') || 0);
+    let storedHighScore = parseInt(safeGetHighScore('astroRulerHighScore'), 10);
     let msg = isWin ? `Incredible! You matched all 12 planets with ${rulerState.timeLeft} seconds left.\nFinal Score: ${rulerState.score}` : `You matched ${rulerState.matchedCount} planets.\nFinal Score: ${rulerState.score}`;
     if (rulerState.score > storedHighScore) {
-        localStorage.setItem('astroRulerHighScore', rulerState.score); document.getElementById('ruler-highscore').innerText = rulerState.score;
+        safeSetHighScore('astroRulerHighScore', rulerState.score); document.getElementById('ruler-highscore').innerText = rulerState.score;
         title = "New High Score! 🌟"; msg = isWin ? `You mastered all planetary domains perfectly!\n\n` + msg : `You mastered the planetary domains!\n\n` + msg;
     }
     showCosmicModal(title, msg, () => initRulerGame());
@@ -549,12 +597,12 @@ function endRulerGame(isWin = false) {
 // ==========================================
 // GAME 5: COSMIC TRUTHS (True or False)
 // ==========================================
-let truthState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, currentAnswer: null, currentSignName: null, hasStarted: false, signPool: [], matchedCount: 0 };
+let truthState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, pendingTimeout: null, currentAnswer: null, currentSignName: null, hasStarted: false, signPool: [], matchedCount: 0 };
 
 function initTruthGame() {
-    if (truthState.timerInterval) clearInterval(truthState.timerInterval);
-    truthState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, currentAnswer: null, currentSignName: null, hasStarted: false, signPool: shuffleArray(Object.keys(zodiacData)), matchedCount: 0 };
-    document.getElementById('truth-highscore').innerText = localStorage.getItem('astroTruthHighScore') || 0;
+    clearGameTimers(truthState);
+    truthState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, pendingTimeout: null, currentAnswer: null, currentSignName: null, hasStarted: false, signPool: shuffleArray(Object.keys(zodiacData)), matchedCount: 0 };
+    document.getElementById('truth-highscore').innerText = safeGetHighScore('astroTruthHighScore');
     document.getElementById('truth-score').innerText = '0';
     document.getElementById('truth-timer').innerText = '01:00';
     loadNextTruthCard();
@@ -593,7 +641,8 @@ function loadNextTruthCard() {
                 const elementsList = ["Fire", "Earth", "Air", "Water"].filter(e => e !== element);
                 element = elementsList[Math.floor(Math.random() * elementsList.length)];
             }
-            statementText = `${signName} is a ${element} sign.`;
+            const article = /^[AEIOU]/i.test(element) ? 'an' : 'a';
+        statementText = `${signName} is ${article} ${element} sign.`;
         }
         
         truthState.currentAnswer = isTrueStatement;
@@ -624,20 +673,22 @@ function handleTruthGuess(guessedAnswer) {
     
     const btns = document.getElementById('truth-buttons').querySelectorAll('button');
     btns.forEach(b => b.disabled = true);
-    setTimeout(() => {
+    truthState.pendingTimeout = setTimeout(() => {
+        truthState.pendingTimeout = null;
         card.style.transform = 'none'; btns.forEach(b => b.disabled = false);
+        if (!truthState.timerActive) return;
         if (truthState.matchedCount >= 12) endTruthGame(true);
         else loadNextTruthCard();
     }, 400);
 }
 
 function endTruthGame(isWin = false) {
-    clearInterval(truthState.timerInterval); truthState.timerActive = false;
+    clearGameTimers(truthState);
     let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroTruthHighScore') || 0);
+    let storedHighScore = parseInt(safeGetHighScore('astroTruthHighScore'), 10);
     let msg = isWin ? `Perfect! You revealed all 12 cosmic truths with ${truthState.timeLeft} seconds left.\nFinal Score: ${truthState.score}` : `You unlocked ${truthState.matchedCount} truths.\nFinal Score: ${truthState.score}`;
     if (truthState.score > storedHighScore) {
-        localStorage.setItem('astroTruthHighScore', truthState.score); document.getElementById('truth-highscore').innerText = truthState.score;
+        safeSetHighScore('astroTruthHighScore', truthState.score); document.getElementById('truth-highscore').innerText = truthState.score;
         title = "New High Score! 🌟"; msg = (isWin ? `You are a master of the cosmic facts!\n\n` : `Great knowledge!\n\n`) + msg;
     }
     showCosmicModal(title, msg, () => initTruthGame());
@@ -661,12 +712,12 @@ const starMaps = {
     "Pisces": `<svg viewBox="0 0 100 100"><polyline points="20,20 40,30 30,50 20,20" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.6"/><polyline points="40,30 60,70" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.6"/><polyline points="80,80 60,70 70,50 80,80" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.6"/><circle cx="20" cy="20" r="3" fill="currentColor"/><circle cx="40" cy="30" r="3" fill="currentColor"/><circle cx="30" cy="50" r="3" fill="currentColor"/><circle cx="60" cy="70" r="3" fill="currentColor"/><circle cx="80" cy="80" r="3" fill="currentColor"/><circle cx="70" cy="50" r="3" fill="currentColor"/></svg>`
 };
 
-let tracerState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, currentSignName: null, hasStarted: false, signPool: [], matchedCount: 0 };
+let tracerState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, pendingTimeout: null, currentSignName: null, hasStarted: false, signPool: [], matchedCount: 0 };
 
 function initTracerGame() {
-    if (tracerState.timerInterval) clearInterval(tracerState.timerInterval);
-    tracerState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, currentSignName: null, hasStarted: false, signPool: shuffleArray(Object.keys(starMaps)), matchedCount: 0 };
-    document.getElementById('tracer-highscore').innerText = localStorage.getItem('astroTracerHighScore') || 0;
+    clearGameTimers(tracerState);
+    tracerState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, pendingTimeout: null, currentSignName: null, hasStarted: false, signPool: shuffleArray(Object.keys(starMaps)), matchedCount: 0 };
+    document.getElementById('tracer-highscore').innerText = safeGetHighScore('astroTracerHighScore');
     document.getElementById('tracer-score').innerText = '0';
     document.getElementById('tracer-timer').innerText = '01:00';
     loadNextTracerCard();
@@ -721,20 +772,22 @@ function handleTracerGuess(guessedSign, btnElement) {
     const allBtns = document.getElementById('tracer-buttons').children;
     for (let b of allBtns) { b.onclick = null; }
     
-    setTimeout(() => {
+    tracerState.pendingTimeout = setTimeout(() => {
+        tracerState.pendingTimeout = null;
         card.style.transform = 'none';
+        if (!tracerState.timerActive) return;
         if (tracerState.matchedCount >= 12) endTracerGame(true);
         else loadNextTracerCard();
     }, 600);
 }
 
 function endTracerGame(isWin = false) {
-    clearInterval(tracerState.timerInterval); tracerState.timerActive = false;
+    clearGameTimers(tracerState);
     let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroTracerHighScore') || 0);
+    let storedHighScore = parseInt(safeGetHighScore('astroTracerHighScore'), 10);
     let msg = isWin ? `Incredible! You mapped all 12 constellations with ${tracerState.timeLeft} seconds left.\nFinal Score: ${tracerState.score}` : `You traced ${tracerState.matchedCount} constellations.\nFinal Score: ${tracerState.score}`;
     if (tracerState.score > storedHighScore) {
-        localStorage.setItem('astroTracerHighScore', tracerState.score); document.getElementById('tracer-highscore').innerText = tracerState.score;
+        safeSetHighScore('astroTracerHighScore', tracerState.score); document.getElementById('tracer-highscore').innerText = tracerState.score;
         title = "New High Score! 🌟"; msg = (isWin ? `You are a true Stargazer!\n\n` : `Great navigation!\n\n`) + msg;
     }
     showCosmicModal(title, msg, () => initTracerGame());
@@ -750,12 +803,12 @@ const tarotCards = [
     { id: "chariot", name: "The Chariot", symbol: "🚀" }, { id: "strength", name: "Strength", symbol: "🦁" }
 ];
 
-let tarotState = { matchedCount: 0, timeLeft: 60, timerActive: false, timerInterval: null, hasStarted: false, firstCard: null, secondCard: null, lockBoard: false };
+let tarotState = { matchedCount: 0, timeLeft: 60, timerActive: false, timerInterval: null, pendingTimeout: null, hasStarted: false, firstCard: null, secondCard: null, lockBoard: false };
 
 function initTarotGame() {
-    if (tarotState.timerInterval) clearInterval(tarotState.timerInterval);
-    tarotState = { matchedCount: 0, timeLeft: 60, timerActive: true, timerInterval: null, hasStarted: false, firstCard: null, secondCard: null, lockBoard: false };
-    document.getElementById('tarot-highscore').innerText = localStorage.getItem('astroTarotHighScore') || 0;
+    clearGameTimers(tarotState);
+    tarotState = { matchedCount: 0, timeLeft: 60, timerActive: true, timerInterval: null, pendingTimeout: null, hasStarted: false, firstCard: null, secondCard: null, lockBoard: false };
+    document.getElementById('tarot-highscore').innerText = safeGetHighScore('astroTarotHighScore');
     document.getElementById('tarot-score').innerText = '0';
     document.getElementById('tarot-timer').innerText = '01:00';
     
@@ -806,20 +859,24 @@ function handleTarotFlip(card) {
         tarotState.firstCard = null; tarotState.secondCard = null; tarotState.lockBoard = false;
         if (tarotState.matchedCount === 8) endTarotGame(true);
     } else {
-        setTimeout(() => {
-            tarotState.firstCard.classList.remove('flipped'); tarotState.secondCard.classList.remove('flipped');
+        const c1 = tarotState.firstCard;
+        const c2 = tarotState.secondCard;
+        tarotState.pendingTimeout = setTimeout(() => {
+            tarotState.pendingTimeout = null;
+            if (c1) c1.classList.remove('flipped');
+            if (c2) c2.classList.remove('flipped');
             tarotState.firstCard = null; tarotState.secondCard = null; tarotState.lockBoard = false;
         }, 1000);
     }
 }
 
 function endTarotGame(isWin = false) {
-    clearInterval(tarotState.timerInterval); tarotState.timerActive = false;
+    clearGameTimers(tarotState);
     let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroTarotHighScore') || 0);
+    let storedHighScore = parseInt(safeGetHighScore('astroTarotHighScore'), 10);
     let msg = isWin ? `You matched all 8 pairs with ${tarotState.timeLeft} seconds left.` : `You matched ${tarotState.matchedCount} pairs.`;
     if (tarotState.matchedCount > storedHighScore) {
-        localStorage.setItem('astroTarotHighScore', tarotState.matchedCount); document.getElementById('tarot-highscore').innerText = tarotState.matchedCount;
+        safeSetHighScore('astroTarotHighScore', tarotState.matchedCount); document.getElementById('tarot-highscore').innerText = tarotState.matchedCount;
         title = "New High Score! 🌟"; msg = (isWin ? `A true Oracle!\n\n` : `Great memory!\n\n`) + msg;
     }
     showCosmicModal(title, msg, () => initTarotGame());
@@ -843,12 +900,12 @@ const chemistryPairs = [
     { s1: "Aquarius", s2: "Leo", ans: "Soulmates" }, { s1: "Pisces", s2: "Gemini", ans: "Challenging" }
 ];
 
-let chemState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, currentPair: null, hasStarted: false, pool: [], matchedCount: 0 };
+let chemState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, pendingTimeout: null, currentPair: null, hasStarted: false, pool: [], matchedCount: 0, lockInput: false };
 
 function initChemistryGame() {
-    if (chemState.timerInterval) clearInterval(chemState.timerInterval);
-    chemState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, currentPair: null, hasStarted: false, pool: shuffleArray([...chemistryPairs]), matchedCount: 0 };
-    document.getElementById('chem-highscore').innerText = localStorage.getItem('astroChemHighScore') || 0;
+    clearGameTimers(chemState);
+    chemState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, pendingTimeout: null, currentPair: null, hasStarted: false, pool: shuffleArray([...chemistryPairs]), matchedCount: 0, lockInput: false };
+    document.getElementById('chem-highscore').innerText = safeGetHighScore('astroChemHighScore');
     document.getElementById('chem-score').innerText = '0';
     document.getElementById('chem-timer').innerText = '01:30';
     loadNextChemCard();
@@ -873,7 +930,8 @@ function loadNextChemCard() {
 }
 
 function handleChemGuess(guess) {
-    if (!chemState.timerActive) return;
+    if (!chemState.timerActive || chemState.lockInput) return;
+    chemState.lockInput = true;
     if (!chemState.hasStarted) { chemState.hasStarted = true; startChemTimer(); }
     const card = document.getElementById('chem-current-card');
     
@@ -886,20 +944,23 @@ function handleChemGuess(guess) {
         chemState.pool.unshift(chemState.currentPair); shuffleArray(chemState.pool);
     }
     
-    setTimeout(() => {
+    chemState.pendingTimeout = setTimeout(() => {
+        chemState.pendingTimeout = null;
         card.style.transform = 'none'; card.style.borderColor = '#f43f5e';
+        if (!chemState.timerActive) return;
+        chemState.lockInput = false;
         if (chemState.matchedCount >= chemistryPairs.length) endChemGame(true);
         else loadNextChemCard();
     }, 400);
 }
 
 function endChemGame(isWin = false) {
-    clearInterval(chemState.timerInterval); chemState.timerActive = false;
+    clearGameTimers(chemState);
     let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroChemHighScore') || 0);
+    let storedHighScore = parseInt(safeGetHighScore('astroChemHighScore'), 10);
     let msg = isWin ? `You mastered synastry with ${chemState.timeLeft} seconds left.\nFinal Score: ${chemState.score}` : `You matched ${chemState.matchedCount} pairings.\nFinal Score: ${chemState.score}`;
     if (chemState.score > storedHighScore) {
-        localStorage.setItem('astroChemHighScore', chemState.score); document.getElementById('chem-highscore').innerText = chemState.score;
+        safeSetHighScore('astroChemHighScore', chemState.score); document.getElementById('chem-highscore').innerText = chemState.score;
         title = "New High Score! 🌟"; msg = (isWin ? `Cupid of the Stars!\n\n` : `Great intuition!\n\n`) + msg;
     }
     showCosmicModal(title, msg, () => initChemistryGame());
@@ -921,12 +982,12 @@ const retrogradeScenarios = [
     { p: "Neptune", text: "Start a creative dream journal.", ans: true }, { p: "Neptune", text: "Ignore red flags in a new relationship.", ans: false }
 ];
 
-let retroState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, currentScenario: null, hasStarted: false, pool: [], matchedCount: 0 };
+let retroState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, pendingTimeout: null, currentScenario: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initRetrogradeGame() {
-    if (retroState.timerInterval) clearInterval(retroState.timerInterval);
-    retroState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, currentScenario: null, hasStarted: false, pool: shuffleArray([...retrogradeScenarios]), matchedCount: 0 };
-    document.getElementById('retro-highscore').innerText = localStorage.getItem('astroRetroHighScore') || 0;
+    clearGameTimers(retroState);
+    retroState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, pendingTimeout: null, currentScenario: null, hasStarted: false, pool: shuffleArray([...retrogradeScenarios]), matchedCount: 0 };
+    document.getElementById('retro-highscore').innerText = safeGetHighScore('astroRetroHighScore');
     document.getElementById('retro-score').innerText = '0';
     document.getElementById('retro-timer').innerText = '01:30';
     loadNextRetroCard();
@@ -965,21 +1026,23 @@ function handleRetroGuess(guess) {
     }
     
     btns.forEach(b => { if(!b.innerText.includes('Hub') && !b.innerText.includes('Restart')) b.disabled = true; });
-    setTimeout(() => {
+    retroState.pendingTimeout = setTimeout(() => {
+        retroState.pendingTimeout = null;
         card.style.transform = 'none'; card.style.borderColor = '#fbbf24';
         btns.forEach(b => b.disabled = false);
+        if (!retroState.timerActive) return;
         if (retroState.matchedCount >= retrogradeScenarios.length) endRetroGame(true);
         else loadNextRetroCard();
     }, 400);
 }
 
 function endRetroGame(isWin = false) {
-    clearInterval(retroState.timerInterval); retroState.timerActive = false;
+    clearGameTimers(retroState);
     let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroRetroHighScore') || 0);
+    let storedHighScore = parseInt(safeGetHighScore('astroRetroHighScore'), 10);
     let msg = isWin ? `Survived the Retrogrades with ${retroState.timeLeft} seconds left.\nFinal Score: ${retroState.score}` : `Navigated ${retroState.matchedCount} scenarios.\nFinal Score: ${retroState.score}`;
     if (retroState.score > storedHighScore) {
-        localStorage.setItem('astroRetroHighScore', retroState.score); document.getElementById('retro-highscore').innerText = retroState.score;
+        safeSetHighScore('astroRetroHighScore', retroState.score); document.getElementById('retro-highscore').innerText = retroState.score;
         title = "New High Score! 🌟"; msg = (isWin ? `Astute Navigator!\n\n` : `Well dodged!\n\n`) + msg;
     }
     showCosmicModal(title, msg, () => initRetrogradeGame());
@@ -999,12 +1062,12 @@ const moonPhases = [
     { phase: "Waning Crescent", icon: "🌘", meaning: "Rest, surrender, and prepare for the next cycle." }
 ];
 
-let moonState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, currentPhase: null, hasStarted: false, pool: [], matchedCount: 0 };
+let moonState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, pendingTimeout: null, currentPhase: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initMoonGame() {
-    if (moonState.timerInterval) clearInterval(moonState.timerInterval);
-    moonState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, currentPhase: null, hasStarted: false, pool: shuffleArray([...moonPhases]), matchedCount: 0 };
-    document.getElementById('moon-highscore').innerText = localStorage.getItem('astroMoonHighScore') || 0;
+    clearGameTimers(moonState);
+    moonState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, pendingTimeout: null, currentPhase: null, hasStarted: false, pool: shuffleArray([...moonPhases]), matchedCount: 0 };
+    document.getElementById('moon-highscore').innerText = safeGetHighScore('astroMoonHighScore');
     document.getElementById('moon-score').innerText = '0';
     document.getElementById('moon-timer').innerText = '01:00';
     loadNextMoonCard();
@@ -1058,20 +1121,22 @@ function handleMoonGuess(guessedPhase, btnElement) {
     const allBtns = document.getElementById('moon-buttons').children;
     for (let b of allBtns) { b.onclick = null; }
     
-    setTimeout(() => {
+    moonState.pendingTimeout = setTimeout(() => {
+        moonState.pendingTimeout = null;
         card.style.transform = 'none';
+        if (!moonState.timerActive) return;
         if (moonState.matchedCount >= moonPhases.length) endMoonGame(true);
         else loadNextMoonCard();
     }, 600);
 }
 
 function endMoonGame(isWin = false) {
-    clearInterval(moonState.timerInterval); moonState.timerActive = false;
+    clearGameTimers(moonState);
     let title = isWin ? "Cosmic Mastery! 🏆" : "Time's up!";
-    let storedHighScore = parseInt(localStorage.getItem('astroMoonHighScore') || 0);
+    let storedHighScore = parseInt(safeGetHighScore('astroMoonHighScore'), 10);
     let msg = isWin ? `Aligned all 8 phases with ${moonState.timeLeft} seconds left.\nFinal Score: ${moonState.score}` : `Aligned ${moonState.matchedCount} phases.\nFinal Score: ${moonState.score}`;
     if (moonState.score > storedHighScore) {
-        localStorage.setItem('astroMoonHighScore', moonState.score); document.getElementById('moon-highscore').innerText = moonState.score;
+        safeSetHighScore('astroMoonHighScore', moonState.score); document.getElementById('moon-highscore').innerText = moonState.score;
         title = "New High Score! 🌟"; msg = (isWin ? `Lunar Master!\n\n` : `Great timing!\n\n`) + msg;
     }
     showCosmicModal(title, msg, () => initMoonGame());
@@ -1092,12 +1157,12 @@ const aspectsScenarios = [
     { text: "A spark of inspiration that requires you to take action to manifest.", ans: "Sextile" },
     { text: "Total alignment of thoughts and actions; you speak and it happens.", ans: "Conjunction" }
 ];
-let aspectsState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+let aspectsState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initAspectsGame() {
-    if (aspectsState.timerInterval) clearInterval(aspectsState.timerInterval);
-    aspectsState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...aspectsScenarios]), matchedCount: 0 };
-    document.getElementById('aspects-highscore').innerText = localStorage.getItem('astroAspectsHighScore') || 0;
+    clearGameTimers(aspectsState);
+    aspectsState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: shuffleArray([...aspectsScenarios]), matchedCount: 0 };
+    document.getElementById('aspects-highscore').innerText = safeGetHighScore('astroAspectsHighScore');
     document.getElementById('aspects-score').innerText = '0';
     document.getElementById('aspects-timer').innerText = '01:00';
     loadNextAspect();
@@ -1144,16 +1209,18 @@ function handleAspectGuess(guess, btn) {
     const allBtns = document.getElementById('aspects-buttons').children;
     for (let b of allBtns) { b.onclick = null; }
     
-    setTimeout(() => { 
+    aspectsState.pendingTimeout = setTimeout(() => { 
+        aspectsState.pendingTimeout = null;
         card.style.transform = 'none';
+        if (!aspectsState.timerActive) return;
         if (aspectsState.matchedCount >= aspectsScenarios.length) endAspectsGame(true);
         else loadNextAspect();
     }, 500);
 }
 function endAspectsGame(isWin = false) {
-    clearInterval(aspectsState.timerInterval); aspectsState.timerActive = false;
-    let stored = parseInt(localStorage.getItem('astroAspectsHighScore') || 0);
-    if (aspectsState.score > stored) { localStorage.setItem('astroAspectsHighScore', aspectsState.score); document.getElementById('aspects-highscore').innerText = aspectsState.score; }
+    clearGameTimers(aspectsState);
+    let stored = parseInt(safeGetHighScore('astroAspectsHighScore'), 10);
+    if (aspectsState.score > stored) { safeSetHighScore('astroAspectsHighScore', aspectsState.score); document.getElementById('aspects-highscore').innerText = aspectsState.score; }
     showCosmicModal("Aspects Complete!", `Final Score: ${aspectsState.score}`, () => initAspectsGame());
 }
 
@@ -1174,12 +1241,12 @@ const housesData = [
     { house: "11th House", domain: "Friendships, groups, community & future aspirations" },
     { house: "12th House", domain: "Spirituality, subconscious, isolation & hidden things" }
 ];
-let housesState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+let housesState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initHousesGame() {
-    if (housesState.timerInterval) clearInterval(housesState.timerInterval);
-    housesState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...housesData]), matchedCount: 0 };
-    document.getElementById('houses-highscore').innerText = localStorage.getItem('astroHousesHighScore') || 0;
+    clearGameTimers(housesState);
+    housesState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: shuffleArray([...housesData]), matchedCount: 0 };
+    document.getElementById('houses-highscore').innerText = safeGetHighScore('astroHousesHighScore');
     document.getElementById('houses-score').innerText = '0';
     document.getElementById('houses-timer').innerText = '01:00';
     loadNextHouse();
@@ -1224,16 +1291,18 @@ function handleHouseGuess(guess, btn) {
     const allBtns = document.getElementById('houses-buttons').children;
     for (let b of allBtns) { b.onclick = null; }
     
-    setTimeout(() => { 
+    housesState.pendingTimeout = setTimeout(() => { 
+        housesState.pendingTimeout = null;
         card.style.transform = 'none';
+        if (!housesState.timerActive) return;
         if (housesState.matchedCount >= housesData.length) endHousesGame(true); 
         else loadNextHouse();
     }, 500);
 }
 function endHousesGame(isWin = false) {
-    clearInterval(housesState.timerInterval); housesState.timerActive = false;
-    let stored = parseInt(localStorage.getItem('astroHousesHighScore') || 0);
-    if (housesState.score > stored) { localStorage.setItem('astroHousesHighScore', housesState.score); document.getElementById('houses-highscore').innerText = housesState.score; }
+    clearGameTimers(housesState);
+    let stored = parseInt(safeGetHighScore('astroHousesHighScore'), 10);
+    if (housesState.score > stored) { safeSetHighScore('astroHousesHighScore', housesState.score); document.getElementById('houses-highscore').innerText = housesState.score; }
     showCosmicModal("Houses Mastered!", `Final Score: ${housesState.score}`, () => initHousesGame());
 }
 
@@ -1258,12 +1327,12 @@ const eclipseData = [
     { text: "Aligns with the New Moon phase.", ans: "Solar" },
     { text: "Aligns with the Full Moon phase.", ans: "Lunar" }
 ];
-let eclipseState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+let eclipseState = { score: 0, timeLeft: 60, timerActive: false, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initEclipseGame() {
-    if (eclipseState.timerInterval) clearInterval(eclipseState.timerInterval);
-    eclipseState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...eclipseData]), matchedCount: 0 };
-    document.getElementById('eclipse-highscore').innerText = localStorage.getItem('astroEclipseHighScore') || 0;
+    clearGameTimers(eclipseState);
+    eclipseState = { score: 0, timeLeft: 60, timerActive: true, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: shuffleArray([...eclipseData]), matchedCount: 0 };
+    document.getElementById('eclipse-highscore').innerText = safeGetHighScore('astroEclipseHighScore');
     document.getElementById('eclipse-score').innerText = '0';
     document.getElementById('eclipse-timer').innerText = '01:00';
     loadNextEclipse();
@@ -1297,17 +1366,19 @@ function handleEclipseGuess(guess) {
     }
     
     btns.forEach(b => { if(!b.innerText.includes('Hub') && !b.innerText.includes('Restart')) b.disabled = true; });
-    setTimeout(() => { 
+    eclipseState.pendingTimeout = setTimeout(() => { 
+        eclipseState.pendingTimeout = null;
         card.style.borderColor = '#8b5cf6'; card.style.transform = 'none';
         btns.forEach(b => b.disabled = false);
+        if (!eclipseState.timerActive) return;
         if (eclipseState.matchedCount >= eclipseData.length) endEclipseGame(true);
         else loadNextEclipse(); 
     }, 400);
 }
 function endEclipseGame(isWin = false) {
-    clearInterval(eclipseState.timerInterval); eclipseState.timerActive = false;
-    let stored = parseInt(localStorage.getItem('astroEclipseHighScore') || 0);
-    if (eclipseState.score > stored) { localStorage.setItem('astroEclipseHighScore', eclipseState.score); document.getElementById('eclipse-highscore').innerText = eclipseState.score; }
+    clearGameTimers(eclipseState);
+    let stored = parseInt(safeGetHighScore('astroEclipseHighScore'), 10);
+    if (eclipseState.score > stored) { safeSetHighScore('astroEclipseHighScore', eclipseState.score); document.getElementById('eclipse-highscore').innerText = eclipseState.score; }
     showCosmicModal("Eclipse Master!", `Final Score: ${eclipseState.score}`, () => initEclipseGame());
 }
 
@@ -1336,12 +1407,12 @@ const balanceData = [
     { text: "Taking the lead in a group project naturally.", ans: "Fire" },
     { text: "Refusing to change your mind despite new evidence.", ans: "Earth" }
 ];
-let balanceState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+let balanceState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initBalanceGame() {
-    if (balanceState.timerInterval) clearInterval(balanceState.timerInterval);
-    balanceState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...balanceData]), matchedCount: 0 };
-    document.getElementById('balance-highscore').innerText = localStorage.getItem('astroBalanceHighScore') || 0;
+    clearGameTimers(balanceState);
+    balanceState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: shuffleArray([...balanceData]), matchedCount: 0 };
+    document.getElementById('balance-highscore').innerText = safeGetHighScore('astroBalanceHighScore');
     document.getElementById('balance-score').innerText = '0';
     document.getElementById('balance-timer').innerText = '01:30';
     loadNextBalance();
@@ -1375,17 +1446,19 @@ function handleBalanceGuess(guess) {
     }
     
     btns.forEach(b => { if(!b.innerText.includes('Hub') && !b.innerText.includes('Restart')) b.disabled = true; });
-    setTimeout(() => { 
+    balanceState.pendingTimeout = setTimeout(() => { 
+        balanceState.pendingTimeout = null;
         card.style.borderColor = '#10b981'; card.style.transform = 'none';
         btns.forEach(b => b.disabled = false);
+        if (!balanceState.timerActive) return;
         if (balanceState.matchedCount >= balanceData.length) endBalanceGame(true);
         else loadNextBalance(); 
     }, 400);
 }
 function endBalanceGame(isWin = false) {
-    clearInterval(balanceState.timerInterval); balanceState.timerActive = false;
-    let stored = parseInt(localStorage.getItem('astroBalanceHighScore') || 0);
-    if (balanceState.score > stored) { localStorage.setItem('astroBalanceHighScore', balanceState.score); document.getElementById('balance-highscore').innerText = balanceState.score; }
+    clearGameTimers(balanceState);
+    let stored = parseInt(safeGetHighScore('astroBalanceHighScore'), 10);
+    if (balanceState.score > stored) { safeSetHighScore('astroBalanceHighScore', balanceState.score); document.getElementById('balance-highscore').innerText = balanceState.score; }
     showCosmicModal("Balanced Elements!", `Final Score: ${balanceState.score}`, () => initBalanceGame());
 }
 
@@ -1409,12 +1482,12 @@ const travelerData = [
     { text: "The planet Mars was named after the Roman god of war.", ans: true },
     { text: "The zodiac sign Leo is ruled by the Moon.", ans: false }
 ];
-let travelerState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
+let travelerState = { score: 0, timeLeft: 90, timerActive: false, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: [], matchedCount: 0 };
 
 function initTravelerGame() {
-    if (travelerState.timerInterval) clearInterval(travelerState.timerInterval);
-    travelerState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, current: null, hasStarted: false, pool: shuffleArray([...travelerData]), matchedCount: 0 };
-    document.getElementById('traveler-highscore').innerText = localStorage.getItem('astroTravelerHighScore') || 0;
+    clearGameTimers(travelerState);
+    travelerState = { score: 0, timeLeft: 90, timerActive: true, timerInterval: null, pendingTimeout: null, current: null, hasStarted: false, pool: shuffleArray([...travelerData]), matchedCount: 0 };
+    document.getElementById('traveler-highscore').innerText = safeGetHighScore('astroTravelerHighScore');
     document.getElementById('traveler-score').innerText = '0';
     document.getElementById('traveler-timer').innerText = '01:30';
     loadNextTraveler();
@@ -1448,16 +1521,18 @@ function handleTravelerGuess(guess) {
     }
     
     btns.forEach(b => { if(!b.innerText.includes('Hub') && !b.innerText.includes('Restart')) b.disabled = true; });
-    setTimeout(() => { 
+    travelerState.pendingTimeout = setTimeout(() => { 
+        travelerState.pendingTimeout = null;
         card.style.borderColor = '#f97316'; card.style.transform = 'none';
         btns.forEach(b => b.disabled = false);
+        if (!travelerState.timerActive) return;
         if (travelerState.matchedCount >= travelerData.length) endTravelerGame(true);
         else loadNextTraveler(); 
     }, 400);
 }
 function endTravelerGame(isWin = false) {
-    clearInterval(travelerState.timerInterval); travelerState.timerActive = false;
-    let stored = parseInt(localStorage.getItem('astroTravelerHighScore') || 0);
-    if (travelerState.score > stored) { localStorage.setItem('astroTravelerHighScore', travelerState.score); document.getElementById('traveler-highscore').innerText = travelerState.score; }
+    clearGameTimers(travelerState);
+    let stored = parseInt(safeGetHighScore('astroTravelerHighScore'), 10);
+    if (travelerState.score > stored) { safeSetHighScore('astroTravelerHighScore', travelerState.score); document.getElementById('traveler-highscore').innerText = travelerState.score; }
     showCosmicModal("Time Traveler!", `Final Score: ${travelerState.score}`, () => initTravelerGame());
 }

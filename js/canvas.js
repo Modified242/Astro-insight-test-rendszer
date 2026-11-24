@@ -141,32 +141,68 @@ function drawLines() {
     ctx.globalAlpha = 1;
 }
 
-let animationId;
+let animationId = null;
 function animate() {
+    if (!canvas || !ctx) return;
     ctx.clearRect(0, 0, width, height);
     updateZodiacGroups();
     stars.forEach(s => s.update());
     drawLines();
-    animationId = requestAnimationFrame(animate);
+    if (!document.hidden) {
+        animationId = requestAnimationFrame(animate);
+    } else {
+        animationId = null;
+    }
 }
 
-document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
+function startCanvasAnimation() {
+    if (!canvas || !ctx) return;
+    if (animationId !== null) {
         cancelAnimationFrame(animationId);
-    } else {
-        animate();
+        animationId = null;
     }
-});
+    animate();
+}
 
-window.addEventListener('resize', initCanvas);
-window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
-window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
-window.addEventListener('touchstart', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }, {passive: true});
-window.addEventListener('touchmove', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }, {passive: true});
-window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
+if (canvas && ctx) {
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            if (animationId !== null) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        } else {
+            startCanvasAnimation();
+        }
+    });
 
-initCanvas();
-animate();
+    let resizeTimer = null;
+    window.addEventListener('resize', () => {
+        const newWidth = Math.floor(window.innerWidth);
+        const newHeight = Math.floor(window.innerHeight);
+        if (newWidth === width && Math.abs(newHeight - height) < 120) return;
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(initCanvas, 150);
+    });
+    window.addEventListener('mousemove', e => { mouse.x = e.x; mouse.y = e.y; });
+    window.addEventListener('mouseout', () => { mouse.x = null; mouse.y = null; });
+    window.addEventListener('touchstart', e => {
+        if (e.touches && e.touches.length > 0) {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+        }
+    }, {passive: true});
+    window.addEventListener('touchmove', e => {
+        if (e.touches && e.touches.length > 0) {
+            mouse.x = e.touches[0].clientX;
+            mouse.y = e.touches[0].clientY;
+        }
+    }, {passive: true});
+    window.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
+
+    initCanvas();
+    startCanvasAnimation();
+}
 
 // ==========================================
 // 1. ASTRO TICKER SYSTEM
@@ -206,11 +242,8 @@ if (omenTextEl) {
         "Saturn's influence promotes discipline; a great time to organize your thoughts.",
         "Neptune casts a dreamy aura, heightening intuition and spiritual awareness."
     ];
-    const now = new Date();
-    const nyTimeStr = now.toLocaleString("en-US", { timeZone: "America/New_York" });
-    const nyNow = new Date(nyTimeStr);
-    const startOfYear = new Date(nyNow.getFullYear(), 0, 0);
-    const dayOfYear = Math.floor((nyNow - startOfYear) / (1000 * 60 * 60 * 24));
+    const ny = getNyDateParts(new Date());
+    const dayOfYear = Math.floor((Date.UTC(ny.year, ny.month - 1, ny.day) - Date.UTC(ny.year, 0, 0)) / 86400000);
     
     omenTextEl.innerText = omens[dayOfYear % omens.length];
 }

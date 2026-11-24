@@ -49,7 +49,7 @@ async function analyzeUsername() {
 document.addEventListener("DOMContentLoaded", function() {
     const nameInputField = document.getElementById("usernameInput");
     if (nameInputField) {
-        nameInputField.addEventListener("keypress", function(event) {
+        nameInputField.addEventListener("keydown", function(event) {
             if (event.key === "Enter") {
                 analyzeUsername();
             }
@@ -110,7 +110,7 @@ async function getMagicAnswer() {
 document.addEventListener("DOMContentLoaded", function() {
     const inputField = document.getElementById("questionInput");
     if (inputField) {
-        inputField.addEventListener("keypress", function(event) {
+        inputField.addEventListener("keydown", function(event) {
             if (event.key === "Enter") {
                 getMagicAnswer();
             }
@@ -127,6 +127,7 @@ function populateSignSelects() {
     const sign2Select = document.getElementById('sign2');
     
     if (!sign1Select || !sign2Select) return;
+    if (sign1Select.tagName !== 'SELECT' || sign2Select.tagName !== 'SELECT') return;
     
     let optionsHtml = '<option value="" disabled selected>Select sign...</option>';
     
@@ -138,7 +139,36 @@ function populateSignSelects() {
     sign2Select.innerHTML = optionsHtml;
 }
 
-document.addEventListener('DOMContentLoaded', populateSignSelects);
+function setCompatibilityDateMax() {
+    const now = new Date();
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const maxDateStr = `${yyyy}-${mm}-${dd}`;
+    const date1El = document.getElementById('date1');
+    const date2El = document.getElementById('date2');
+    if (date1El) date1El.setAttribute('max', maxDateStr);
+    if (date2El) date2El.setAttribute('max', maxDateStr);
+}
+
+function parseLocalDateInput(dateStr) {
+    if (!dateStr || typeof dateStr !== 'string') return null;
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateStr.trim());
+    if (!match) return null;
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+    const dt = new Date(year, month - 1, day);
+    if (dt.getFullYear() !== year || dt.getMonth() !== month - 1 || dt.getDate() !== day) {
+        return null;
+    }
+    return dt;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    populateSignSelects();
+    setCompatibilityDateMax();
+});
 
 
 const COMPATIBILITY_WORKER_URL = "https://natal-engine.astroinsight.workers.dev/";
@@ -150,49 +180,65 @@ async function calculateCompatibility() {
     const sign1 = sign1El ? sign1El.value : null;
     const sign2 = sign2El ? sign2El.value : null;
 
-    const date1 = document.getElementById('date1').value;
-    const date2 = document.getElementById('date2').value;
+    const date1El = document.getElementById('date1');
+    const date2El = document.getElementById('date2');
+    const date1 = date1El ? date1El.value : '';
+    const date2 = date2El ? date2El.value : '';
 
     const resultBox = document.getElementById('compatibilityResult');
     const scoreSpan = document.getElementById('syncScore');
+    const scoreUnit = document.getElementById('syncScoreUnit');
     const titleSpan = document.getElementById('syncTitle');
     const verdictP = document.getElementById('syncVerdict');
     const breakdownDiv = document.getElementById('syncBreakdown');
+    const weatherScoreEl = document.getElementById('weatherScore');
+    const weatherVerdictEl = document.getElementById('weatherVerdict');
+    const weatherDetailsEl = document.getElementById('weatherDetails');
+    const compatBtn = document.querySelector('.compat-btn');
+
+    if (!resultBox || !scoreSpan || !titleSpan || !verdictP || !breakdownDiv) return;
 
     resultBox.classList.remove('hidden');
     scoreSpan.innerText = "...";
+    if (scoreUnit) scoreUnit.style.display = 'none';
     titleSpan.innerText = "Aligning Celestial Spheres...";
     verdictP.innerText = "";
-    breakdownDiv.innerHTML = "Connecting to the Natal Synastry Engine...";
+    breakdownDiv.innerText = "Connecting to the Natal Synastry Engine...";
+    if (weatherScoreEl) weatherScoreEl.innerText = "--%";
+    if (weatherVerdictEl) weatherVerdictEl.innerText = "Awaiting Forecast...";
+    if (weatherDetailsEl) weatherDetailsEl.innerText = "";
 
     if (!date1 || !date2) {
         scoreSpan.innerText = "ERR";
         titleSpan.innerText = "Date Required";
-        breakdownDiv.innerHTML = "Please provide exact birth dates for both individuals to calculate natal positions.";
+        breakdownDiv.innerText = "Please provide exact birth dates for both individuals to calculate natal positions.";
         return;
     }
 
     if (!sign1 || !sign2 || sign1 === "" || sign2 === "") {
         scoreSpan.innerText = "ERR";
         titleSpan.innerText = "Zodiac Signs Required";
-        breakdownDiv.innerHTML = "Please select the Sun signs for both individuals before calculating.";
+        breakdownDiv.innerText = "Please select the Sun signs for both individuals before calculating.";
         return; 
     }
 
-    const parsedDate1 = new Date(date1);
-    const parsedDate2 = new Date(date2);
-    const minDate = new Date("1900-01-01");
-    const today = new Date();
+    const parsedDate1 = parseLocalDateInput(date1);
+    const parsedDate2 = parseLocalDateInput(date2);
+    const minDate = new Date(1900, 0, 1);
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    if (isNaN(parsedDate1.getTime()) || isNaN(parsedDate2.getTime()) || 
+    if (!parsedDate1 || !parsedDate2 || 
         parsedDate1 < minDate || parsedDate2 < minDate || 
         parsedDate1 > today || parsedDate2 > today) {
         
         scoreSpan.innerText = "ERR";
         titleSpan.innerText = "Invalid Time Line";
-        breakdownDiv.innerHTML = "Please enter valid birth dates (between 1900 and today's date). We cannot calculate synastry for time travelers.";
+        breakdownDiv.innerText = "Please enter valid birth dates (between 1900 and today's date). We cannot calculate synastry for time travelers.";
         return;
     }
+
+    if (compatBtn) compatBtn.disabled = true;
 
     try {
         const response = await fetch(COMPATIBILITY_WORKER_URL, {
@@ -205,34 +251,34 @@ async function calculateCompatibility() {
         const data = await response.json();
         if (!data.success) throw new Error(data.error || "Unknown calculation error");
 
-        scoreSpan.innerText = `${data.synastry.score}`; 
+        scoreSpan.innerText = `${data.synastry.score}`;
+        if (scoreUnit) scoreUnit.style.display = 'inline';
         titleSpan.innerText = data.synastry.title;
         verdictP.innerText = data.synastry.verdict;
 
         const planetsInfo = `
             <div style="background: rgba(212, 175, 55, 0.1); padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9rem;">
                 <strong>Calculated Natal Placements:</strong><br>
-                ✦ Person 1: Moon in ${data.person1.moon}, Venus in ${data.person1.venus}, Mars in ${data.person1.mars}<br>
-                ✦ Person 2: Moon in ${data.person2.moon}, Venus in ${data.person2.venus}, Mars in ${data.person2.mars}
+                ✦ Person 1: Moon in ${escapeHtml(data.person1.moon)}, Venus in ${escapeHtml(data.person1.venus)}, Mars in ${escapeHtml(data.person1.mars)}<br>
+                ✦ Person 2: Moon in ${escapeHtml(data.person2.moon)}, Venus in ${escapeHtml(data.person2.venus)}, Mars in ${escapeHtml(data.person2.mars)}
             </div>
         `;
-        breakdownDiv.innerHTML = planetsInfo + data.synastry.details;
-
-        const weatherScoreEl = document.getElementById('weatherScore');
-        const weatherVerdictEl = document.getElementById('weatherVerdict');
-        const weatherDetailsEl = document.getElementById('weatherDetails');
+        breakdownDiv.innerHTML = planetsInfo + sanitizeHtml(data.synastry.details);
 
         if (weatherScoreEl && data.weather) {
             weatherScoreEl.innerText = `${data.weather.weatherScore}%`;
-            weatherVerdictEl.innerText = data.weather.weatherVerdict;
-            weatherDetailsEl.innerText = data.weather.transitDetails;
+            if (weatherVerdictEl) weatherVerdictEl.innerText = data.weather.weatherVerdict;
+            if (weatherDetailsEl) weatherDetailsEl.innerText = data.weather.transitDetails;
         }
 
     } catch (error) {
         console.error("Natal Engine Communication Failure:", error);
         scoreSpan.innerText = "---";
+        if (scoreUnit) scoreUnit.style.display = 'none';
         titleSpan.innerText = "Cosmic Disconnection";
-        breakdownDiv.innerHTML = `Unable to reach the Cloudflare Worker. Details: ${error.message}`;
+        breakdownDiv.innerText = `Unable to reach the Cloudflare Worker. Details: ${error.message}`;
+    } finally {
+        if (compatBtn) compatBtn.disabled = false;
     }
 }
 // ==========================================
@@ -351,7 +397,10 @@ window.handleTarotCardFlip = function(card) {
     }
 }
 
+let isDrawingTarot = false;
+
 function drawTarot() {
+    if (isDrawingTarot) return;
     const container = document.getElementById('tarotResult');
     if (!container) return;
 
@@ -365,27 +414,25 @@ function drawTarot() {
             container.parentNode.insertBefore(readingBox, container.nextSibling);
         }
 
-        const savedSpread = localStorage.getItem('saved_tarot_spread');
-        const savedReading = localStorage.getItem('saved_tarot_reading');
+        const savedSpread = safeStorageGet(localStorage, 'saved_tarot_spread');
+        const savedReading = safeStorageGet(localStorage, 'saved_tarot_reading');
 
         if (savedSpread && savedReading) {
-            try {
-                const spreadData = JSON.parse(savedSpread);
+            const spreadData = safeJsonParse(savedSpread, null);
+            if (spreadData) {
                 container.innerHTML = renderTarotCards(spreadData, true);
                 readingBox.style.display = 'block';
                 readingBox.innerHTML = `
-                    <div class="reading-error" style="margin-bottom: 20px;">The cards are resting. ${rateLimit.message}</div>
-                    <div class="reading-content">${savedReading}</div>
+                    <div class="reading-error" style="margin-bottom: 20px;">The cards are resting. ${escapeHtml(rateLimit.message)}</div>
+                    <div class="reading-content">${sanitizeHtml(savedReading)}</div>
                 `;
                 readingBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 return;
-            } catch (e) {
-                console.error("Error restoring saved tarot reading:", e);
             }
         }
 
         readingBox.style.display = 'block';
-        readingBox.innerHTML = `<div class="reading-error">The cards are resting. ${rateLimit.message}</div>`;
+        readingBox.innerHTML = `<div class="reading-error">The cards are resting. ${escapeHtml(rateLimit.message)}</div>`;
         readingBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         return;
     }
@@ -397,7 +444,10 @@ function drawTarot() {
 }
 
 async function fetchTarotReading(spread, existingRateLimit = null) {
+    if (isDrawingTarot) return;
     const container = document.getElementById('tarotResult');
+    if (!container) return;
+    const drawBtn = document.querySelector('#tarot .glow-btn');
     
     let readingBox = document.getElementById('tarot-interpretation');
     if (!readingBox) {
@@ -410,10 +460,13 @@ async function fetchTarotReading(spread, existingRateLimit = null) {
     const rateLimit = existingRateLimit || checkRateLimit('usage_tarot', 1);
     if (!rateLimit.allowed) {
         readingBox.style.display = 'block';
-        readingBox.innerHTML = `<div class="reading-error">The cards are resting. ${rateLimit.message}</div>`;
+        readingBox.innerHTML = `<div class="reading-error">The cards are resting. ${escapeHtml(rateLimit.message)}</div>`;
         readingBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         return;
     }
+
+    isDrawingTarot = true;
+    if (drawBtn) drawBtn.disabled = true;
 
     // Hide initially until cards are flipped
     readingBox.style.display = 'none';
@@ -443,28 +496,30 @@ async function fetchTarotReading(spread, existingRateLimit = null) {
         
         if (data.error) throw new Error(data.error);
 
-        readingBox.innerHTML = `<div class="reading-content">${data.reading}</div>`;
+        const safeReading = sanitizeHtml(data.reading);
+        readingBox.innerHTML = `<div class="reading-content">${safeReading}</div>`;
         // Scroll into view if already revealed
         if (readingBox.style.display === 'block') {
             readingBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         recordUsage('usage_tarot', rateLimit.usageData);
-        try {
-            localStorage.setItem('saved_tarot_spread', JSON.stringify(spread));
-            localStorage.setItem('saved_tarot_reading', data.reading);
-        } catch (e) {
-            console.error("Error saving tarot reading:", e);
-        }
+        safeStorageSet(localStorage, 'saved_tarot_spread', JSON.stringify(spread));
+        safeStorageSet(localStorage, 'saved_tarot_reading', data.reading);
 
     } catch (error) {
         console.error("Fetch error:", error);
+        readingBox.style.display = 'block';
         readingBox.innerHTML = `
             <div class="reading-error">
-                The connection to the stars was lost. <br><small>Reason: ${error.message || "Unknown error"}</small><br><br>
+                The connection to the stars was lost. <br><small>Reason: ${escapeHtml(error.message || "Unknown error")}</small><br><br>
                 <span style="color: #fbbf24; font-size: 0.9em;">Don't worry, your daily attempt was not used up. You can try again.</span>
             </div>
-            ${localStorage.getItem('saved_tarot_reading') ? '<div style="text-align:center; margin-top: 15px;"><button class="glow-btn" style="padding: 8px 16px; font-size: 0.9rem;" onclick="initDailyTarotState()">Show Previous Reading</button></div>' : ''}
+            ${safeStorageGet(localStorage, 'saved_tarot_reading') ? '<div style="text-align:center; margin-top: 15px;"><button class="glow-btn" style="padding: 8px 16px; font-size: 0.9rem;" onclick="initDailyTarotState()">Show Previous Reading</button></div>' : ''}
         `;
+        readingBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } finally {
+        isDrawingTarot = false;
+        if (drawBtn) drawBtn.disabled = false;
     }
 }
 
@@ -473,38 +528,35 @@ function initDailyTarotState() {
     if (!container) return;
 
     const rateLimit = checkRateLimit('usage_tarot', 1);
-    const savedSpread = localStorage.getItem('saved_tarot_spread');
-    const savedReading = localStorage.getItem('saved_tarot_reading');
+    const savedSpread = safeStorageGet(localStorage, 'saved_tarot_spread');
+    const savedReading = safeStorageGet(localStorage, 'saved_tarot_reading');
 
     if (savedSpread && savedReading) {
-        try {
-            const spreadData = JSON.parse(savedSpread);
-            container.innerHTML = renderTarotCards(spreadData, true);
+        const spreadData = safeJsonParse(savedSpread, null);
+        if (!spreadData) return;
+        container.innerHTML = renderTarotCards(spreadData, true);
 
-            let readingBox = document.getElementById('tarot-interpretation');
-            if (!readingBox) {
-                readingBox = document.createElement('div');
-                readingBox.id = 'tarot-interpretation';
-                readingBox.className = 'oracle-reading';
-                container.parentNode.insertBefore(readingBox, container.nextSibling);
-            }
-            readingBox.style.display = 'block';
-            
-            if (!rateLimit.allowed) {
-                readingBox.innerHTML = `
-                    <div class="reading-error" style="margin-bottom: 20px;">The cards are resting. ${rateLimit.message}</div>
-                    <div class="reading-content">${savedReading}</div>
-                `;
-            } else {
-                readingBox.innerHTML = `
-                    <div class="reading-content">
-                        <div style="margin-bottom: 15px; font-style: italic; color: #fbbf24; text-align: center;">This is your previous reading. You can draw new cards for today!</div>
-                        ${savedReading}
-                    </div>
-                `;
-            }
-        } catch (e) {
-            console.error("Error loading daily tarot state:", e);
+        let readingBox = document.getElementById('tarot-interpretation');
+        if (!readingBox) {
+            readingBox = document.createElement('div');
+            readingBox.id = 'tarot-interpretation';
+            readingBox.className = 'oracle-reading';
+            container.parentNode.insertBefore(readingBox, container.nextSibling);
+        }
+        readingBox.style.display = 'block';
+        
+        if (!rateLimit.allowed) {
+            readingBox.innerHTML = `
+                <div class="reading-error" style="margin-bottom: 20px;">The cards are resting. ${escapeHtml(rateLimit.message)}</div>
+                <div class="reading-content">${sanitizeHtml(savedReading)}</div>
+            `;
+        } else {
+            readingBox.innerHTML = `
+                <div class="reading-content">
+                    <div style="margin-bottom: 15px; font-style: italic; color: #fbbf24; text-align: center;">This is your previous reading. You can draw new cards for today!</div>
+                    ${sanitizeHtml(savedReading)}
+                </div>
+            `;
         }
     }
 }
@@ -520,7 +572,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const siteLogo = document.getElementById("site-logo-container");
     const siteTitle = document.getElementById("site-title-container"); 
 
-    const introPlayed = sessionStorage.getItem('introPlayed');
+    const introPlayed = safeStorageGet(sessionStorage, 'introPlayed');
+    const shouldPlayIntro = !introPlayed && preloader && introLogo && siteLogo;
+
+    if (!shouldPlayIntro) {
+        if (siteLogo) siteLogo.style.opacity = '1';
+        if (siteTitle) siteTitle.style.opacity = '1';
+        if (preloader) preloader.remove();
+        document.body.classList.remove('no-scroll');
+    }
 
     fetch(getRootPrefix() + 'logo.svg')
         .then(response => {
@@ -530,8 +590,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(svgData => {
             if (siteLogo) siteLogo.innerHTML = svgData;
 
-            if (!introPlayed && preloader && introLogo && siteLogo) {
-                
+            if (shouldPlayIntro) {
                 document.body.classList.add('no-scroll');
                 introLogo.innerHTML = svgData;
                 
@@ -557,17 +616,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     setTimeout(() => {
                         preloader.remove(); 
                         document.body.classList.remove('no-scroll'); 
-                        sessionStorage.setItem('introPlayed', 'true'); 
+                        safeStorageSet(sessionStorage, 'introPlayed', 'true'); 
                     }, 1200);
 
                 }, 1800);
-
-            } else {
-                // Ha már látta a felhasználó, azonnal megjelenítjük az oldalt
-                if (siteLogo) siteLogo.style.opacity = '1';
-                if (siteTitle) siteTitle.style.opacity = '1';
-                if (preloader) preloader.remove();
-                document.body.classList.remove('no-scroll');
             }
         })
         .catch(error => {

@@ -4,11 +4,15 @@ function setAura(hexColor) {
 }
 
 function resetAura() {
-    setAura('#d4af37'); 
+    clearAura();
 }
 
 function toggleMobileMenu() {
-    document.getElementById('mobileMenu').classList.toggle('open');
+    const menu = document.getElementById('mobileMenu');
+    if (!menu) return;
+    const isOpen = menu.classList.toggle('open');
+    const hamburger = document.querySelector('.hamburger');
+    if (hamburger) hamburger.setAttribute('aria-expanded', String(isOpen));
 }
 // ==========================================
 // WIDGETS
@@ -65,8 +69,8 @@ function initGlobalAuraUI() {
         document.body.appendChild(wrapper);
     }
     
-    const savedSign = sessionStorage.getItem('selectedSign');
-    const savedAura = sessionStorage.getItem('selectedAura');
+    const savedSign = safeStorageGet(sessionStorage, 'selectedSign');
+    const savedAura = safeStorageGet(sessionStorage, 'selectedAura');
     
     if (savedSign && savedAura) {
         wrapper.style.display = 'flex'; 
@@ -91,8 +95,8 @@ function initGlobalAuraUI() {
 }
 
 function clearAura() {
-    sessionStorage.removeItem('selectedAura');
-    sessionStorage.removeItem('selectedSign'); 
+    safeStorageRemove(sessionStorage, 'selectedAura');
+    safeStorageRemove(sessionStorage, 'selectedSign'); 
     applyAuraColor('#d4af37'); 
     
     const wrapper = document.getElementById('global-aura-wrapper');
@@ -103,11 +107,11 @@ window.addEventListener('DOMContentLoaded', () => {
     const navEntries = performance.getEntriesByType('navigation');
     
     if (navEntries.length > 0 && navEntries[0].type === 'reload') {
-        sessionStorage.removeItem('selectedAura');
-        sessionStorage.removeItem('selectedSign');
+        safeStorageRemove(sessionStorage, 'selectedAura');
+        safeStorageRemove(sessionStorage, 'selectedSign');
     }
 
-    const savedAura = sessionStorage.getItem('selectedAura');
+    const savedAura = safeStorageGet(sessionStorage, 'selectedAura');
     if (savedAura) {
         applyAuraColor(savedAura);
     }
@@ -123,6 +127,17 @@ window.addEventListener('DOMContentLoaded', () => {
 function initCustomDropdowns() {
     const signs = Object.keys(zodiacData);
     
+    function closeAllDropdowns(exceptList = null) {
+        document.querySelectorAll('.custom-select').forEach(dd => {
+            const list = dd.querySelector('.custom-options');
+            const trig = dd.querySelector('.select-trigger');
+            if (list && list !== exceptList) {
+                list.classList.remove('open');
+                if (trig) trig.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
     ['custom-dropdown-1', 'custom-dropdown-2'].forEach(dropdownId => {
         const dropdown = document.getElementById(dropdownId);
         if (!dropdown) return;
@@ -131,27 +146,36 @@ function initCustomDropdowns() {
         const selectedContent = dropdown.querySelector('.selected-content');
         const optionsList = dropdown.querySelector('.custom-options');
         const hiddenInput = dropdown.querySelector('input[type="hidden"]');
+        if (!trigger || !selectedContent || !optionsList || !hiddenInput) return;
+
+        function selectSign(sign) {
+            hiddenInput.value = sign;
+            selectedContent.innerHTML = `
+                <div class="dropdown-icon">${zodiacData[sign].svgIcon}</div>
+                <span>${escapeHtml(sign)}</span>
+            `;
+            optionsList.querySelectorAll('.custom-option').forEach(opt => {
+                opt.setAttribute('aria-selected', opt.dataset.sign === sign ? 'true' : 'false');
+            });
+            optionsList.classList.remove('open');
+            trigger.setAttribute('aria-expanded', 'false');
+        }
         
         signs.forEach(sign => {
             const li = document.createElement('li');
             li.className = 'custom-option';
+            li.setAttribute('role', 'option');
+            li.setAttribute('aria-selected', 'false');
+            li.dataset.sign = sign;
             
             li.innerHTML = `
                 <div class="dropdown-icon">${zodiacData[sign].svgIcon}</div>
-                <span>${sign}</span>
+                <span>${escapeHtml(sign)}</span>
             `;
             
             li.addEventListener('click', (e) => {
                 e.stopPropagation(); 
-                
-                hiddenInput.value = sign; 
-                
-                selectedContent.innerHTML = `
-                    <div class="dropdown-icon">${zodiacData[sign].svgIcon}</div>
-                    <span>${sign}</span>
-                `;
-                
-                optionsList.classList.remove('open');
+                selectSign(sign);
             });
             
             optionsList.appendChild(li);
@@ -159,26 +183,79 @@ function initCustomDropdowns() {
         
         trigger.addEventListener('click', (e) => {
             e.stopPropagation();
-            document.querySelectorAll('.custom-options').forEach(list => {
-                if (list !== optionsList) list.classList.remove('open');
-            });
-            optionsList.classList.toggle('open');
+            closeAllDropdowns(optionsList);
+            const isOpen = optionsList.classList.toggle('open');
+            trigger.setAttribute('aria-expanded', String(isOpen));
+        });
+
+        trigger.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                closeAllDropdowns(optionsList);
+                const isOpen = optionsList.classList.toggle('open');
+                trigger.setAttribute('aria-expanded', String(isOpen));
+            } else if (e.key === 'Escape') {
+                optionsList.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+            } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                const currentIdx = signs.indexOf(hiddenInput.value);
+                const nextIdx = e.key === 'ArrowDown'
+                    ? (currentIdx + 1) % signs.length
+                    : (currentIdx - 1 + signs.length) % signs.length;
+                selectSign(signs[nextIdx]);
+            }
         });
     });
     
-    document.addEventListener('click', () => {
-        document.querySelectorAll('.custom-options').forEach(list => {
-            list.classList.remove('open');
-        });
-    });
+    document.addEventListener('click', () => closeAllDropdowns());
 }
 
 // ==========================================
 // SHARE FATE (DESTINY) FUNCTIONALITY
 // ==========================================
+let shareResetTimeout = null;
+
+function showCopiedState(shareBtn) {
+    if (!shareBtn) return;
+    if (!shareBtn.dataset.originalText) {
+        shareBtn.dataset.originalText = shareBtn.innerText;
+    }
+    if (shareResetTimeout) {
+        clearTimeout(shareResetTimeout);
+    }
+    shareBtn.innerText = 'Copied to Clipboard! 🔮';
+    shareBtn.style.borderColor = 'var(--glow-color, #d4af37)';
+    shareBtn.style.color = 'var(--glow-color, #d4af37)';
+
+    shareResetTimeout = setTimeout(() => {
+        shareBtn.innerText = shareBtn.dataset.originalText || 'Share Fate';
+        shareBtn.style.borderColor = '';
+        shareBtn.style.color = '';
+        shareResetTimeout = null;
+    }, 2000);
+}
+
+function fallbackCopyText(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    let ok = false;
+    try {
+        ok = document.execCommand('copy');
+    } catch (e) {
+        ok = false;
+    }
+    document.body.removeChild(textarea);
+    return ok;
+}
 
 function shareDestiny() {
-    const savedSign = sessionStorage.getItem('selectedSign');
+    const savedSign = safeStorageGet(sessionStorage, 'selectedSign');
     const signName = savedSign || "my Zodiac Sign";
     const signData = zodiacData[savedSign];
     const motto = signData && signData.motto ? ` (${signData.motto})` : '';
@@ -199,22 +276,19 @@ function shareDestiny() {
     else {
         const fullShareContent = `${shareText} ${shareUrl}`;
         
-        navigator.clipboard.writeText(fullShareContent)
-            .then(() => {
-                const originalText = shareBtn.innerText;
-                shareBtn.innerText = 'Copied to Clipboard! 🔮';
-                shareBtn.style.borderColor = 'var(--glow-color, #d4af37)';
-                shareBtn.style.color = 'var(--glow-color, #d4af37)';
-
-                setTimeout(() => {
-                    shareBtn.innerText = originalText;
-                    shareBtn.style.borderColor = '';
-                    shareBtn.style.color = '';
-                }, 2000);
-            })
-            .catch(err => {
-                console.error('Could not copy text: ', err);
-            });
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+            navigator.clipboard.writeText(fullShareContent)
+                .then(() => showCopiedState(shareBtn))
+                .catch(err => {
+                    if (fallbackCopyText(fullShareContent)) {
+                        showCopiedState(shareBtn);
+                    } else {
+                        console.error('Could not copy text: ', err);
+                    }
+                });
+        } else if (fallbackCopyText(fullShareContent)) {
+            showCopiedState(shareBtn);
+        }
     }
 }
 
@@ -235,28 +309,35 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(supportForm);
 
             const submitButton = supportForm.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
+            const originalText = submitButton ? submitButton.textContent : '';
             
-            submitButton.disabled = true;
-            submitButton.textContent = 'Sending...';
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Sending...';
+            }
 
             fetch(scriptURL, { method: 'POST', body: formData })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
+                    return response.json();
+                })
                 .then(data => {
                     if (data.result === 'success') {
-                        responseDiv.innerHTML = '<p style="color: #4CAF50;">Your message has been sent successfully!</p>';
+                        if (responseDiv) responseDiv.innerHTML = '<p style="color: #4CAF50;">Your message has been sent successfully!</p>';
                         supportForm.reset();
                     } else {
-                        responseDiv.innerHTML = '<p style="color: #f44336;">There was an error sending your message.</p>';
+                        if (responseDiv) responseDiv.innerHTML = '<p style="color: #f44336;">There was an error sending your message.</p>';
                     }
                 })
                 .catch(error => {
                     console.error('Error!', error.message);
-                    responseDiv.innerHTML = '<p style="color: #f44336;">Network error occurred.</p>';
+                    if (responseDiv) responseDiv.innerHTML = '<p style="color: #f44336;">Network error occurred.</p>';
                 })
                 .finally(() => {
-                    submitButton.disabled = false;
-                    submitButton.textContent = originalText;
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        submitButton.textContent = originalText;
+                    }
                 });
         });
     }
@@ -309,10 +390,19 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     animateCursor();
 
-    const clickableElements = document.querySelectorAll('a, button, .card, .dropbtn, .hamburger, .info-tooltip');
-    clickableElements.forEach(el => {
-        el.addEventListener('mouseenter', () => customCursor.classList.add('hovering'));
-        el.addEventListener('mouseleave', () => customCursor.classList.remove('hovering'));
+    const hoverSelector = 'a, button, .card, .dropbtn, .hamburger, .info-tooltip, .tarot-card, .custom-option, .blitz-card, .archive-item, .select-trigger';
+    document.addEventListener('mouseover', (e) => {
+        if (e.target && e.target.closest && e.target.closest(hoverSelector)) {
+            customCursor.classList.add('hovering');
+        }
+    });
+    document.addEventListener('mouseout', (e) => {
+        if (e.target && e.target.closest && e.target.closest(hoverSelector)) {
+            const toEl = e.relatedTarget;
+            if (!toEl || !toEl.closest || !toEl.closest(hoverSelector)) {
+                customCursor.classList.remove('hovering');
+            }
+        }
     });
 })();
 // ==========================================
@@ -321,6 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener("DOMContentLoaded", () => {
     const filterBtns = document.querySelectorAll(".selector-group .glow-btn");
     const articles = document.querySelectorAll(".insight-card");
+    const filterTimeouts = new WeakMap();
 
     if(filterBtns.length > 0 && articles.length > 0) {
         filterBtns.forEach(btn => {
@@ -334,21 +425,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 const filterValue = btn.getAttribute("data-filter");
 
                 articles.forEach(article => {
+                    const prevTimer = filterTimeouts.get(article);
+                    if (prevTimer) clearTimeout(prevTimer);
+
                     // Check category
                     if (filterValue === "all" || article.getAttribute("data-category") === filterValue) {
                         article.style.display = "flex";
                         // Small animation delay for smooth appearance
-                        setTimeout(() => {
+                        const t = setTimeout(() => {
                             article.style.opacity = "1";
                             article.style.transform = "scale(1)";
+                            filterTimeouts.delete(article);
                         }, 50);
+                        filterTimeouts.set(article, t);
                     } else {
                         article.style.opacity = "0";
                         article.style.transform = "scale(0.95)";
                         // Hide element after animation finishes
-                        setTimeout(() => {
+                        const t = setTimeout(() => {
                             article.style.display = "none";
+                            filterTimeouts.delete(article);
                         }, 300);
+                        filterTimeouts.set(article, t);
                     }
                 });
             });
@@ -429,6 +527,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const shuffled = [...availableArticles].sort(() => 0.5 - Math.random());
     const selectedArticles = shuffled.slice(0, 9);
 
+    const rootPrefix = typeof getRootPrefix === "function" ? getRootPrefix() : "";
+
+    function resolveArticleHref(slug) {
+        if (slug === "intro-astrology-guide.html") {
+            return rootPrefix + "pages/" + slug;
+        }
+        const planets = ["sun.html", "moon.html", "mercury.html", "venus.html", "mars.html", "jupiter.html", "saturn.html", "uranus.html", "neptune.html", "pluto.html"];
+        const elements = ["fire.html", "earth.html", "air.html", "water.html"];
+        const guides = ["big-three.html", "astrological-houses.html", "retrograde-planets.html", "saturn-return.html", "lunar-nodes.html", "tarot-spreads.html"];
+        let folder = "zodiac/";
+        if (planets.includes(slug)) folder = "planets/";
+        else if (elements.includes(slug)) folder = "elements/";
+        else if (guides.includes(slug)) folder = "guides/";
+        return rootPrefix + "articles/" + folder + slug;
+    }
+
     function createCardElement(item) {
         const card = document.createElement("article");
         card.className = "insight-card article-card";
@@ -447,14 +561,14 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
             mediaBoxHtml = `
                 <div class="insight-img-box">
-                    <img src="image/${item.src}" alt="${item.title}" loading="lazy">
+                    <img src="${rootPrefix}image/${item.src}" alt="${escapeHtml(item.title)}" loading="lazy">
                     <span class="insight-badge">${item.badge}</span>
                 </div>
             `;
         }
 
         card.innerHTML = `
-            <a href="${item.slug}">
+            <a href="${resolveArticleHref(item.slug)}">
                 ${mediaBoxHtml}
                 <div class="insight-body">
                     <h3>${item.title}</h3>
@@ -550,46 +664,4 @@ document.addEventListener("DOMContentLoaded", () => {
             relatedContainer.scrollBy({ left: step, behavior: "smooth" });
         });
     }
-});
-// --- AUTOMATIKUS ÚTVONALJAVÍTÓ A DINAMIKUS KÁRTYÁKHOZ ---
-document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => {
-        const currentPath = window.location.pathname;
-        let rootPrefix = "";
-        
-        // Mappamélység megállapítása
-        if (currentPath.includes('/articles/')) rootPrefix = "../../";
-        else if (currentPath.includes('/pages/')) rootPrefix = "../";
-        else return; // Gyökérben vagyunk, a JS kód alapból helyes
-
-        const grid = document.getElementById('relatedArticlesGrid');
-        if (grid) {
-            // 1. Képek forrásának javítása
-            grid.querySelectorAll('img').forEach(img => {
-                const src = img.getAttribute('src');
-                if (src && src.startsWith('image/')) {
-                    img.setAttribute('src', rootPrefix + src);
-                }
-            });
-            
-            // 2. Linkek (Read Guide gombok) javítása
-            grid.querySelectorAll('a').forEach(a => {
-                const href = a.getAttribute('href');
-                if (href && !href.startsWith('.') && !href.startsWith('http')) {
-                    if (href === 'intro-astrology-guide.html') {
-                        a.setAttribute('href', rootPrefix + 'pages/' + href);
-                        return;
-                    }
-                    const planets = ['sun.html', 'moon.html', 'mercury.html', 'venus.html', 'mars.html', 'jupiter.html', 'saturn.html', 'uranus.html', 'neptune.html', 'pluto.html'];
-                    const elements = ['fire.html', 'earth.html', 'air.html', 'water.html'];
-                    const guides = ['big-three.html', 'astrological-houses.html', 'retrograde-planets.html', 'saturn-return.html', 'lunar-nodes.html', 'tarot-spreads.html'];
-                    let folder = 'zodiac/';
-                    if (planets.includes(href)) folder = 'planets/';
-                    else if (elements.includes(href)) folder = 'elements/';
-                    else if (guides.includes(href)) folder = 'guides/';
-                    a.setAttribute('href', rootPrefix + 'articles/' + folder + href);
-                }
-            });
-        }
-    }, 500); // 500ms késleltetés a JS kártyagenerálás kivárására
 });

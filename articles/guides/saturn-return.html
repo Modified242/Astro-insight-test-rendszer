@@ -14,7 +14,8 @@
         (function () {
             var COOKIE_KEY = 'astro_cookie_consent';
             var isGPCActivated = !!(navigator.globalPrivacyControl || window.globalPrivacyControl);
-            var savedConsent = localStorage.getItem(COOKIE_KEY);
+            var savedConsent = null;
+            try { savedConsent = localStorage.getItem(COOKIE_KEY); } catch (e) {}
 
             function getConsentPayload(state) {
                 var isGranted = state === 'granted';
@@ -33,7 +34,7 @@
 
             var initialState;
             if (isGPCActivated) {
-                localStorage.setItem(COOKIE_KEY, 'denied');
+                try { localStorage.setItem(COOKIE_KEY, 'denied'); } catch (e) {}
                 initialState = 'denied';
             } else if (savedConsent === 'granted' || savedConsent === 'denied' || savedConsent === 'necessary') {
                 initialState = savedConsent;
@@ -257,7 +258,7 @@
             <span class="divider">|</span>
             <a href="../../pages/support.html">Contact Support</a>
             <span class="divider">|</span>
-            <a href="#" onclick="localStorage.removeItem('astro_cookie_consent'); location.reload(); return false;">Cookie Settings</a>
+            <a href="#" onclick="if(window.showCookieBanner) window.showCookieBanner(); return false;">Cookie Settings</a>
         </div>
 
         <div class="social-links">
