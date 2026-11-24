@@ -33,4 +33,16 @@
   <url><loc>https://astroinsight.space/articles/planets/uranus.html</loc><priority>0.7</priority></url>
   <url><loc>https://astroinsight.space/articles/planets/neptune.html</loc><priority>0.7</priority></url>
   <url><loc>https://astroinsight.space/articles/planets/pluto.html</loc><priority>0.7</priority></url>
+  <!-- Elements -->
+  <url><loc>https://astroinsight.space/articles/elements/fire.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/elements/earth.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/elements/air.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/elements/water.html</loc><priority>0.7</priority></url>
+  <!-- Cosmic Guides -->
+  <url><loc>https://astroinsight.space/articles/guides/big-three.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/guides/astrological-houses.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/guides/retrograde-planets.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/guides/saturn-return.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/guides/lunar-nodes.html</loc><priority>0.7</priority></url>
+  <url><loc>https://astroinsight.space/articles/guides/tarot-spreads.html</loc><priority>0.7</priority></url>
 </urlset>

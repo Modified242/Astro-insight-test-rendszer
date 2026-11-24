@@ -128,7 +128,7 @@ async function openModal(sign) {
 
    document.getElementById('modalPlanet').innerHTML = `<a href="articles/planets/${zData.planet.toLowerCase()}.html" style="color: var(--glow-color); text-decoration: underline; cursor: pointer;">${zData.planet}</a>`;
     
-    document.getElementById('modalElement').innerText = zData.element;
+    document.getElementById('modalElement').innerHTML = `<a href="articles/elements/${zData.element.toLowerCase()}.html" style="color: var(--glow-color); text-decoration: underline; cursor: pointer;">${zData.element}</a>`;
     document.getElementById('modalEnergy').innerText = `"${zData.energy}"`;
     document.getElementById('luckyColorBox').style.backgroundColor = zData.aura;
     document.getElementById('luckyColorBox').style.color = zData.aura;

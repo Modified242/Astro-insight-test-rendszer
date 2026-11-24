@@ -411,7 +411,17 @@ document.addEventListener("DOMContentLoaded", () => {
         { slug: "saturn.html", title: "Saturn: Discipline & Time", badge: "Planet", type: "img", src: "saturn.webp", desc: "Karmic lessons, boundaries, and long-term endurance." },
         { slug: "uranus.html", title: "Uranus: Awakening & Change", badge: "Planet", type: "img", src: "uranus.webp", desc: "Breakthroughs, individuality, and sudden shifts." },
         { slug: "neptune.html", title: "Neptune: Dreams & Illusion", badge: "Planet", type: "img", src: "neptune.webp", desc: "Spiritual connection, intuition, and mysticism." },
-        { slug: "pluto.html", title: "Pluto: Rebirth & Power", badge: "Planet", type: "img", src: "pluto.webp", desc: "Generational shifts, shadow work, and evolution." }
+        { slug: "pluto.html", title: "Pluto: Rebirth & Power", badge: "Planet", type: "img", src: "pluto.webp", desc: "Generational shifts, shadow work, and evolution." },
+        { slug: "fire.html", title: "Fire: Spark & Courage", badge: "Element", type: "img", src: "fire.webp", desc: "Instinct, vitality, courage, and the hunger to begin." },
+        { slug: "earth.html", title: "Earth: Patience & Craft", badge: "Element", type: "img", src: "earth.webp", desc: "Stability, practical endurance, and the gravity of what lasts." },
+        { slug: "air.html", title: "Air: Thought & Curiosity", badge: "Element", type: "img", src: "air.webp", desc: "Intellect, communication, perspective, and connection." },
+        { slug: "water.html", title: "Water: Depth & Intuition", badge: "Element", type: "img", src: "water.webp", desc: "Emotion, empathy, memory, and the tide beneath words." },
+        { slug: "big-three.html", title: "The Big Three: Sun, Moon & Rising", badge: "Guide", type: "img", src: "big-three.webp", desc: "Why your Moon and Rising signs tell the real story beyond your Sun sign." },
+        { slug: "astrological-houses.html", title: "The 12 Houses of Astrology", badge: "Guide", type: "img", src: "astrological-houses.webp", desc: "A practical tour through the twelve rooms of your birth chart." },
+        { slug: "retrograde-planets.html", title: "Natal Retrograde Planets", badge: "Guide", type: "img", src: "retrograde-planets.webp", desc: "What it means if you were born with retrograde planets in your chart." },
+        { slug: "saturn-return.html", title: "Saturn Return Survival Guide", badge: "Guide", type: "img", src: "saturn-return.webp", desc: "Turning late-twenties life crises into lasting milestones (ages 27–30)." },
+        { slug: "lunar-nodes.html", title: "The North & South Nodes", badge: "Guide", type: "img", src: "lunar-nodes.webp", desc: "Navigating your comfort zone versus your true growth edge." },
+        { slug: "tarot-spreads.html", title: "Tarot Spreads for Beginners", badge: "Guide", type: "img", src: "tarot-spreads.webp", desc: "Simple 3-card layouts for daily clarity and tough decisions." }
     ];
 
     const currentPath = window.location.pathname.split("/").pop() || "index.html";
@@ -566,8 +576,17 @@ document.addEventListener("DOMContentLoaded", () => {
             grid.querySelectorAll('a').forEach(a => {
                 const href = a.getAttribute('href');
                 if (href && !href.startsWith('.') && !href.startsWith('http')) {
+                    if (href === 'intro-astrology-guide.html') {
+                        a.setAttribute('href', rootPrefix + 'pages/' + href);
+                        return;
+                    }
                     const planets = ['sun.html', 'moon.html', 'mercury.html', 'venus.html', 'mars.html', 'jupiter.html', 'saturn.html', 'uranus.html', 'neptune.html', 'pluto.html'];
-                    const folder = planets.includes(href) ? 'planets/' : 'zodiac/';
+                    const elements = ['fire.html', 'earth.html', 'air.html', 'water.html'];
+                    const guides = ['big-three.html', 'astrological-houses.html', 'retrograde-planets.html', 'saturn-return.html', 'lunar-nodes.html', 'tarot-spreads.html'];
+                    let folder = 'zodiac/';
+                    if (planets.includes(href)) folder = 'planets/';
+                    else if (elements.includes(href)) folder = 'elements/';
+                    else if (guides.includes(href)) folder = 'guides/';
                     a.setAttribute('href', rootPrefix + 'articles/' + folder + href);
                 }
             });
