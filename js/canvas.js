@@ -232,7 +232,6 @@ const omenTextEl = document.getElementById('omenText');
 if (omenTextEl) {
     const omens = [
         "The position of Venus suggests harmony in upcoming endeavors.",
-        "Solar winds are calm; excellent energy for analytical focus and structured coding.",
         "High planetary resonance today. Intuitive decision-making is heavily favored.",
         "Mercury aligns with Jupiter: expansive communication and clarity in negotiations.",
         "Lunar energy shifts toward Earth signs—ground your ideas into practical projects today.",
